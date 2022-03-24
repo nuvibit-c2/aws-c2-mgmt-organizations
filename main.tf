@@ -86,7 +86,7 @@ locals {
       account_access_role       = "OrganizationAccountAccessRole"
     }
     core_security = {
-      account_id                   = ""
+      account_id                   = "111111111111"
       spoke_provisioning_role_name = "foundation-security-provisioning-role"
     }
     account_baseline = {

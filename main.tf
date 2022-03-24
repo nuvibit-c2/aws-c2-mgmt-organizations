@@ -72,7 +72,7 @@ locals {
     customer1 = "org"
   }
 
-  foundation_settings = {
+  org_mgmt_settings = {
     org_mgmt = {
       main_region               = data.aws_region.current.name
       root_id                   = module.master_config.organization_root_id
@@ -85,10 +85,6 @@ locals {
       write_parameter_role_name = "foundation-write-parameter-role"
       account_access_role       = "OrganizationAccountAccessRole"
     }
-    core_security = {
-      account_id                   = "111111111111"
-      spoke_provisioning_role_name = "foundation-security-provisioning-role"
-    }
     account_baseline = {
       workload_provisioning_user_name = "tf_workload_provisioning"
       provisioning_role_name          = "FoundationBaselineProvisioningRole"
@@ -96,6 +92,8 @@ locals {
       aws_config_role_name            = "FoundationAwsConfigRole"
     }
   }
+
+  foundation_settings = module.account_context.foundation_settings
 
   foundation_settings_security = {
     org_mgmt = {
@@ -134,9 +132,9 @@ module "foundation_settings_security" {
 module "foundation_security_provisioner" {
   source = "github.com/nuvibit/terraform-aws-foundation-security.git//modules/iam-roles-provisioner?ref=main"
 
-  org_mgmt_account_id      = local.foundation_settings["org_mgmt"]["account_id"]
-  core_security_account_id = local.foundation_settings["core_security"]["account_id"]
-  provisioner_role_name    = local.foundation_settings["core_security"]["spoke_provisioning_role_name"]
+  org_mgmt_account_id      = local.org_mgmt_settings["org_mgmt"]["account_id"]
+  core_security_account_id = try(local.foundation_settings["core_security"]["account_id"], "111111111111")
+  provisioner_role_name    = try(local.foundation_settings["core_security"]["spoke_provisioning_role_name"], "placeholder")
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

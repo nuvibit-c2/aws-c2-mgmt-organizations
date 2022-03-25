@@ -148,7 +148,7 @@ module "master_config" {
   vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
   statemachine_arn   = try(module.account_context.foundation_settings["core_vending"].statemachine_arn, "")
 
-  org_parameters = local.foundation_settings
+  org_parameters = local.org_mgmt_settings
   resource_tags  = local.resource_tags
 
   providers = {

@@ -133,7 +133,7 @@ module "foundation_security_provisioner" {
   source = "github.com/nuvibit/terraform-aws-foundation-security.git//modules/iam-roles-provisioner?ref=main"
 
   org_mgmt_account_id      = local.org_mgmt_settings["org_mgmt"]["account_id"]
-  core_security_account_id = try(local.foundation_settings["core_security"]["account_id"], "111111111111")
+  core_security_account_id = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
   provisioner_role_name    = try(local.foundation_settings["core_security"]["spoke_provisioning_role_name"], "placeholder")
 }
 
@@ -145,7 +145,7 @@ module "master_config" {
 
   root_id            = data.aws_organizations_organization.current.roots[0].id
   ou_tenant_map      = local.ou_tenant_map
-  vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, "")
+  vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
   statemachine_arn   = try(module.account_context.foundation_settings["core_vending"].statemachine_arn, "")
 
   org_parameters = local.foundation_settings

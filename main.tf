@@ -74,6 +74,8 @@ locals {
     customer1 = "org"
   }
 
+  token_name = "GH_SA_TOKEN"
+
   org_mgmt_settings = {
     org_mgmt = {
       main_region               = data.aws_region.current.name
@@ -93,8 +95,28 @@ locals {
       auto_remediation_role_name      = "foundation-auto-remediation-role"
       aws_config_role_name            = "FoundationAwsConfigRole"
     }
+    core_vending = {
+      gh_token                = local.token_name
+      account_context_version = "main"
+      baseline_version        = "main"
+      account_id              = local.this_account
+    }
   }
 
+  vending_settings = {
+    baseline_repo      = "https://${local.token_name}:<token>@github.com/nuvibit/aws-${local.org_mgmt_settings["org_mgmt"].env}-baseline.git"
+    account_role       = local.org_mgmt_settings["org_mgmt"].account_access_role
+    baseline_version   = "main"
+    org_mgmt_id        = local.this_account
+    vending_account_id = local.this_account
+    cloud_management   = "arn:aws:iam::${local.this_account}:role/cloud-management"
+    token_name         = local.token_name
+    git_token          = var.git_token
+  }
+
+  vending_context = {
+
+  }
   foundation_settings = module.account_context.foundation_settings
 
   foundation_settings_security = {
@@ -147,7 +169,7 @@ module "master_config" {
 
   ou_tenant_map      = local.ou_tenant_map
   vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
-  statemachine_arn   = try(module.account_context.foundation_settings["core_vending"].statemachine_arn, "")
+  statemachine_arn   = module.account_vendor.state_machine_arn
 
   org_parameters = local.org_mgmt_settings
   resource_tags  = local.resource_tags
@@ -209,5 +231,19 @@ module "aws-c2" {
   providers = {
     azuread              = azuread.sso
     aws.org_mgmt_account = aws.euc1
+  }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ Account Vending
+# ---------------------------------------------------------------------------------------------------------------------
+module "account_vendor" {
+  source = "github.com/nuvibit/terraform-aws-account-vendor.git?ref=v1.0.0"
+
+  resource_name_suffix = local.org_mgmt_settings["org_mgmt"].env
+  vending_settings     = local.vending_settings
+
+  providers = {
+    aws = aws
   }
 }

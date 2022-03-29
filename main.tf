@@ -171,7 +171,7 @@ module "aws-c2" {
   aws_sso_sign_in_url       = "https://d-996719544f.awsapps.com/start"
   aws_sso_acs_url           = "https://eu-central-1.signin.aws.amazon.com/platform/saml/acs/85f2a8f3-9efd-4a5d-82d4-536a359a8c35"
   aws_sso_issuer_url        = "https://eu-central-1.signin.aws.amazon.com/platform/saml/d-996719544f"
-  aws_sso_manual_config     = false
+  aws_sso_manual_config     = true
   aws_sso_session_duration  = 10
   aws_sso_users = [
     {

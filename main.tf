@@ -104,7 +104,7 @@ locals {
   }
 
   vending_settings = {
-    baseline_repo      = "https://${local.token_name}:<token>@github.com/nuvibit/aws-s-baseline.git"
+    baseline_repo      = "https://${local.token_name}:<token>@github.com/nuvibit/aws-${local.org_mgmt_settings["org_mgmt"].env}-baseline.git"
     account_role       = local.org_mgmt_settings["org_mgmt"].account_access_role
     baseline_version   = "main"
     org_mgmt_id        = local.this_account

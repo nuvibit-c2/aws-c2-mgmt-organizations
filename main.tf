@@ -51,7 +51,7 @@ data "aws_organizations_organizational_units" "ou" {
 data "aws_organizations_resource_tags" "account" {
   for_each = { for a in data.aws_organizations_organization.current.accounts : a.id => a if(
     a.status == "ACTIVE"
-  )}
+  ) }
 
   resource_id = each.key
 }

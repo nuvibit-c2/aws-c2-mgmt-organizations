@@ -175,7 +175,7 @@ module "master_config" {
   resource_tags  = local.resource_tags
 
   providers = {
-    aws      = aws
+    aws = aws
   }
 }
 
@@ -265,6 +265,6 @@ module "account_vendor" {
 
   providers = {
     aws.use1 = aws.use1
-    aws = aws
+    aws      = aws
   }
 }

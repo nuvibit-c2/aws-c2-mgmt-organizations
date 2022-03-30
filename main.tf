@@ -181,6 +181,27 @@ module "master_config" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
+# ¦ ORG MGMT - ORGANIZATION CLOUDTRAIL
+# ---------------------------------------------------------------------------------------------------------------------
+module "org_cloudtrail" {
+  source = "github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail?ref=move-org-mgmt-configs"
+
+  org_mgmt_account_id                         = local.org_mgmt_account_id
+  core_security_account_id                    = var.core_logging_account_id
+  core_monitoring_cloudtrail_cw_logs_dest_arn = var.core_monitoring_cloudtrail_cw_logs_dest_arn
+  core_logging_account_id                     = var.core_logging_account_id
+  s3_days_to_glacier                          = var.s3_days_to_glacier
+  s3_days_to_expiration                       = var.s3_days_to_expiration
+  core_logging_bucket_access_s3_id            = var.core_logging_bucket_access_s3_id
+
+  resource_tags = var.resource_tags
+  providers = {
+    aws              = aws
+    aws.core_logging = aws.core_logging
+  }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ¦ SINGLE SIGN ON
 # ---------------------------------------------------------------------------------------------------------------------
 module "aws-c2" {

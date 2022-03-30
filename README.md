@@ -36,7 +36,7 @@
 | <a name="module_aws-c2"></a> [aws-c2](#module\_aws-c2) | github.com/nuvibit/terraform-aws-sso.git//modules/azuread-org-sso | n/a |
 | <a name="module_foundation_security_provisioner"></a> [foundation\_security\_provisioner](#module\_foundation\_security\_provisioner) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/iam-roles-provisioner | main |
 | <a name="module_foundation_settings_security"></a> [foundation\_settings\_security](#module\_foundation\_settings\_security) | github.com/nuvibit/terraform-aws-org-mgmt.git//modules/terraform-aws-paramters | main |
-| <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | 1.3.1 |
+| <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | add-cloudtrail |
 
 ## Resources
 

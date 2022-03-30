@@ -37,6 +37,7 @@
 | <a name="module_foundation_security_provisioner"></a> [foundation\_security\_provisioner](#module\_foundation\_security\_provisioner) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/iam-roles-provisioner | main |
 | <a name="module_foundation_settings_security"></a> [foundation\_settings\_security](#module\_foundation\_settings\_security) | github.com/nuvibit/terraform-aws-org-mgmt.git//modules/terraform-aws-paramters | main |
 | <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | add-cloudtrail |
+| <a name="module_org_cloudtrail"></a> [org\_cloudtrail](#module\_org\_cloudtrail) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail | move-org-mgmt-configs |
 
 ## Resources
 

@@ -165,7 +165,7 @@ module "foundation_security_provisioner" {
 # ¦  ORGANIZATION
 # ---------------------------------------------------------------------------------------------------------------------
 module "master_config" {
-  source = "github.com/nuvibit/terraform-aws-org-mgmt.git?ref=1.3.1"
+  source = "github.com/nuvibit/terraform-aws-org-mgmt.git?ref=add-cloudtrail"
 
   ou_tenant_map      = local.ou_tenant_map
   vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)

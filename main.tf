@@ -143,7 +143,7 @@ module "account_context" {
 }
 
 module "foundation_settings_security" {
-  source = "github.com/nuvibit/terraform-aws-org-mgmt.git//modules/terraform-aws-paramters?ref=main"
+  source = "github.com/nuvibit/terraform-aws-org-mgmt.git//modules/ssm-parameters?ref=main"
 
   parameters          = local.foundation_settings_security
   resource_tags       = local.resource_tags

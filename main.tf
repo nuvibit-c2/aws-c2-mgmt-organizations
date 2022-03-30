@@ -117,7 +117,7 @@ locals {
   }
   foundation_settings = module.account_context.foundation_settings
 
-  core_logging_account_id = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
+  core_logging_account_id  = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
   core_security_account_id = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
 
   foundation_settings_security = {

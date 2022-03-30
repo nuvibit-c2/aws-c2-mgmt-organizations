@@ -35,7 +35,7 @@
 | <a name="module_account_vendor"></a> [account\_vendor](#module\_account\_vendor) | github.com/nuvibit/terraform-aws-account-vendor.git | v1.0.0 |
 | <a name="module_aws-c2"></a> [aws-c2](#module\_aws-c2) | github.com/nuvibit/terraform-aws-sso.git//modules/azuread-org-sso | n/a |
 | <a name="module_foundation_security_provisioner"></a> [foundation\_security\_provisioner](#module\_foundation\_security\_provisioner) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/iam-roles-provisioner | main |
-| <a name="module_foundation_settings_security"></a> [foundation\_settings\_security](#module\_foundation\_settings\_security) | github.com/nuvibit/terraform-aws-org-mgmt.git//modules/terraform-aws-paramters | main |
+| <a name="module_foundation_settings_security"></a> [foundation\_settings\_security](#module\_foundation\_settings\_security) | github.com/nuvibit/terraform-aws-org-mgmt.git//modules/ssm-parameters | main |
 | <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | add-cloudtrail |
 | <a name="module_org_cloudtrail"></a> [org\_cloudtrail](#module\_org\_cloudtrail) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail | move-org-mgmt-configs |
 

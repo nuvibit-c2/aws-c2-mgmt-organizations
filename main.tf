@@ -175,7 +175,6 @@ module "master_config" {
   resource_tags  = local.resource_tags
 
   providers = {
-    aws.use1 = aws.use1
     aws      = aws
   }
 }
@@ -186,13 +185,13 @@ module "master_config" {
 module "org_cloudtrail" {
   source = "github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail?ref=move-org-mgmt-configs"
 
-  org_mgmt_account_id                         = local.org_mgmt_account_id
-  core_security_account_id                    = var.core_logging_account_id
-  core_monitoring_cloudtrail_cw_logs_dest_arn = var.core_monitoring_cloudtrail_cw_logs_dest_arn
-  core_logging_account_id                     = var.core_logging_account_id
-  s3_days_to_glacier                          = var.s3_days_to_glacier
-  s3_days_to_expiration                       = var.s3_days_to_expiration
-  core_logging_bucket_access_s3_id            = var.core_logging_bucket_access_s3_id
+  org_mgmt_account_id                         = local.this_account
+  core_security_account_id                    = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
+  core_monitoring_cloudtrail_cw_logs_dest_arn = try(local.foundation_settings["core_monitoring"]["cloudtrail_cw_logs_dest_arn"], null)
+  core_logging_account_id                     = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
+  s3_days_to_glacier                          = try(local.foundation_settings["core_logging"]["s3_days_to_glacier"], null)
+  s3_days_to_expiration                       = try(local.foundation_settings["core_logging"]["s3_days_to_expiration"], null)
+  core_logging_bucket_access_s3_id            = try(local.foundation_settings["core_logging"]["core_logging_bucket"], "")
 
   resource_tags = var.resource_tags
   providers = {
@@ -265,6 +264,7 @@ module "account_vendor" {
   vending_settings     = local.vending_settings
 
   providers = {
+    aws.use1 = aws.use1
     aws = aws
   }
 }

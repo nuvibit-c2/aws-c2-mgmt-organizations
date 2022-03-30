@@ -259,7 +259,7 @@ module "aws-c2" {
 # ¦ Account Vending
 # ---------------------------------------------------------------------------------------------------------------------
 module "account_vendor" {
-  source = "github.com/nuvibit/terraform-aws-account-vendor.git?ref=v1.1.0"
+  source = "github.com/nuvibit/terraform-aws-account-vendor.git?ref=1.1.0"
 
   resource_name_suffix = local.org_mgmt_settings["org_mgmt"].env
   vending_settings     = local.vending_settings

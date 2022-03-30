@@ -167,15 +167,16 @@ module "foundation_security_provisioner" {
 module "master_config" {
   source = "github.com/nuvibit/terraform-aws-org-mgmt.git?ref=add-cloudtrail"
 
-  ou_tenant_map      = local.ou_tenant_map
-  vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
-  statemachine_arn   = module.account_vendor.state_machine_arn
+  ou_tenant_map            = local.ou_tenant_map
+  vending_account_id       = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
+  core_security_account_id = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
+  statemachine_arn         = module.account_vendor.state_machine_arn
 
   org_parameters = local.org_mgmt_settings
   resource_tags  = local.resource_tags
 
   providers = {
-    aws      = aws
+    aws = aws
   }
 }
 
@@ -258,13 +259,13 @@ module "aws-c2" {
 # ¦ Account Vending
 # ---------------------------------------------------------------------------------------------------------------------
 module "account_vendor" {
-  source = "github.com/nuvibit/terraform-aws-account-vendor.git?ref=v1.0.0"
+  source = "github.com/nuvibit/terraform-aws-account-vendor.git?ref=v1.1.0"
 
   resource_name_suffix = local.org_mgmt_settings["org_mgmt"].env
   vending_settings     = local.vending_settings
 
   providers = {
     aws.use1 = aws.use1
-    aws = aws
+    aws      = aws
   }
 }

@@ -171,10 +171,10 @@ module "org_cloudtrail" {
   org_mgmt_account_id                         = local.this_account
   core_security_account_id                    = local.core_security_account_id
   core_monitoring_cloudtrail_cw_logs_dest_arn = try(local.foundation_settings["core_monitoring"]["cloudtrail_cw_logs_dest_arn"], null)
-  core_logging_account_id                     = local.this_account #local.foundation_settings["core_logging"]["account_id"]
+  core_logging_account_id                     = local.foundation_settings["core_logging"]["account_id"]
   s3_days_to_glacier                          = try(local.foundation_settings["core_logging"]["s3_days_to_glacier"], null)
   s3_days_to_expiration                       = try(local.foundation_settings["core_logging"]["s3_days_to_expiration"], null)
-  core_logging_bucket_access_s3_id            = "" #local.foundation_settings["core_logging"]["core_logging_bucket"]
+  core_logging_bucket_access_s3_id            = local.foundation_settings["core_logging"]["core_logging_bucket"]
 
   resource_tags = var.resource_tags
   providers = {

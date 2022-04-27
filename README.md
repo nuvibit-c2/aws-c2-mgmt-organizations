@@ -34,7 +34,7 @@
 | <a name="module_account_context"></a> [account\_context](#module\_account\_context) | github.com/nuvibit/terraform-aws-account-context.git | main |
 | <a name="module_account_vendor"></a> [account\_vendor](#module\_account\_vendor) | github.com/nuvibit/terraform-aws-account-vendor.git | 1.1.0 |
 | <a name="module_aws-c2"></a> [aws-c2](#module\_aws-c2) | github.com/nuvibit/terraform-aws-sso.git//modules/azuread-org-sso | n/a |
-| <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | add-cloudtrail |
+| <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | n/a |
 | <a name="module_org_cloudtrail"></a> [org\_cloudtrail](#module\_org\_cloudtrail) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail | move-org-mgmt-configs |
 
 ## Resources

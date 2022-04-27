@@ -151,11 +151,11 @@ module "master_config" {
   org_parameters = local.org_mgmt_settings
   resource_tags  = local.resource_tags
 
-  enable_aws_guardduty = true
-  enable_aws_security_hub = true 
+  enable_aws_guardduty    = true
+  enable_aws_security_hub = true
 
   providers = {
-    aws = aws
+    aws      = aws
     aws.use1 = aws.use1
   }
 }

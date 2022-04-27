@@ -34,8 +34,6 @@
 | <a name="module_account_context"></a> [account\_context](#module\_account\_context) | github.com/nuvibit/terraform-aws-account-context.git | main |
 | <a name="module_account_vendor"></a> [account\_vendor](#module\_account\_vendor) | github.com/nuvibit/terraform-aws-account-vendor.git | 1.1.0 |
 | <a name="module_aws-c2"></a> [aws-c2](#module\_aws-c2) | github.com/nuvibit/terraform-aws-sso.git//modules/azuread-org-sso | n/a |
-| <a name="module_foundation_security_provisioner"></a> [foundation\_security\_provisioner](#module\_foundation\_security\_provisioner) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/iam-roles-provisioner | main |
-| <a name="module_foundation_settings_security"></a> [foundation\_settings\_security](#module\_foundation\_settings\_security) | github.com/nuvibit/terraform-aws-org-mgmt.git//modules/ssm-parameters | main |
 | <a name="module_master_config"></a> [master\_config](#module\_master\_config) | github.com/nuvibit/terraform-aws-org-mgmt.git | add-cloudtrail |
 | <a name="module_org_cloudtrail"></a> [org\_cloudtrail](#module\_org\_cloudtrail) | github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail | move-org-mgmt-configs |
 
@@ -68,7 +66,6 @@
 | <a name="output_aws_organizations_organization"></a> [aws\_organizations\_organization](#output\_aws\_organizations\_organization) | n/a |
 | <a name="output_aws_organizations_organizational_units"></a> [aws\_organizations\_organizational\_units](#output\_aws\_organizations\_organizational\_units) | n/a |
 | <a name="output_branding_ou_id"></a> [branding\_ou\_id](#output\_branding\_ou\_id) | n/a |
-| <a name="output_foundation_security_provisioner_role_arn"></a> [foundation\_security\_provisioner\_role\_arn](#output\_foundation\_security\_provisioner\_role\_arn) | n/a |
 | <a name="output_org_id"></a> [org\_id](#output\_org\_id) | n/a |
 | <a name="output_organization_root_id"></a> [organization\_root\_id](#output\_organization\_root\_id) | n/a |
 | <a name="output_region"></a> [region](#output\_region) | n/a |

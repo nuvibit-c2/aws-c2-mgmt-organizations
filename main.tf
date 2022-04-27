@@ -117,8 +117,8 @@ locals {
   }
   foundation_settings = module.account_context.foundation_settings
 
-  core_logging_account_id  = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
-  core_security_account_id = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
+  core_logging_account_id     = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
+  core_security_account_id    = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
   create_security_cloud_trail = can(local.foundation_settings["core_logging"]["core_logging_bucket"]) && can(local.foundation_settings["core_logging"]["account_id"])
 
   active_org_accounts = [for a in data.aws_organizations_resource_tags.account : a.resource_id if(
@@ -166,7 +166,7 @@ module "master_config" {
 # ---------------------------------------------------------------------------------------------------------------------
 module "org_cloudtrail" {
   source = "github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail?ref=move-org-mgmt-configs"
-  #count = local.create_security_cloud_trail ? 1 : 0
+  count  = local.create_security_cloud_trail ? 1 : 0
 
   org_mgmt_account_id                         = local.this_account
   core_security_account_id                    = local.core_security_account_id

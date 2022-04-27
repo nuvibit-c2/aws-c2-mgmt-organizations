@@ -22,10 +22,6 @@ output "branding_ou_id" {
   value = module.master_config.branding_ou_id
 }
 
-output "foundation_security_provisioner_role_arn" {
-  value = module.foundation_security_provisioner.org_mgmt_provisioner_role_arn
-}
-
 output "aws_organizations_organization" {
   value = data.aws_organizations_organization.current
 }

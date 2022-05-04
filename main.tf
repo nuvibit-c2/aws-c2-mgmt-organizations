@@ -117,9 +117,7 @@ locals {
   }
   foundation_settings = module.account_context.foundation_settings
 
-  core_logging_account_id     = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
-  core_security_account_id    = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
-  create_security_cloud_trail = can(local.foundation_settings["core_logging"]["core_logging_bucket"]) && can(local.foundation_settings["core_logging"]["account_id"])
+  core_logging_account_id     = try(local.foundation_settings["core_logging"]["account_id"], local.this_account) //workaround for provider
 
   active_org_accounts = [for a in data.aws_organizations_resource_tags.account : a.resource_id if(
     a.resource_id == data.aws_caller_identity.current.account_id || try(a.tags.recycled == "false", false)
@@ -170,7 +168,7 @@ module "org_cloudtrail" {
   core_monitoring_cloudtrail_cw_logs_dest_arn = try(local.foundation_settings["core_monitoring"]["cloudtrail_cw_logs_dest_arn"], null)
   s3_days_to_glacier = try(local.foundation_settings["core_logging"]["s3_days_to_glacier"], null)
   s3_days_to_expiration = try(local.foundation_settings["core_logging"]["s3_days_to_expiration"], null)
-  core_logging_bucket_access_s3_id = local.foundation_settings["core_logging"]["core_logging_bucket"]
+  core_logging_bucket_access_s3_id = try(local.foundation_settings["core_logging"]["core_logging_bucket"], "")
 
   resource_tags = var.resource_tags
   providers = {

@@ -117,9 +117,7 @@ locals {
   }
   foundation_settings = module.account_context.foundation_settings
 
-  core_logging_account_id     = try(local.foundation_settings["core_logging"]["account_id"], local.this_account)
-  core_security_account_id    = try(local.foundation_settings["core_security"]["account_id"], local.this_account)
-  create_security_cloud_trail = can(local.foundation_settings["core_logging"]["core_logging_bucket"]) && can(local.foundation_settings["core_logging"]["account_id"])
+  core_logging_account_id = try(local.foundation_settings["core_logging"]["account_id"], local.this_account) //workaround for provider
 
   active_org_accounts = [for a in data.aws_organizations_resource_tags.account : a.resource_id if(
     a.resource_id == data.aws_caller_identity.current.account_id || try(a.tags.recycled == "false", false)
@@ -144,15 +142,11 @@ module "account_context" {
 module "master_config" {
   source = "github.com/nuvibit/terraform-aws-org-mgmt.git"
 
-  ou_tenant_map            = local.ou_tenant_map
-  vending_account_id       = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
-  core_security_account_id = local.core_security_account_id
+  ou_tenant_map      = local.ou_tenant_map
+  vending_account_id = try(module.account_context.foundation_settings["core_vending"].account_id, local.this_account)
 
   org_parameters = local.org_mgmt_settings
   resource_tags  = local.resource_tags
-
-  enable_aws_guardduty    = true
-  enable_aws_security_hub = true
 
   providers = {
     aws      = aws
@@ -165,20 +159,17 @@ module "master_config" {
 # ¦ ORG MGMT - ORGANIZATION CLOUDTRAIL
 # ---------------------------------------------------------------------------------------------------------------------
 module "org_cloudtrail" {
+  count  = can(local.foundation_settings["core_logging"]["account_id"]) ? 1 : 0
   source = "github.com/nuvibit/terraform-aws-foundation-security.git//modules/org-cloudtrail?ref=move-org-mgmt-configs"
-  count  = local.create_security_cloud_trail ? 1 : 0
 
-  org_mgmt_account_id                         = local.this_account
-  core_security_account_id                    = local.core_security_account_id
   core_monitoring_cloudtrail_cw_logs_dest_arn = try(local.foundation_settings["core_monitoring"]["cloudtrail_cw_logs_dest_arn"], null)
-  core_logging_account_id                     = local.foundation_settings["core_logging"]["account_id"]
   s3_days_to_glacier                          = try(local.foundation_settings["core_logging"]["s3_days_to_glacier"], null)
   s3_days_to_expiration                       = try(local.foundation_settings["core_logging"]["s3_days_to_expiration"], null)
-  core_logging_bucket_access_s3_id            = local.foundation_settings["core_logging"]["core_logging_bucket"]
+  core_logging_bucket_access_s3_id            = try(local.foundation_settings["core_logging"]["core_logging_bucket"], "")
 
   resource_tags = var.resource_tags
   providers = {
-    aws              = aws
+    aws.org_mgmt     = aws
     aws.core_logging = aws.core_logging
   }
 }

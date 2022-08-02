@@ -13,7 +13,7 @@
 <!-- DESCRIPTION -->
 [Terraform workspace][terraform-workspace-url] repository to deploy resources on [AWS][aws-url]
 
-<!--- BEGIN_TF_DOCS --->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -71,7 +71,7 @@
 | <a name="output_region"></a> [region](#output\_region) | n/a |
 | <a name="output_tenant_ou_ids"></a> [tenant\_ou\_ids](#output\_tenant\_ou\_ids) | n/a |
 
-<!--- END_TF_DOCS --->
+<!-- END_TF_DOCS -->
 
 <!-- AUTHORS -->
 ## Authors

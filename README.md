@@ -70,7 +70,6 @@
 | <a name="output_organization_root_id"></a> [organization\_root\_id](#output\_organization\_root\_id) | n/a |
 | <a name="output_region"></a> [region](#output\_region) | n/a |
 | <a name="output_tenant_ou_ids"></a> [tenant\_ou\_ids](#output\_tenant\_ou\_ids) | n/a |
-
 <!-- END_TF_DOCS -->
 
 <!-- AUTHORS -->

@@ -14,6 +14,34 @@
 [Terraform workspace][terraform-workspace-url] repository to deploy resources on [AWS][aws-url]
 
 <!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.1.5 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.0 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 4.0 |
+| <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) | ~> 0.31 |
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
 <!-- END_TF_DOCS -->
 
 <!-- AUTHORS -->

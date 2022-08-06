@@ -6,13 +6,11 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "euc1"
+  alias  = "core_logging"
   region = "eu-central-1"
-}
-
-provider "aws" {
-  alias  = "euw1"
-  region = "eu-west-1"
+  assume_role {
+    role_arn = "arn:aws:iam::${local.core_logging_account_id}:role/OrganizationAccountAccessRole"
+  }
 }
 
 provider "aws" {
@@ -20,28 +18,13 @@ provider "aws" {
   region = "us-east-1"
 }
 
+provider "azuread" {
+  alias = "sso"
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # REQUIREMENTS
 # ---------------------------------------------------------------------------------------------------------------------
-terraform {
-  required_version = ">= 1.1.5"
-
-  required_providers {
-    aws = {
-      source                = "hashicorp/aws"
-      version               = "~> 4.0"
-      configuration_aliases = []
-    }
-    tfe = {
-      source  = "hashicorp/tfe"
-      version = "~> 0.31"
-    }
-    github = {
-      source  = "integrations/github"
-      version = "~> 4.0"
-    }
-  }
-}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DATA
@@ -50,9 +33,6 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 # LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
-locals {
-  # aws_org = "c2"
-}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # AWS SSO

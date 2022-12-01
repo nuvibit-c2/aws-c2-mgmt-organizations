@@ -283,12 +283,6 @@ module "account_baseline_pipline" {
   setup_account_config      = !each.value.create_repo
   account_baseline_workflow = true
   github_enforce_admins     = false
-
-  providers = {
-    aws    = aws
-    tfe    = tfe
-    github = github
-  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

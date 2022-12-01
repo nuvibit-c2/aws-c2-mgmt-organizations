@@ -187,7 +187,7 @@ module "main_config" {
   resource_tags  = local.resource_tags
 
   providers = {
-    aws      = aws
+    aws      = aws.euc1
     aws.use1 = aws.use1
   }
 }
@@ -200,8 +200,8 @@ module "foundation_settings" {
   version = "1.0.0"
 
   providers = {
-    aws               = aws
-    aws.ssm_ps_reader = aws
+    aws               = aws.euc1
+    aws.ssm_ps_reader = aws.euc1
   }
 }
 
@@ -213,8 +213,8 @@ module "org_mgmt_parameters" {
   parameters_overwrite = true
 
   providers = {
-    aws               = aws
-    aws.ssm_ps_writer = aws
+    aws               = aws.euc1
+    aws.ssm_ps_writer = aws.euc1
   }
 }
 
@@ -227,7 +227,7 @@ module "parameter_roles" {
   parameters_reader_role_name = local.org_mgmt_parameters["org_mgmt"]["parameters_reader_role_name"]
 
   providers = {
-    aws = aws
+    aws = aws.euc1
   }
 }
 
@@ -245,7 +245,7 @@ resource "aws_organizations_account" "org_management" {
   }
 
   providers = {
-    aws = aws
+    aws = aws.euc1
   }
 }
 
@@ -260,7 +260,7 @@ module "org_mgmt_pipline" {
   github_template = local.github_template
 
   providers = {
-    aws    = aws
+    aws    = aws.euc1
     tfe    = tfe
     github = github
   }
@@ -278,7 +278,7 @@ module "account_lifecycle_pipline" {
   github_template        = local.github_template
 
   providers = {
-    aws    = aws
+    aws    = aws.euc1
     tfe    = tfe
     github = github
   }
@@ -307,7 +307,7 @@ module "account_baseline_pipline" {
   github_enforce_admins     = false
 
   providers = {
-    aws    = aws
+    aws    = aws.euc1
     tfe    = tfe
     github = github
   }
@@ -324,7 +324,7 @@ module "sso_permission_sets" {
   custom_job_functions_org_billing = true # additionally create custom billing permission-set
 
   providers = {
-    aws = aws
+    aws = aws.euc1
   }
 }
 
@@ -343,7 +343,7 @@ module "sso_org_admins" {
   sso_billing_permission_set_name = "OrgBilling" # org admins get a custom billing permission set
 
   providers = {
-    aws = aws
+    aws = aws.euc1
   }
 }
 
@@ -361,7 +361,7 @@ module "account_vendor" {
   org_mgmt_account_id           = local.this_account_id
 
   providers = {
-    aws      = aws
+    aws      = aws.euc1
     aws.use1 = aws.use1
   }
 }

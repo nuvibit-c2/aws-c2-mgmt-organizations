@@ -331,6 +331,7 @@ module "account_vendor" {
   org_mgmt_account_id           = local.this_account_id
 
   providers = {
+    aws      = aws
     aws.use1 = aws.use1
   }
 }

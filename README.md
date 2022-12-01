@@ -16,19 +16,45 @@
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.10, != 4.34 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
+| <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) | ~> 0.31 |
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.10, != 4.34 |
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_account_baseline_pipline"></a> [account\_baseline\_pipline](#module\_account\_baseline\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
+| <a name="module_account_lifecycle_pipline"></a> [account\_lifecycle\_pipline](#module\_account\_lifecycle\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
+| <a name="module_account_vendor"></a> [account\_vendor](#module\_account\_vendor) | app.terraform.io/nuvibit/account-vendor/aws | 1.4.0 |
+| <a name="module_foundation_settings"></a> [foundation\_settings](#module\_foundation\_settings) | app.terraform.io/nuvibit/core-parameters/aws//modules/reader | 1.0.0 |
+| <a name="module_main_config"></a> [main\_config](#module\_main\_config) | app.terraform.io/nuvibit/org-mgmt/aws | 1.5.2 |
+| <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | app.terraform.io/nuvibit/core-parameters/aws | 1.0.0 |
+| <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
+| <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles | 1.0.0 |
+| <a name="module_sso_csb_admins"></a> [sso\_csb\_admins](#module\_sso\_csb\_admins) | github.com/nuvibit/terraform-aws-sso-gen2 | feat-init2 |
+| <a name="module_sso_permission_sets"></a> [sso\_permission\_sets](#module\_sso\_permission\_sets) | github.com/nuvibit/terraform-aws-sso-gen2//modules/permission-sets | feat-init2 |
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_organizations_account.org_management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_account) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_organizations_organization.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
+| [aws_organizations_organizational_units.ou](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organizational_units) | data source |
+| [aws_organizations_resource_tags.account](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_resource_tags) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_ssoadmin_instances.sso](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
 
 ## Inputs
 

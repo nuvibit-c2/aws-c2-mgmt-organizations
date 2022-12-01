@@ -61,9 +61,6 @@ data "aws_caller_identity" "current" {}
 
 data "aws_ssoadmin_instances" "sso" {}
 data "aws_organizations_organization" "current" {}
-data "aws_organizations_organizational_units" "ou" {
-  parent_id = data.aws_organizations_organization.current.roots[0].id
-}
 data "aws_organizations_resource_tags" "account" {
   for_each = {
     for a in data.aws_organizations_organization.current.accounts : a.id => a
@@ -90,11 +87,6 @@ locals {
     "accountClass" = "Core Organizations Management"
     "iacPipeline"  = local.management_account_name
   }
-
-  this_account = format(
-    "arn:aws:iam::%s:root",
-    data.aws_caller_identity.current.account_id
-  )
 
   this_account_id = data.aws_caller_identity.current.account_id
 
@@ -318,9 +310,9 @@ module "sso_csb_admins" {
   sso_account_id                  = each.key
   sso_identity_store_id           = local.sso_identity_store_id
   sso_admin_user_list             = local.sso_admin_users
-  sso_admin_group_list            = local.sso_csb_admins_admin_groups
-  sso_billing_group_list          = local.sso_csb_admins_billing_groups
-  sso_supporter_group_list        = local.sso_csb_admins_supporter_groups
+  sso_admin_group_list            = local.sso_admin_groups
+  sso_billing_group_list          = local.sso_billing_groups
+  sso_supporter_group_list        = local.sso_supporter_groups
   sso_permission_sets_map         = module.sso_permission_sets.sso_permission_sets_map
   sso_billing_permission_set_name = "OrgBilling" # csb admins get a custom billing permission set
 }

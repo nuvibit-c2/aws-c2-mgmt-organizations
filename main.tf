@@ -302,7 +302,7 @@ module "sso_permission_sets" {
   custom_job_functions_org_billing = true # additionally create custom billing permission-set
 }
 
-module "sso_admins" {
+module "sso_org_admins" {
   source = "github.com/nuvibit/terraform-aws-sso-gen2?ref=feat-init2"
 
   for_each = toset(local.active_org_accounts)
@@ -314,7 +314,7 @@ module "sso_admins" {
   sso_billing_group_list          = local.sso_billing_groups
   sso_supporter_group_list        = local.sso_supporter_groups
   sso_permission_sets_map         = module.sso_permission_sets.sso_permission_sets_map
-  sso_billing_permission_set_name = "OrgBilling" # csb admins get a custom billing permission set
+  sso_billing_permission_set_name = "OrgBilling" # org admins get a custom billing permission set
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

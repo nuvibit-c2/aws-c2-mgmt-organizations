@@ -41,7 +41,7 @@
 | <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | app.terraform.io/nuvibit/core-parameters/aws | 1.0.0 |
 | <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
 | <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles | 1.0.0 |
-| <a name="module_sso_csb_admins"></a> [sso\_csb\_admins](#module\_sso\_csb\_admins) | github.com/nuvibit/terraform-aws-sso-gen2 | feat-init2 |
+| <a name="module_sso_org_admins"></a> [sso\_org\_admins](#module\_sso\_org\_admins) | github.com/nuvibit/terraform-aws-sso-gen2 | feat-init2 |
 | <a name="module_sso_permission_sets"></a> [sso\_permission\_sets](#module\_sso\_permission\_sets) | github.com/nuvibit/terraform-aws-sso-gen2//modules/permission-sets | feat-init2 |
 
 ## Resources

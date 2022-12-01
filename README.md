@@ -61,7 +61,13 @@ No inputs.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_account_id"></a> [account\_id](#output\_account\_id) | The current account id |
+| <a name="output_account_parameters"></a> [account\_parameters](#output\_account\_parameters) | The account parameter values |
+| <a name="output_organization_root_id"></a> [organization\_root\_id](#output\_organization\_root\_id) | The organization root id |
+| <a name="output_region"></a> [region](#output\_region) | The current region name |
+| <a name="output_tenant_ou_ids"></a> [tenant\_ou\_ids](#output\_tenant\_ou\_ids) | A List of tenant ou ids |
 <!-- END_TF_DOCS -->
 
 <!-- AUTHORS -->

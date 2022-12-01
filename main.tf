@@ -200,6 +200,7 @@ module "foundation_settings" {
   version = "1.0.0"
 
   providers = {
+    aws               = aws
     aws.ssm_ps_reader = aws
   }
 }
@@ -212,6 +213,7 @@ module "org_mgmt_parameters" {
   parameters_overwrite = true
 
   providers = {
+    aws               = aws
     aws.ssm_ps_writer = aws
   }
 }
@@ -223,6 +225,10 @@ module "parameter_roles" {
   org_id                      = local.org_mgmt_parameters["org_mgmt"]["org_id"]
   parameters_writer_role_name = local.org_mgmt_parameters["org_mgmt"]["parameters_writer_role_name"]
   parameters_reader_role_name = local.org_mgmt_parameters["org_mgmt"]["parameters_reader_role_name"]
+
+  providers = {
+    aws = aws
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -237,6 +243,10 @@ resource "aws_organizations_account" "org_management" {
     account_email = local.management_account_email
     account_name  = local.management_account_name
   }
+
+  providers = {
+    aws = aws
+  }
 }
 
 module "org_mgmt_pipline" {
@@ -248,6 +258,12 @@ module "org_mgmt_pipline" {
   env             = local.env
   tf_version      = local.tf_version
   github_template = local.github_template
+
+  providers = {
+    aws    = aws
+    tfe    = tfe
+    github = github
+  }
 }
 
 module "account_lifecycle_pipline" {
@@ -260,6 +276,12 @@ module "account_lifecycle_pipline" {
   tf_version             = local.tf_version
   provisioning_user_name = "account_provisioner"
   github_template        = local.github_template
+
+  providers = {
+    aws    = aws
+    tfe    = tfe
+    github = github
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -283,6 +305,12 @@ module "account_baseline_pipline" {
   setup_account_config      = !each.value.create_repo
   account_baseline_workflow = true
   github_enforce_admins     = false
+
+  providers = {
+    aws    = aws
+    tfe    = tfe
+    github = github
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -294,6 +322,10 @@ module "sso_permission_sets" {
   sso_identity_store_arn           = local.sso_identity_store_arn
   aws_managed_job_functions        = local.sso_aws_managed_job_functions
   custom_job_functions_org_billing = true # additionally create custom billing permission-set
+
+  providers = {
+    aws = aws
+  }
 }
 
 module "sso_org_admins" {
@@ -309,6 +341,10 @@ module "sso_org_admins" {
   sso_supporter_group_list        = local.sso_supporter_groups
   sso_permission_sets_map         = module.sso_permission_sets.sso_permission_sets_map
   sso_billing_permission_set_name = "OrgBilling" # org admins get a custom billing permission set
+
+  providers = {
+    aws = aws
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -302,7 +302,7 @@ module "sso_permission_sets" {
   custom_job_functions_org_billing = true # additionally create custom billing permission-set
 }
 
-module "sso_csb_admins" {
+module "sso_admins" {
   source = "github.com/nuvibit/terraform-aws-sso-gen2?ref=feat-init2"
 
   for_each = toset(local.active_org_accounts)

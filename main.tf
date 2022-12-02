@@ -80,7 +80,6 @@ locals {
   management_account_email = "accounts+${local.management_account_name}@nuvibit.com"
   tf_version               = "1.3.6"
   github_template          = "template-terraform-aws-workspace"
-  token_name               = "GH_SA_TOKEN"
   # core_logging_account_id  = try(local.foundation_settings["core_logging"]["account_id"], local.this_account) #workaround for provider
 
   this_account_id = data.aws_caller_identity.current.account_id
@@ -93,7 +92,7 @@ locals {
     nuvibit = "org"
   }
 
-  foundation_settings = module.foundation_settings.parameters
+  # foundation_settings = module.foundation_settings.parameters
   org_mgmt_parameters = {
     org_mgmt = {
       main_region                 = data.aws_region.current.name

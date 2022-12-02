@@ -2,7 +2,7 @@
 # ¦ BACKEND
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
-  backend "remote" {
+  cloud {
     organization = "nuvibit"
     hostname     = "app.terraform.io"
 

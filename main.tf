@@ -349,6 +349,7 @@ module "account_vendor" {
   resource_name_suffix          = local.org_mgmt_parameters["org_mgmt"].env
   account_role                  = local.org_mgmt_parameters["org_mgmt"].account_access_role
   baseline_managed_by_terraform = true
+  vendor_cloudtrail_enabled     = true
   cloud_management_role_arn     = "arn:aws:iam::${local.this_account_id}:role/cloud-management"
   org_mgmt_account_id           = local.this_account_id
 

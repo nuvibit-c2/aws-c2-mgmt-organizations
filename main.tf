@@ -197,7 +197,7 @@ module "main_config" {
 # ---------------------------------------------------------------------------------------------------------------------
 module "foundation_settings" {
   source  = "app.terraform.io/nuvibit/core-parameters/aws//modules/reader"
-  version = "1.0.0"
+  version = "1.0.1"
 
   providers = {
     aws               = aws.euc1
@@ -207,7 +207,7 @@ module "foundation_settings" {
 
 module "org_mgmt_parameters" {
   source  = "app.terraform.io/nuvibit/core-parameters/aws"
-  version = "1.0.0"
+  version = "1.0.1"
 
   parameters           = local.org_mgmt_parameters
   parameters_overwrite = true
@@ -220,7 +220,7 @@ module "org_mgmt_parameters" {
 
 module "parameter_roles" {
   source  = "app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles"
-  version = "1.0.0"
+  version = "1.0.1"
 
   org_id                      = local.org_mgmt_parameters["org_mgmt"]["org_id"]
   parameters_writer_role_name = local.org_mgmt_parameters["org_mgmt"]["parameters_writer_role_name"]

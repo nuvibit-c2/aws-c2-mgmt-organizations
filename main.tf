@@ -39,7 +39,8 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 4.10, != 4.34"
+      # version               = "~> 4.10, != 4.34"
+      version               = "4.35"
       configuration_aliases = []
     }
     tfe = {

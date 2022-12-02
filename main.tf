@@ -93,7 +93,7 @@ locals {
     nuvibit = "org"
   }
 
-  foundation_settings      = module.foundation_settings.parameters
+  foundation_settings = module.foundation_settings.parameters
   org_mgmt_parameters = {
     org_mgmt = {
       main_region                 = data.aws_region.current.name

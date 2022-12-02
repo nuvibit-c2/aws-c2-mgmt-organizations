@@ -19,7 +19,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.10, != 4.34 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.35 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
 | <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) | ~> 0.31 |
 
@@ -27,7 +27,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.10, != 4.34 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.35 |
 
 ## Modules
 
@@ -48,12 +48,12 @@
 
 | Name | Type |
 |------|------|
-| [aws_organizations_account.org_management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_account) | resource |
-| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_organizations_organization.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
-| [aws_organizations_resource_tags.account](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_resource_tags) | data source |
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
-| [aws_ssoadmin_instances.sso](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
+| [aws_organizations_account.org_management](https://registry.terraform.io/providers/hashicorp/aws/4.35/docs/resources/organizations_account) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/4.35/docs/data-sources/caller_identity) | data source |
+| [aws_organizations_organization.current](https://registry.terraform.io/providers/hashicorp/aws/4.35/docs/data-sources/organizations_organization) | data source |
+| [aws_organizations_resource_tags.account](https://registry.terraform.io/providers/hashicorp/aws/4.35/docs/data-sources/organizations_resource_tags) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/4.35/docs/data-sources/region) | data source |
+| [aws_ssoadmin_instances.sso](https://registry.terraform.io/providers/hashicorp/aws/4.35/docs/data-sources/ssoadmin_instances) | data source |
 
 ## Inputs
 

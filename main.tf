@@ -178,7 +178,7 @@ module "main_config" {
   version = "1.5.2"
 
   ou_tenant_map  = local.ou_tenant_map
-  org_parameters = local.org_mgmt_settings
+  org_parameters = local.org_mgmt_parameters
   resource_tags  = local.resource_tags
 
   providers = {
@@ -345,8 +345,8 @@ module "account_vendor" {
   source  = "app.terraform.io/nuvibit/account-vendor/aws"
   version = "1.4.0"
 
-  resource_name_suffix          = local.org_mgmt_settings["org_mgmt"].env
-  account_role                  = local.org_mgmt_settings["org_mgmt"].account_access_role
+  resource_name_suffix          = local.org_mgmt_parameters["org_mgmt"].env
+  account_role                  = local.org_mgmt_parameters["org_mgmt"].account_access_role
   baseline_managed_by_terraform = true
   cloud_management_role_arn     = "arn:aws:iam::${local.this_account_id}:role/cloud-management"
   org_mgmt_account_id           = local.this_account_id

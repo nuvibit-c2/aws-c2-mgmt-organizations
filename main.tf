@@ -105,9 +105,9 @@ locals {
       account_access_role         = "OrganizationAccountAccessRole"
       env                         = local.env
       # main_config modul needs to be provisioned first before adding these parameters
-      root_id         = module.main_config.organization_root_id
-      branding_ou_id  = module.main_config.branding_ou_id
-      tenant_ou_ids   = jsonencode(module.main_config.tenant_ou_ids)
+      root_id        = module.main_config.organization_root_id
+      branding_ou_id = module.main_config.branding_ou_id
+      tenant_ou_ids  = jsonencode(module.main_config.tenant_ou_ids)
     }
     account_baseline = {
       workload_provisioning_user_name = "tf_workload_provisioning"

@@ -243,10 +243,6 @@ resource "aws_organizations_account" "org_management" {
     account_email = local.management_account_email
     account_name  = local.management_account_name
   }
-
-  providers = {
-    aws = aws.euc1
-  }
 }
 
 module "org_mgmt_pipline" {

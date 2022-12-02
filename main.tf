@@ -96,10 +96,7 @@ locals {
   org_mgmt_parameters = {
     org_mgmt = {
       main_region                 = data.aws_region.current.name
-      root_id                     = module.main_config.organization_root_id
       org_id                      = data.aws_organizations_organization.current.id
-      branding_ou_id              = module.main_config.branding_ou_id
-      tenant_ou_ids               = jsonencode(module.main_config.tenant_ou_ids)
       account_id                  = local.this_account_id
       account_name                = local.management_account_name
       context_reader_role_name    = "foundation-read-account-context-role"
@@ -107,6 +104,10 @@ locals {
       parameters_reader_role_name = "foundation-read-parameter-role"
       account_access_role         = "OrganizationAccountAccessRole"
       env                         = local.env
+      # main_config modul needs to be provisioned first before adding these parameters
+      # root_id         = module.main_config.organization_root_id
+      # branding_ou_id  = module.main_config.branding_ou_id
+      # tenant_ou_ids   = jsonencode(module.main_config.tenant_ou_ids)
     }
     account_baseline = {
       workload_provisioning_user_name = "tf_workload_provisioning"

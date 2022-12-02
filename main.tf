@@ -76,26 +76,24 @@ data "aws_organizations_resource_tags" "account" {
 locals {
   env                      = "c2"
   organization             = "nuvibit"
-  foundation_settings      = module.foundation_settings.parameters
   management_account_name  = "aws-${local.env}-org-mgmt"
-  tf_version               = "1.2.9"
-  github_template          = "template-terraform-aws-workspace"
   management_account_email = "accounts+${local.management_account_name}@nuvibit.com"
+  tf_version               = "1.3.6"
+  github_template          = "template-terraform-aws-workspace"
+  token_name               = "GH_SA_TOKEN"
   # core_logging_account_id  = try(local.foundation_settings["core_logging"]["account_id"], local.this_account) #workaround for provider
 
+  this_account_id = data.aws_caller_identity.current.account_id
   resource_tags = {
     "accountClass" = "Core Organizations Management"
     "iacPipeline"  = local.management_account_name
   }
 
-  this_account_id = data.aws_caller_identity.current.account_id
-
   ou_tenant_map = {
     nuvibit = "org"
   }
 
-  token_name = "GH_SA_TOKEN"
-
+  foundation_settings      = module.foundation_settings.parameters
   org_mgmt_parameters = {
     org_mgmt = {
       main_region                 = data.aws_region.current.name
@@ -122,7 +120,7 @@ locals {
       max_accounts_per_workspace      = local.max_accounts_per_workspace
     }
     core_vending = {
-      gh_token                = local.token_name
+      gh_token                = "GH_SA_TOKEN"
       tf_version              = local.tf_version
       github_template         = local.github_template
       account_context_version = "1.1.0"
@@ -130,8 +128,6 @@ locals {
       account_id              = local.this_account_id
     }
   }
-
-  org_mgmt_settings = try(merge(local.org_mgmt_parameters, { core_security = local.foundation_settings["core_security"] }), local.org_mgmt_parameters)
 
   active_org_accounts = [
     for a in data.aws_organizations_resource_tags.account : a.resource_id

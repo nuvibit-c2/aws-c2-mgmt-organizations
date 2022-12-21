@@ -24,6 +24,10 @@ provider "aws" {
   }
 }
 
+provider "github" {
+  owner = "nuvibit"
+}
+
 # provider "aws" {
 #   alias                  = "euc2"
 #   region                 = "eu-central-2"

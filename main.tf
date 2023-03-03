@@ -271,8 +271,8 @@ module "account_baseline_pipline" {
 module "sso_permission_sets" {
   source = "github.com/nuvibit/terraform-aws-sso-gen2//modules/permission-sets?ref=feat-init3"
 
-  sso_identity_store_arn           = local.sso_identity_store_arn
-  aws_managed_job_functions        = local.sso_aws_managed_job_functions
+  sso_identity_store_arn    = local.sso_identity_store_arn
+  aws_managed_job_functions = local.sso_aws_managed_job_functions
 
   providers = {
     aws = aws.euc1
@@ -284,9 +284,9 @@ module "sso_org_admins" {
 
   for_each = toset(local.active_org_accounts)
 
-  sso_account_id                  = each.key
-  sso_identity_store_id           = local.sso_identity_store_id
-  sso_permission_sets_map         = module.sso_permission_sets.sso_permission_sets_map
+  sso_account_id          = each.key
+  sso_identity_store_id   = local.sso_identity_store_id
+  sso_permission_sets_map = module.sso_permission_sets.sso_permission_sets_map
   sso_permission_mapping = {
     "AdministratorAccess" : {
       "users" : local.sso_admin_users

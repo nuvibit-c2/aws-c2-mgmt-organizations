@@ -270,7 +270,7 @@ module "account_baseline_pipline" {
 # ---------------------------------------------------------------------------------------------------------------------
 module "sso_permission_sets" {
   source  = "app.terraform.io/nuvibit/sso/aws//modules/permission-sets"
-  version = "1.0.0"
+  version = "1.0.1"
 
   sso_identity_store_arn    = local.sso_identity_store_arn
   aws_managed_job_functions = local.sso_aws_managed_job_functions
@@ -282,7 +282,7 @@ module "sso_permission_sets" {
 
 module "sso_account_assignments" {
   source  = "app.terraform.io/nuvibit/sso/aws"
-  version = "1.0.0"
+  version = "1.0.1"
 
   for_each = toset(local.active_org_accounts)
 

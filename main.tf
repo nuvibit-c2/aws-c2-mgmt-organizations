@@ -269,7 +269,8 @@ module "account_baseline_pipline" {
 # ¦ IDENTITY CENTER
 # ---------------------------------------------------------------------------------------------------------------------
 module "sso_permission_sets" {
-  source = "github.com/nuvibit/terraform-aws-sso-gen2//modules/permission-sets?ref=feat-init3"
+  source = "app.terraform.io/nuvibit/sso/aws//modules/permission-sets"
+  version = "1.0.0"
 
   sso_identity_store_arn    = local.sso_identity_store_arn
   aws_managed_job_functions = local.sso_aws_managed_job_functions
@@ -279,8 +280,9 @@ module "sso_permission_sets" {
   }
 }
 
-module "sso_org_admins" {
-  source = "github.com/nuvibit/terraform-aws-sso-gen2?ref=feat-init3"
+module "sso_account_assignments" {
+  source = "app.terraform.io/nuvibit/sso/aws"
+  version = "1.0.0"
 
   for_each = toset(local.active_org_accounts)
 

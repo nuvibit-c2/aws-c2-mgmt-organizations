@@ -129,9 +129,6 @@ locals {
     "christoph.siegrist@nuvibit.com",
     "michael.ullrich@nuvibit.com",
   ]
-  sso_admin_groups     = []
-  sso_billing_groups   = []
-  sso_supporter_groups = []
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -272,11 +269,10 @@ module "account_baseline_pipline" {
 # ¦ IDENTITY CENTER
 # ---------------------------------------------------------------------------------------------------------------------
 module "sso_permission_sets" {
-  source = "github.com/nuvibit/terraform-aws-sso-gen2//modules/permission-sets?ref=feat-init2"
+  source = "github.com/nuvibit/terraform-aws-sso-gen2//modules/permission-sets?ref=feat-init3"
 
   sso_identity_store_arn           = local.sso_identity_store_arn
   aws_managed_job_functions        = local.sso_aws_managed_job_functions
-  custom_job_functions_org_billing = true # additionally create custom billing permission-set
 
   providers = {
     aws = aws.euc1
@@ -284,18 +280,21 @@ module "sso_permission_sets" {
 }
 
 module "sso_org_admins" {
-  source = "github.com/nuvibit/terraform-aws-sso-gen2?ref=feat-init2"
+  source = "github.com/nuvibit/terraform-aws-sso-gen2?ref=feat-init3"
 
   for_each = toset(local.active_org_accounts)
 
   sso_account_id                  = each.key
   sso_identity_store_id           = local.sso_identity_store_id
-  sso_admin_user_list             = local.sso_admin_users
-  sso_admin_group_list            = local.sso_admin_groups
-  sso_billing_group_list          = local.sso_billing_groups
-  sso_supporter_group_list        = local.sso_supporter_groups
   sso_permission_sets_map         = module.sso_permission_sets.sso_permission_sets_map
-  sso_billing_permission_set_name = "OrgBilling" # org admins get a custom billing permission set
+  sso_permission_mapping = {
+    "AdministratorAccess" : {
+      "users" : local.sso_admin_users
+    }
+    "SupportUser" : {
+      "users" : local.sso_admin_users
+    }
+  }
 
   providers = {
     aws = aws.euc1

@@ -121,7 +121,7 @@ locals {
     {
       name : "AdministratorAccess"
       description : "This permission set grants full admin access"
-      session_duration : 12
+      session_duration : 10
       aws_managed_policies : [
         {
           policy_name : "AdministratorAccess"
@@ -135,7 +135,7 @@ locals {
     {
       name : "OrgBilling"
       description : "This permission set grants organizational billing access"
-      session_duration : 12
+      session_duration : 10
       aws_managed_policies : [
         {
           policy_name : "Billing"
@@ -153,7 +153,7 @@ locals {
     {
       name : "SupportUser"
       description : "This permission set grants access for support users"
-      session_duration : 12
+      session_duration : 10
       aws_managed_policies : [
         {
           policy_name : "SupportUser"

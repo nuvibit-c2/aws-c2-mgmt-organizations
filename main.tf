@@ -166,12 +166,12 @@ locals {
     }
   ]
 
-  sso_account_assignments = [ for account in local.active_org_accounts :
+  sso_account_assignments = [for account in local.active_org_accounts :
     {
       account_id = each.value
       assignment_map = {
         "AdministratorAccess" : {
-          users  = [
+          users = [
             "stefano.franco@nuvibit.com",
             "jonas.saegesser@nuvibit.com",
             "andreas.moor@nuvibit.com",
@@ -181,13 +181,13 @@ locals {
           groups = []
         },
         "OrgBilling" : {
-          users  = [
+          users = [
             "christoph.siegrist@nuvibit.com",
           ]
           groups = []
         },
         "SupportUser" : {
-          users  = [
+          users = [
             "stefano.franco@nuvibit.com",
             "jonas.saegesser@nuvibit.com",
             "andreas.moor@nuvibit.com",
@@ -339,7 +339,7 @@ module "account_baseline_pipline" {
 # ¦ SSO IDENTITY CENTER
 # ---------------------------------------------------------------------------------------------------------------------
 module "sso_identity_center" {
-  source  = "github.com/nuvibit/terraform-aws-sso//modules/permission-sets?ref=feat-wrapper"
+  source = "github.com/nuvibit/terraform-aws-sso//modules/permission-sets?ref=feat-wrapper"
   # source  = "app.terraform.io/nuvibit/sso/aws"
   # version = "1.1.0"
 

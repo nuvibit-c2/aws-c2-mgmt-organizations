@@ -59,7 +59,6 @@ terraform {
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
-data "aws_ssoadmin_instances" "sso" {}
 data "aws_organizations_organization" "current" {}
 data "aws_organizations_resource_tags" "account" {
   for_each = {
@@ -118,16 +117,87 @@ locals {
     )
   )
 
-  sso_identity_store_id         = tolist(data.aws_ssoadmin_instances.sso.identity_store_ids)[0]
-  sso_identity_store_arn        = tolist(data.aws_ssoadmin_instances.sso.arns)[0]
-  sso_aws_managed_job_functions = ["AdministratorAccess", "Billing", "SupportUser"]
-  sso_admin_users = [
-    "stefano.franco@nuvibit.com",
-    "jonas.saegesser@nuvibit.com",
-    "andreas.moor@nuvibit.com",
-    "roman.plessl@nuvibit.com",
-    "christoph.siegrist@nuvibit.com",
-    "michael.ullrich@nuvibit.com",
+  sso_permission_sets = [
+    {
+      name : "AdministratorAccess"
+      description : "This permission set grants full admin access"
+      session_duration : 12
+      aws_managed_policies : [
+        {
+          policy_name : "AdministratorAccess"
+          policy_path : "/"
+        }
+      ]
+      customer_managed_policies : []
+      inline_policy_json : ""
+      boundary_policy : {}
+    },
+    {
+      name : "OrgBilling"
+      description : "This permission set grants organizational billing access"
+      session_duration : 12
+      aws_managed_policies : [
+        {
+          policy_name : "Billing"
+          policy_path : "/"
+        }
+        {
+          policy_name : "ReadOnlyAccess"
+          policy_path : "/"
+        }
+      ]
+      customer_managed_policies : []
+      inline_policy_json : ""
+      boundary_policy : {}
+    },
+    {
+      name : "SupportUser"
+      description : "This permission set grants access for support users"
+      session_duration : 12
+      aws_managed_policies : [
+        {
+          policy_name : "SupportUser"
+          policy_path : "/"
+        }
+      ]
+      customer_managed_policies : []
+      inline_policy_json : ""
+      boundary_policy : {}
+    },
+  ]
+
+  sso_account_assignments = [ for account in local.active_org_accounts :
+    {
+      account_id = each.value
+      assignment_map = {
+        "AdministratorAccess" : {
+          users  = [
+            "stefano.franco@nuvibit.com",
+            "jonas.saegesser@nuvibit.com",
+            "andreas.moor@nuvibit.com",
+            "roman.plessl@nuvibit.com",
+            "michael.ullrich@nuvibit.com",
+          ]
+          groups = []
+        },
+        "OrgBilling" : {
+          users  = [
+            "christoph.siegrist@nuvibit.com",
+          ]
+          groups = []
+        },
+        "SupportUser" : {
+          users  = [
+            "stefano.franco@nuvibit.com",
+            "jonas.saegesser@nuvibit.com",
+            "andreas.moor@nuvibit.com",
+            "roman.plessl@nuvibit.com",
+            "michael.ullrich@nuvibit.com",
+          ]
+          groups = []
+        }
+      }
+    }
   ]
 }
 
@@ -266,37 +336,15 @@ module "account_baseline_pipline" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ IDENTITY CENTER
+# ¦ SSO IDENTITY CENTER
 # ---------------------------------------------------------------------------------------------------------------------
-module "sso_permission_sets" {
-  source  = "app.terraform.io/nuvibit/sso/aws//modules/permission-sets"
-  version = "1.0.1"
+module "sso_identity_center" {
+  source  = "github.com/nuvibit/terraform-aws-sso//modules/permission-sets?ref=feat-wrapper"
+  # source  = "app.terraform.io/nuvibit/sso/aws"
+  # version = "1.1.0"
 
-  sso_identity_store_arn    = local.sso_identity_store_arn
-  aws_managed_job_functions = local.sso_aws_managed_job_functions
-
-  providers = {
-    aws = aws.euc1
-  }
-}
-
-module "sso_account_assignments" {
-  source  = "app.terraform.io/nuvibit/sso/aws"
-  version = "1.0.1"
-
-  for_each = toset(local.active_org_accounts)
-
-  sso_account_id          = each.key
-  sso_identity_store_id   = local.sso_identity_store_id
-  sso_permission_sets_map = module.sso_permission_sets.sso_permission_sets_map
-  sso_permission_mapping = {
-    "AdministratorAccess" : {
-      "users" : local.sso_admin_users
-    }
-    "SupportUser" : {
-      "users" : local.sso_admin_users
-    }
-  }
+  sso_permission_sets     = local.sso_permission_sets
+  sso_account_assignments = local.sso_account_assignments
 
   providers = {
     aws = aws.euc1

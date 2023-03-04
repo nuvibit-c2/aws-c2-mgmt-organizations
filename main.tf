@@ -168,7 +168,7 @@ locals {
 
   sso_account_assignments = [for account in local.active_org_accounts :
     {
-      account_id = each.value
+      account_id = account
       assignment_map = {
         "AdministratorAccess" : {
           users = [

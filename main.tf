@@ -140,7 +140,7 @@ locals {
         {
           policy_name : "Billing"
           policy_path : "/"
-        }
+        },
         {
           policy_name : "ReadOnlyAccess"
           policy_path : "/"
@@ -163,7 +163,7 @@ locals {
       customer_managed_policies : []
       inline_policy_json : ""
       boundary_policy : {}
-    },
+    }
   ]
 
   sso_account_assignments = [ for account in local.active_org_accounts :

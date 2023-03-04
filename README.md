@@ -40,8 +40,7 @@
 | <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | app.terraform.io/nuvibit/core-parameters/aws | 1.0.1 |
 | <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
 | <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles | 1.0.1 |
-| <a name="module_sso_account_assignments"></a> [sso\_account\_assignments](#module\_sso\_account\_assignments) | app.terraform.io/nuvibit/sso/aws | 1.0.1 |
-| <a name="module_sso_permission_sets"></a> [sso\_permission\_sets](#module\_sso\_permission\_sets) | app.terraform.io/nuvibit/sso/aws//modules/permission-sets | 1.0.1 |
+| <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | github.com/nuvibit/terraform-aws-sso//modules/permission-sets | feat-wrapper |
 
 ## Resources
 
@@ -52,7 +51,6 @@
 | [aws_organizations_organization.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
 | [aws_organizations_resource_tags.account](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_resource_tags) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
-| [aws_ssoadmin_instances.sso](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
 
 ## Inputs
 
@@ -66,6 +64,9 @@ No inputs.
 | <a name="output_account_parameters"></a> [account\_parameters](#output\_account\_parameters) | The account parameter values |
 | <a name="output_organization_root_id"></a> [organization\_root\_id](#output\_organization\_root\_id) | The organization root id |
 | <a name="output_region"></a> [region](#output\_region) | The current region name |
+| <a name="output_sso_group_assignments_map"></a> [sso\_group\_assignments\_map](#output\_sso\_group\_assignments\_map) | Map of group assignments in AWS SSO. |
+| <a name="output_sso_permission_sets_map"></a> [sso\_permission\_sets\_map](#output\_sso\_permission\_sets\_map) | Map of permission sets configured to be used with AWS SSO. |
+| <a name="output_sso_user_assignments_map"></a> [sso\_user\_assignments\_map](#output\_sso\_user\_assignments\_map) | Map of permission sets configured to be used with AWS SSO. |
 | <a name="output_tenant_ou_ids"></a> [tenant\_ou\_ids](#output\_tenant\_ou\_ids) | A List of tenant ou ids |
 <!-- END_TF_DOCS -->
 

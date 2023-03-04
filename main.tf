@@ -139,11 +139,11 @@ locals {
       aws_managed_policies : [
         {
           policy_name : "Billing"
-          policy_path : "/"
+          policy_path : "/job-function/"
         },
         {
-          policy_name : "ReadOnlyAccess"
-          policy_path : "/"
+          policy_name : "ViewOnlyAccess"
+          policy_path : "/job-function/"
         }
       ]
       customer_managed_policies : []
@@ -157,7 +157,7 @@ locals {
       aws_managed_policies : [
         {
           policy_name : "SupportUser"
-          policy_path : "/"
+          policy_path : "/job-function/"
         }
       ]
       customer_managed_policies : []

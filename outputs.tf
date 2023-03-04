@@ -25,15 +25,15 @@ output "account_parameters" {
 
 output "sso_permission_sets_map" {
   description = "Map of permission sets configured to be used with AWS SSO."
-  value = module.sso_identity_center.sso_permission_sets_map
+  value       = module.sso_identity_center.sso_permission_sets_map
 }
 
 output "sso_user_assignments_map" {
   description = "Map of permission sets configured to be used with AWS SSO."
-  value = module.sso_identity_center.sso_user_assignments_map
+  value       = module.sso_identity_center.sso_user_assignments_map
 }
 
 output "sso_group_assignments_map" {
   description = "Map of group assignments in AWS SSO."
-  value = module.sso_identity_center.sso_group_assignments_map
+  value       = module.sso_identity_center.sso_group_assignments_map
 }

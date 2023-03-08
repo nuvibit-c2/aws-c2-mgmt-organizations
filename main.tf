@@ -222,7 +222,7 @@ module "main_config" {
 # ¦ FOUNDATION PARAMETERS
 # ---------------------------------------------------------------------------------------------------------------------
 module "foundation_settings" {
-  source  = "app.terraform.io/nuvibit/core-parameters/aws//modules/reader"
+  source  = "nuvibit/core-parameters/aws//modules/reader"
   version = "1.0.1"
 
   providers = {
@@ -232,7 +232,7 @@ module "foundation_settings" {
 }
 
 module "org_mgmt_parameters" {
-  source  = "app.terraform.io/nuvibit/core-parameters/aws"
+  source  = "nuvibit/core-parameters/aws"
   version = "1.0.1"
 
   parameters           = local.org_mgmt_parameters
@@ -245,7 +245,7 @@ module "org_mgmt_parameters" {
 }
 
 module "parameter_roles" {
-  source  = "app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles"
+  source  = "nuvibit/core-parameters/aws//modules/iam-roles"
   version = "1.0.1"
 
   org_id                      = local.org_mgmt_parameters["org_mgmt"]["org_id"]

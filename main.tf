@@ -363,8 +363,8 @@ module "sso_identity_center" {
   # source  = "app.terraform.io/nuvibit/sso/aws"
   # version = "1.1.0"
 
-  sso_permission_sets     = local.sso_permission_sets
-  sso_account_assignments = local.sso_account_assignments
+  permission_sets     = local.sso_permission_sets
+  account_assignments = local.sso_account_assignments
 
   providers = {
     aws = aws.euc1

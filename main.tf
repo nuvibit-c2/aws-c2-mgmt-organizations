@@ -169,9 +169,10 @@ locals {
   sso_account_assignments = [for account in local.active_org_accounts :
     {
       account_id = account
-      permissions = {
-        "AdministratorAccess" : {
-          users = [
+      permissions = [
+        {
+          permission_set_name : "AdministratorAccess"
+          users : [
             "stefano.franco@nuvibit.com",
             "jonas.saegesser@nuvibit.com",
             "andreas.moor@nuvibit.com",
@@ -180,14 +181,16 @@ locals {
           ]
           groups = []
         },
-        "OrgBilling" : {
-          users = [
+        {
+          permission_set_name : "OrgBilling"
+          users : [
             "christoph.siegrist@nuvibit.com",
           ]
           groups = []
         },
-        "SupportUser" : {
-          users = [
+        {
+          permission_set_name : "SupportUser"
+          users : [
             "stefano.franco@nuvibit.com",
             "jonas.saegesser@nuvibit.com",
             "andreas.moor@nuvibit.com",
@@ -196,7 +199,7 @@ locals {
           ]
           groups = []
         }
-      }
+      ]
     }
   ]
 }

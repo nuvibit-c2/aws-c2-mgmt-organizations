@@ -40,7 +40,7 @@
 | <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | app.terraform.io/nuvibit/core-parameters/aws | 1.0.1 |
 | <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
 | <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles | 1.0.1 |
-| <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | github.com/nuvibit/terraform-aws-sso | feat-wrapper |
+| <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | github.com/nuvibit/terraform-aws-sso | feat-init |
 
 ## Resources
 

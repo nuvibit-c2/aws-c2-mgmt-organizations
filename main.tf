@@ -336,22 +336,6 @@ module "account_baseline_pipline" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ SSO IDENTITY CENTER
-# ---------------------------------------------------------------------------------------------------------------------
-module "sso_identity_center" {
-  source = "github.com/nuvibit/terraform-aws-sso?ref=feat-wrapper"
-  # source  = "app.terraform.io/nuvibit/sso/aws"
-  # version = "1.1.0"
-
-  sso_permission_sets     = local.sso_permission_sets
-  sso_account_assignments = local.sso_account_assignments
-
-  providers = {
-    aws = aws.euc1
-  }
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # ¦ ACCOUNT VENDING
 # ---------------------------------------------------------------------------------------------------------------------
 module "account_vendor" {
@@ -368,5 +352,21 @@ module "account_vendor" {
   providers = {
     aws      = aws.euc1
     aws.use1 = aws.use1
+  }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ SSO IDENTITY CENTER
+# ---------------------------------------------------------------------------------------------------------------------
+module "sso_identity_center" {
+  source = "github.com/nuvibit/terraform-aws-sso?ref=feat-init"
+  # source  = "app.terraform.io/nuvibit/sso/aws"
+  # version = "1.1.0"
+
+  sso_permission_sets     = local.sso_permission_sets
+  sso_account_assignments = local.sso_account_assignments
+
+  providers = {
+    aws = aws.euc1
   }
 }

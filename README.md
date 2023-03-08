@@ -35,11 +35,11 @@
 | <a name="module_account_baseline_pipline"></a> [account\_baseline\_pipline](#module\_account\_baseline\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
 | <a name="module_account_lifecycle_pipline"></a> [account\_lifecycle\_pipline](#module\_account\_lifecycle\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
 | <a name="module_account_vendor"></a> [account\_vendor](#module\_account\_vendor) | app.terraform.io/nuvibit/account-vendor/aws | 1.4.0 |
-| <a name="module_foundation_settings"></a> [foundation\_settings](#module\_foundation\_settings) | app.terraform.io/nuvibit/core-parameters/aws//modules/reader | 1.0.1 |
+| <a name="module_foundation_settings"></a> [foundation\_settings](#module\_foundation\_settings) | nuvibit/core-parameters/aws//modules/reader | 1.0.1 |
 | <a name="module_main_config"></a> [main\_config](#module\_main\_config) | app.terraform.io/nuvibit/org-mgmt/aws | 1.5.2 |
-| <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | app.terraform.io/nuvibit/core-parameters/aws | 1.0.1 |
+| <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | nuvibit/core-parameters/aws | 1.0.1 |
 | <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
-| <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | app.terraform.io/nuvibit/core-parameters/aws//modules/iam-roles | 1.0.1 |
+| <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | nuvibit/core-parameters/aws//modules/iam-roles | 1.0.1 |
 | <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | github.com/nuvibit/terraform-aws-sso | feat-init |
 
 ## Resources

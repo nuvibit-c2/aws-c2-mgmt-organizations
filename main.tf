@@ -122,46 +122,47 @@ locals {
       name : "AdministratorAccess"
       description : "This permission set grants full admin access"
       session_duration : 10
-      aws_managed_policies : [
+      inline_policy_json : ""
+      managed_policies : [
         {
+          managed_by : "aws"
           policy_name : "AdministratorAccess"
           policy_path : "/"
         }
       ]
-      customer_managed_policies : []
-      inline_policy_json : ""
       boundary_policy : {}
     },
     {
       name : "OrgBilling"
       description : "This permission set grants organizational billing access"
       session_duration : 10
-      aws_managed_policies : [
+      inline_policy_json : ""
+      managed_policies : [
         {
+          managed_by : "aws"
           policy_name : "Billing"
           policy_path : "/job-function/"
         },
         {
+          managed_by : "aws"
           policy_name : "ViewOnlyAccess"
           policy_path : "/job-function/"
         }
       ]
-      customer_managed_policies : []
-      inline_policy_json : ""
       boundary_policy : {}
     },
     {
       name : "SupportUser"
       description : "This permission set grants access for support users"
       session_duration : 10
-      aws_managed_policies : [
+      inline_policy_json : ""
+      managed_policies : [
         {
+          managed_by : "aws"
           policy_name : "SupportUser"
           policy_path : "/job-function/"
         }
       ]
-      customer_managed_policies : []
-      inline_policy_json : ""
       boundary_policy : {}
     }
   ]

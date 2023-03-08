@@ -23,17 +23,17 @@ output "account_parameters" {
   value       = try(module.org_mgmt_parameters.parameters, {})
 }
 
-output "sso_permission_sets_map" {
+output "sso_permission_sets" {
   description = "Map of permission sets configured to be used with AWS SSO."
-  value       = module.sso_identity_center.sso_permission_sets_map
+  value       = module.sso_identity_center.sso_permission_sets
 }
 
-output "sso_user_assignments_map" {
-  description = "Map of permission sets configured to be used with AWS SSO."
-  value       = module.sso_identity_center.sso_user_assignments_map
+output "sso_user_assignments" {
+  description = "Map of user assignments in AWS SSO."
+  value       = module.sso_identity_center.sso_user_assignments
 }
 
-output "sso_group_assignments_map" {
+output "sso_group_assignments" {
   description = "Map of group assignments in AWS SSO."
-  value       = module.sso_identity_center.sso_group_assignments_map
+  value       = module.sso_identity_center.sso_group_assignments
 }

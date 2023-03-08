@@ -64,9 +64,9 @@ No inputs.
 | <a name="output_account_parameters"></a> [account\_parameters](#output\_account\_parameters) | The account parameter values |
 | <a name="output_organization_root_id"></a> [organization\_root\_id](#output\_organization\_root\_id) | The organization root id |
 | <a name="output_region"></a> [region](#output\_region) | The current region name |
-| <a name="output_sso_group_assignments_map"></a> [sso\_group\_assignments\_map](#output\_sso\_group\_assignments\_map) | Map of group assignments in AWS SSO. |
-| <a name="output_sso_permission_sets_map"></a> [sso\_permission\_sets\_map](#output\_sso\_permission\_sets\_map) | Map of permission sets configured to be used with AWS SSO. |
-| <a name="output_sso_user_assignments_map"></a> [sso\_user\_assignments\_map](#output\_sso\_user\_assignments\_map) | Map of permission sets configured to be used with AWS SSO. |
+| <a name="output_sso_group_assignments"></a> [sso\_group\_assignments](#output\_sso\_group\_assignments) | Map of group assignments in AWS SSO. |
+| <a name="output_sso_permission_sets"></a> [sso\_permission\_sets](#output\_sso\_permission\_sets) | Map of permission sets configured to be used with AWS SSO. |
+| <a name="output_sso_user_assignments"></a> [sso\_user\_assignments](#output\_sso\_user\_assignments) | Map of user assignments in AWS SSO. |
 | <a name="output_tenant_ou_ids"></a> [tenant\_ou\_ids](#output\_tenant\_ou\_ids) | A List of tenant ou ids |
 <!-- END_TF_DOCS -->
 

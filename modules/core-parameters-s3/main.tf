@@ -20,7 +20,7 @@ data "aws_organizations_organization" "current" {
   # get organization id only when no custom bucket policy and org id is provided
   count = alltrue([
     length(var.org_id) < 1,
-    length(var.custom_bucket_policy_json) < 1
+    length(var.custom_bucket_read_policy_json) < 1
   ]) ? 1 : 0
 }
 
@@ -34,9 +34,9 @@ locals {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ IAM DEFAULT BUCKET POLICY
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_iam_policy_document" "allow_access_from_organization" {
+data "aws_iam_policy_document" "read_access_for_organization" {
   statement {
-    sid    = "AllowAccessOrganization"
+    sid    = "AllowReadAccessOrganization"
     effect = "Allow"
     principals {
       type        = "*"
@@ -47,6 +47,32 @@ data "aws_iam_policy_document" "allow_access_from_organization" {
     ]
     resources = [
       "${aws_s3_bucket.core_parameters.arn}/*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalOrgID"
+      values   = [local.org_id]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "write_access_for_node_owners" {
+  for_each = {
+    for node in var.parameter_nodes : node.node_name => node
+  }
+
+  statement {
+    sid    = "AllowWriteAccessNodeOwners"
+    effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+    resources = [
+      "${aws_s3_bucket.core_parameters.arn}/${each.value.account_id}/*",
     ]
     condition {
       test     = "StringEquals"
@@ -79,21 +105,37 @@ resource "aws_s3_bucket_public_access_block" "core_parameters" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_policy" "allow_access_from_organization" {
+resource "aws_s3_bucket_policy" "read_access_for_organization" {
   bucket = aws_s3_bucket.core_parameters.id
-  policy = length(var.custom_bucket_policy_json) > 0 ? var.custom_bucket_policy_json : data.aws_iam_policy_document.allow_access_from_organization.json
+  policy = length(var.custom_bucket_read_policy_json) > 0 ? var.custom_bucket_read_policy_json : data.aws_iam_policy_document.read_access_for_organization.json
+}
+
+resource "aws_s3_bucket_policy" "write_access_for_node_ownerss" {
+  for_each = {
+    for node in var.parameter_nodes : node.node_name => node
+  }
+
+  bucket = aws_s3_bucket.core_parameters.id
+  policy = data.aws_iam_policy_document.write_access_for_node_ownerss[each.key].json
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ S3 OBJECTS
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_s3_object" "core_parameters" {
+resource "aws_s3_object" "parameter_nodes" {
   for_each = {
-    for key, value in var.core_parameters_map : key => value
+    for node in var.parameter_nodes : node.node_name => node
   }
 
   bucket       = aws_s3_bucket.core_parameters.id
-  key          = "${each.key}.json"
-  content      = jsonencode(each.value)
+  key          = "${each.key}/parameters.json"
+  content      = "{}"
   content_type = "application/json"
+
+  lifecycle {
+    ignore_changes = [
+      # content is managed by node owners
+      content,
+    ]
+  }
 }

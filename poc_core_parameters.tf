@@ -1,30 +1,14 @@
 locals {
-  core_parameters = {
-    "org_management"  = {
-      "account_id" = "123"
-      "org_id" = data.aws_organizations_organization.current.id
+  parameter_node = [
+    {
+      "node_name": "org_management",
+      "node_owner_account_id" = "228120440352"
+    },
+    {
+      "node_name": "core_connectivity"
+      "node_owner_account_id" = "944538260333"
     }
-    "core_provisioning" = {
-      "account_id" = "123"
-      "iam_role_prefix" = "pipeline_"
-    }
-    "core_identitiy" = {
-      "account_id" = "123"
-      "sso_timeout_in_hours" = 10
-    }
-    "core_connectivity"  = {
-      "account_id" = "123"
-      "ipam_pool" = "prod_hybrid"
-    }
-    "core_security"  = {
-      "account_id" = "123"
-      "controls" = ["cis", "pci-dss"]
-    }
-    "core_log_archive" = {
-      "account_id" = "123"
-      "buckets" = ["flow_logs", "config", "guardduty"]
-    }
-  }
+  ]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -35,7 +19,7 @@ module "core_parameters_s3" {
 
   bucket_name = "poc-core-parameters-s3"
   org_id = data.aws_organizations_organization.current.id
-  core_parameters_map = local.core_parameters
+  parameter_nodes = local.core_parameters
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

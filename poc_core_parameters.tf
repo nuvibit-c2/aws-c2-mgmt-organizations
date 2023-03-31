@@ -31,6 +31,13 @@ module "core_parameters_s3_reader" {
   bucket_name = "poc-core-parameters-s3"
 }
 
+output "parameter_map" {
+  value = module.core_parameters_s3_reader.parameter_map
+}
+output "parameter_nodes" {
+  value = module.core_parameters_s3_reader.parameter_nodes
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS S3 - WRITER
 # ---------------------------------------------------------------------------------------------------------------------

@@ -363,9 +363,9 @@ module "account_vendor" {
 # ¦ SSO IDENTITY CENTER
 # ---------------------------------------------------------------------------------------------------------------------
 module "sso_identity_center" {
-  source = "github.com/nuvibit/terraform-aws-sso?ref=feat-init"
-  # source  = "app.terraform.io/nuvibit/sso/aws"
-  # version = "1.1.0"
+  # source = "github.com/nuvibit/terraform-aws-sso?ref=feat-branch"
+  source  = "app.terraform.io/nuvibit/sso/aws"
+  version = "1.0.0"
 
   permission_sets     = local.sso_permission_sets
   account_assignments = local.sso_account_assignments

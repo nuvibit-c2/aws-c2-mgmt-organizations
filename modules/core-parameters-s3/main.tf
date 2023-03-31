@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "write_access_for_node_owners" {
   }
 
   statement {
-    sid    = "AllowWriteAccessNodeOwners"
+    sid    = "AllowWriteAccessNodeOwner${each.value.node_owner_account_id}"
     effect = "Allow"
     principals {
       type        = "*"
@@ -72,12 +72,12 @@ data "aws_iam_policy_document" "write_access_for_node_owners" {
       "s3:PutObject",
     ]
     resources = [
-      "${aws_s3_bucket.core_parameters.arn}/${each.value.account_id}/*",
+      "${aws_s3_bucket.core_parameters.arn}/${each.value.node_name}/*",
     ]
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalOrgID"
-      values   = [local.org_id]
+      variable = "aws:SourceAccount"
+      values   = [each.value.node_owner_account_id]
     }
   }
 }
@@ -110,13 +110,13 @@ resource "aws_s3_bucket_policy" "read_access_for_organization" {
   policy = length(var.custom_bucket_read_policy_json) > 0 ? var.custom_bucket_read_policy_json : data.aws_iam_policy_document.read_access_for_organization.json
 }
 
-resource "aws_s3_bucket_policy" "write_access_for_node_ownerss" {
+resource "aws_s3_bucket_policy" "write_access_for_node_owners" {
   for_each = {
     for node in var.parameter_nodes : node.node_name => node
   }
 
   bucket = aws_s3_bucket.core_parameters.id
-  policy = data.aws_iam_policy_document.write_access_for_node_ownerss[each.key].json
+  policy = data.aws_iam_policy_document.write_access_for_node_owners[each.key].json
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -131,6 +131,10 @@ resource "aws_s3_object" "parameter_nodes" {
   key          = "${each.key}/parameters.json"
   content      = "{}"
   content_type = "application/json"
+
+  tags = {
+    Owner = each.value.node_owner_account_id
+  }
 
   lifecycle {
     ignore_changes = [

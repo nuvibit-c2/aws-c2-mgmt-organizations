@@ -17,10 +17,10 @@ variable "custom_bucket_read_policy_json" {
 variable "parameter_nodes" {
   description = "List of parameter nodes. Nodes can be merged into a single parameter map. A node owner (usually a core account) is allowed to manage parameters in his node."
   type = list(object({
-    node_name = string
+    node_name             = string
     node_owner_account_id = string
   }))
-  default     = []
+  default = []
 
   validation {
     condition     = length(var.parameter_nodes) == length(distinct([for p in var.parameter_nodes : p.node_name]))
@@ -28,14 +28,14 @@ variable "parameter_nodes" {
   }
 
   validation {
-    condition     = alltrue([
+    condition = alltrue([
       for node in var.parameter_nodes : can(regex("^[a-z0-1_]+$", lower(node.node_name)))
     ])
     error_message = "Allowed characters for \"parameter_nodes.node_name\" are letters, numbers and _."
   }
 
   validation {
-    condition     = alltrue([
+    condition = alltrue([
       for node in var.parameter_nodes : can(regex("^[0-9]{12}$", lower(node.node_owner_account_id)))
     ])
     error_message = "\"parameter_nodes.node_owner_account_id\" must be valid account id."

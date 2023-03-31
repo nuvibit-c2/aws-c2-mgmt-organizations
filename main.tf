@@ -84,7 +84,7 @@ locals {
   this_account_id = data.aws_caller_identity.current.account_id
   resource_tags = {
     "AccountType" = "Core Org Management"
-    "ManagedBy"  = "Terraform Pipeline - ${local.management_account_name}"
+    "ManagedBy"   = "Terraform Pipeline - ${local.management_account_name}"
   }
 
   ou_tenant_map = {

@@ -41,11 +41,11 @@ module "core_parameters_s3" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS S3 - READER
 # ---------------------------------------------------------------------------------------------------------------------
-module "core_parameters_s3_reader" {
-  source = "./modules/core-parameters-s3"
+# module "core_parameters_s3_reader" {
+#   source = "./modules/core-parameters-s3"
 
-  bucket_name = "poc-core-parameters-s3"
-}
+#   bucket_name = "poc-core-parameters-s3"
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS S3 - WRITER

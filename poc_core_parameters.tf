@@ -50,9 +50,8 @@ module "core_parameters_s3_reader" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS S3 - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
-module "core_parameters_s3_writer" {
-  source = "./modules/core-parameters-s3"
+# module "core_parameters_s3_writer" {
+#   source = "./modules/core-parameters-s3"
 
-  bucket_name = "poc-core-parameters-s3"
-  
-}
+#   bucket_name = "poc-core-parameters-s3"
+# }

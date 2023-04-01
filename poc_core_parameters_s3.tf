@@ -33,6 +33,8 @@ locals {
       "account_lifecycle_module" : { "input1" : "value1", "input2" : ["value2"], "input3" : 3 },
     }
   }
+
+  # core_parameters = { org_management : {}, core_connectivity : {} }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -95,42 +97,38 @@ module "core_parameters_s3_writer_org_mgmt" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS S3 - WRITER [aws-c2-connectivity]
 # ---------------------------------------------------------------------------------------------------------------------
-# module "core_parameters_s3_writer_connectivity" {
-#   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"
+# TODO: bucket policy not working for upload cross-account
+module "core_parameters_s3_writer_connectivity" {
+  source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"
 
-#   bucket_name     = "poc-core-parameters-s3"
-#   parameter_node  = "core_connectivity"
-#   node_parameters = local.core_parameters.core_connectivity
+  bucket_name     = "poc-core-parameters-s3"
+  parameter_node  = "core_connectivity"
+  node_parameters = local.core_parameters.core_connectivity
 
-#   providers = {
-#     aws = aws.aws-c2-connectivity
-#   }
-# }
+  providers = {
+    aws = aws.aws-c2-connectivity
+  }
+}
 
-# # ---------------------------------------------------------------------------------------------------------------------
-# # ¦ CORE PARAMETERS S3 - READER [aws-c2-0001]
-# # ---------------------------------------------------------------------------------------------------------------------
-# module "core_parameters_s3_reader_0001" {
-#   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ CORE PARAMETERS S3 - READER [aws-c2-0001]
+# ---------------------------------------------------------------------------------------------------------------------
+module "core_parameters_s3_reader_0001" {
+  source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
 
-#   bucket_name = "poc-core-parameters-s3"
+  bucket_name = "poc-core-parameters-s3"
 
-#   providers = {
-#     aws = aws.aws-c2-0001
-#   }
+  providers = {
+    aws = aws.aws-c2-0001
+  }
+}
 
-#   depends_on = [
-#     module.core_parameters_s3_writer_org_mgmt,
-#     module.core_parameters_s3_writer_connectivity
-#   ]
-# }
-
-# # ---------------------------------------------------------------------------------------------------------------------
-# # ¦ OUTPUTS
-# # ---------------------------------------------------------------------------------------------------------------------
-# output "core_parameters" {
-#   value = module.core_parameters_s3_reader_0001.parameter_map
-# }
-# output "parameter_nodes" {
-#   value = module.core_parameters_s3_reader_0001.parameter_nodes
-# }
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ OUTPUTS
+# ---------------------------------------------------------------------------------------------------------------------
+output "core_parameters" {
+  value = module.core_parameters_s3_reader_0001.parameter_map
+}
+output "parameter_nodes" {
+  value = module.core_parameters_s3_reader_0001.parameter_nodes
+}

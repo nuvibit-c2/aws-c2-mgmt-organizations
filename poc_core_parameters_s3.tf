@@ -97,7 +97,6 @@ module "core_parameters_s3_writer_org_mgmt" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS S3 - WRITER [aws-c2-connectivity]
 # ---------------------------------------------------------------------------------------------------------------------
-# TODO: bucket policy not working for upload cross-account
 module "core_parameters_s3_writer_connectivity" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"
 

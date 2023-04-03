@@ -1,15 +1,4 @@
 locals {
-  parameter_nodes = [
-    {
-      "node_name" : "org_management",
-      "node_owner_account_id" = "228120440352"
-    },
-    {
-      "node_name" : "core_connectivity"
-      "node_owner_account_id" = "944538260333"
-    }
-  ]
-
   core_parameters = {
     org_management : { # this parameter node is managed by org_mgmt account
       # this node contains global parameters which are used across entire organization
@@ -33,8 +22,19 @@ locals {
       "account_lifecycle_module" : { "input1" : "value1", "input2" : ["value2"], "input3" : 3 },
     }
   }
-
+  
   # core_parameters = { org_management : {}, core_connectivity : {} }
+
+  parameter_nodes = [
+    {
+      "node_name" : "org_management",
+      "node_owner_account_id" = "228120440352"
+    },
+    {
+      "node_name" : "core_connectivity"
+      "node_owner_account_id" = "944538260333"
+    }
+  ]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

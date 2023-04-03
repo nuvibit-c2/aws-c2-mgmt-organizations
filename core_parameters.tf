@@ -14,7 +14,7 @@ locals {
     }
   ]
 
-  core_parameters = module.core_parameters_s3_reader_org_mgmt.parameter_map
+  core_parameters = module.core_parameters_s3_reader.parameter_map
 
   # this parameter node is managed by org_mgmt account
   parameters_org_management = {
@@ -40,7 +40,7 @@ module "core_parameters_s3" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS READER
 # ---------------------------------------------------------------------------------------------------------------------
-module "core_parameters_s3_reader_org_mgmt" {
+module "core_parameters_s3_reader" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
 
   bucket_name = "poc-core-parameters-s3"
@@ -49,7 +49,7 @@ module "core_parameters_s3_reader_org_mgmt" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS WRITER
 # ---------------------------------------------------------------------------------------------------------------------
-module "core_parameters_s3_writer_org_mgmt" {
+module "core_parameters_s3_writer" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"
 
   bucket_name     = "poc-core-parameters-s3"

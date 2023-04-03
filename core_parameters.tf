@@ -22,7 +22,7 @@ locals {
       "account_lifecycle_module" : { "input1" : "value1", "input2" : ["value2"], "input3" : 3 },
     }
   }
-  
+
   # core_parameters = { org_management : {}, core_connectivity : {} }
 
   parameter_nodes = [

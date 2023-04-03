@@ -32,15 +32,10 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_account_baseline_pipline"></a> [account\_baseline\_pipline](#module\_account\_baseline\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
-| <a name="module_account_lifecycle_pipline"></a> [account\_lifecycle\_pipline](#module\_account\_lifecycle\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
-| <a name="module_account_vendor"></a> [account\_vendor](#module\_account\_vendor) | app.terraform.io/nuvibit/account-vendor/aws | 1.4.0 |
-| <a name="module_foundation_settings"></a> [foundation\_settings](#module\_foundation\_settings) | nuvibit/core-parameters/aws//modules/reader | 1.0.1 |
-| <a name="module_main_config"></a> [main\_config](#module\_main\_config) | app.terraform.io/nuvibit/org-mgmt/aws | 1.5.2 |
-| <a name="module_org_mgmt_parameters"></a> [org\_mgmt\_parameters](#module\_org\_mgmt\_parameters) | nuvibit/core-parameters/aws | 1.0.1 |
+| <a name="module_core_parameters_s3"></a> [core\_parameters\_s3](#module\_core\_parameters\_s3) | github.com/nuvibit/terraform-aws-core-parameters-s3 | feat-init |
+| <a name="module_core_parameters_s3_writer_connectivity"></a> [core\_parameters\_s3\_writer\_connectivity](#module\_core\_parameters\_s3\_writer\_connectivity) | github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer | feat-init |
 | <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
-| <a name="module_parameter_roles"></a> [parameter\_roles](#module\_parameter\_roles) | nuvibit/core-parameters/aws//modules/iam-roles | 1.0.1 |
-| <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | github.com/nuvibit/terraform-aws-sso | feat-init |
+| <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | app.terraform.io/nuvibit/sso/aws | 1.0.0 |
 
 ## Resources
 
@@ -61,13 +56,7 @@ No inputs.
 | Name | Description |
 |------|-------------|
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | The current account id |
-| <a name="output_account_parameters"></a> [account\_parameters](#output\_account\_parameters) | The account parameter values |
-| <a name="output_organization_root_id"></a> [organization\_root\_id](#output\_organization\_root\_id) | The organization root id |
 | <a name="output_region"></a> [region](#output\_region) | The current region name |
-| <a name="output_sso_group_assignments"></a> [sso\_group\_assignments](#output\_sso\_group\_assignments) | Map of group assignments in AWS SSO. |
-| <a name="output_sso_permission_sets"></a> [sso\_permission\_sets](#output\_sso\_permission\_sets) | Map of permission sets configured to be used with AWS SSO. |
-| <a name="output_sso_user_assignments"></a> [sso\_user\_assignments](#output\_sso\_user\_assignments) | Map of user assignments in AWS SSO. |
-| <a name="output_tenant_ou_ids"></a> [tenant\_ou\_ids](#output\_tenant\_ou\_ids) | A List of tenant ou ids |
 <!-- END_TF_DOCS -->
 
 <!-- AUTHORS -->

@@ -56,15 +56,3 @@ module "core_parameters_s3_writer" {
   parameter_node  = "org_management"
   node_parameters = local.parameters_org_management
 }
-
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ DEBUG - SHOULD GENERATE ERROR
-# ---------------------------------------------------------------------------------------------------------------------
-# module "core_parameters_s3_writer_error" {
-#   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"
-
-#   bucket_name     = "poc-core-parameters-s3"
-#   parameter_node  = "core_security"
-#   node_parameters = {"this" = "should fail"}
-# }

@@ -1,4 +1,5 @@
 locals {
+  core_parameters = module.core_parameters_s3_reader.parameter_map
   parameter_nodes = [
     {
       "node_name"             = "org_management",
@@ -14,9 +15,6 @@ locals {
     }
   ]
 
-  core_parameters = module.core_parameters_s3_reader.parameter_map
-
-  # this parameter node is managed by org_mgmt account
   parameters_org_management = {
     # this node contains global parameters which are used across entire organization
     "global" : { "core_regions" : ["eu-central-1", "eu-central-2"], "env_prefix" : "fdnt", "env_suffix" : "p" },
@@ -27,7 +25,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - BUCKET
+# ¦ CORE PARAMETERS - BUCKET OWNER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3?ref=feat-init"

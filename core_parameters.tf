@@ -27,7 +27,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS S3 BUCKET
+# ¦ CORE PARAMETERS - BUCKET
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3?ref=feat-init"
@@ -38,7 +38,7 @@ module "core_parameters_s3" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS READER
+# ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_reader" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
@@ -47,7 +47,7 @@ module "core_parameters_s3_reader" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS WRITER
+# ¦ CORE PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_writer" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"

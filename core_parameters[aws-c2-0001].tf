@@ -3,7 +3,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS READER
+# ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_reader_0001" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"

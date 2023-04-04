@@ -10,7 +10,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS READER
+# ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_reader_security" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
@@ -19,7 +19,7 @@ module "core_parameters_s3_reader_security" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS WRITER
+# ¦ CORE PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_writer_security" {
   source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"

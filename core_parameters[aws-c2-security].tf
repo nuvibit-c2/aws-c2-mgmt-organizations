@@ -32,20 +32,3 @@ module "core_parameters_s3_writer_security" {
     aws = aws.aws-c2-security
   }
 }
-
-
-
-
-
-
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ CROSS ACCOUNT TESTING [aws-c2-security]
-# ---------------------------------------------------------------------------------------------------------------------
-provider "aws" {
-  alias  = "aws-c2-security"
-  region = "eu-central-1"
-  assume_role {
-    role_arn = "arn:aws:iam::769269768678:role/OrganizationAccountAccessRole"
-  }
-}

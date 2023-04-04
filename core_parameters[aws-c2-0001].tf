@@ -14,21 +14,3 @@ module "core_parameters_s3_reader_0001" {
     aws = aws.aws-c2-0001
   }
 }
-
-
-
-
-
-
-
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ CROSS ACCOUNT TESTING [aws-c2-0001]
-# ---------------------------------------------------------------------------------------------------------------------
-provider "aws" {
-  alias  = "aws-c2-0001"
-  region = "eu-central-1"
-  assume_role {
-    role_arn = "arn:aws:iam::945766593056:role/OrganizationAccountAccessRole"
-  }
-}

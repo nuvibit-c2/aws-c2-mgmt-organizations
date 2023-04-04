@@ -32,21 +32,3 @@ module "core_parameters_s3_writer_connectivity" {
     aws = aws.aws-c2-connectivity
   }
 }
-
-
-
-
-
-
-
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ CROSS ACCOUNT TESTING [aws-c2-connectivity]
-# ---------------------------------------------------------------------------------------------------------------------
-provider "aws" {
-  alias  = "aws-c2-connectivity"
-  region = "eu-central-1"
-  assume_role {
-    role_arn = "arn:aws:iam::944538260333:role/OrganizationAccountAccessRole"
-  }
-}

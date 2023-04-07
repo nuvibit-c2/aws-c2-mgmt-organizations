@@ -32,14 +32,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_core_parameters_s3"></a> [core\_parameters\_s3](#module\_core\_parameters\_s3) | github.com/nuvibit/terraform-aws-ntc-parameters | feat-init |
-| <a name="module_core_parameters_s3_reader"></a> [core\_parameters\_s3\_reader](#module\_core\_parameters\_s3\_reader) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader | feat-init |
-| <a name="module_core_parameters_s3_reader_0001"></a> [core\_parameters\_s3\_reader\_0001](#module\_core\_parameters\_s3\_reader\_0001) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader | feat-init |
-| <a name="module_core_parameters_s3_reader_connectivity"></a> [core\_parameters\_s3\_reader\_connectivity](#module\_core\_parameters\_s3\_reader\_connectivity) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader | feat-init |
-| <a name="module_core_parameters_s3_reader_security"></a> [core\_parameters\_s3\_reader\_security](#module\_core\_parameters\_s3\_reader\_security) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader | feat-init |
-| <a name="module_core_parameters_s3_writer"></a> [core\_parameters\_s3\_writer](#module\_core\_parameters\_s3\_writer) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer | feat-init |
-| <a name="module_core_parameters_s3_writer_connectivity"></a> [core\_parameters\_s3\_writer\_connectivity](#module\_core\_parameters\_s3\_writer\_connectivity) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer | feat-init |
-| <a name="module_core_parameters_s3_writer_security"></a> [core\_parameters\_s3\_writer\_security](#module\_core\_parameters\_s3\_writer\_security) | github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer | feat-init |
+| <a name="module_ntc_parameters_bucket"></a> [ntc\_parameters\_bucket](#module\_ntc\_parameters\_bucket) | github.com/nuvibit/terraform-aws-ntc-parameters | feat-init |
 | <a name="module_org_mgmt_pipline"></a> [org\_mgmt\_pipline](#module\_org\_mgmt\_pipline) | app.terraform.io/nuvibit/org-mgmt-piplines/aws | 1.2.2 |
 | <a name="module_sso_identity_center"></a> [sso\_identity\_center](#module\_sso\_identity\_center) | app.terraform.io/nuvibit/sso/aws | 1.0.0 |
 
@@ -62,7 +55,7 @@ No inputs.
 | Name | Description |
 |------|-------------|
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | The current account id |
-| <a name="output_core_parameters"></a> [core\_parameters](#output\_core\_parameters) | Map of all core parameters |
+| <a name="output_ntc_parameters"></a> [ntc\_parameters](#output\_ntc\_parameters) | Map of all ntc core parameters |
 | <a name="output_region"></a> [region](#output\_region) | The current region name |
 <!-- END_TF_DOCS -->
 

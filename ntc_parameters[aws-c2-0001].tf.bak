@@ -1,14 +1,14 @@
 locals {
-  # core_parameters = module.core_parameters_s3_reader_0001.parameter_map
+  # ntc_parameters = module.ntc_parameters_reader_0001.parameter_map
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
-module "core_parameters_s3_reader_0001" {
+module "ntc_parameters_reader_0001" {
   source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
 
-  bucket_name = "poc-core-parameters-s3"
+  bucket_name = "ntc-parameters-c2"
 
   providers = {
     aws = aws.aws-c2-0001

@@ -8,7 +8,7 @@ output "account_id" {
   value       = data.aws_caller_identity.current.account_id
 }
 
-output "core_parameters" {
-  description = "Map of all core parameters"
-  value       = local.core_parameters
+output "ntc_parameters" {
+  description = "Map of all ntc core parameters"
+  value       = local.ntc_parameters
 }

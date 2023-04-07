@@ -28,7 +28,7 @@ locals {
 # ¦ CORE PARAMETERS - BUCKET OWNER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3" {
-  source = "github.com/nuvibit/terraform-aws-core-parameters-s3?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters-s3?ref=feat-init"
 
   bucket_name     = "poc-core-parameters-s3"
   org_id          = data.aws_organizations_organization.current.id
@@ -39,7 +39,7 @@ module "core_parameters_s3" {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_reader" {
-  source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters-s3//modules/reader?ref=feat-init"
 
   bucket_name = "poc-core-parameters-s3"
 }
@@ -48,7 +48,7 @@ module "core_parameters_s3_reader" {
 # ¦ CORE PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_writer" {
-  source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/writer?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters-s3//modules/writer?ref=feat-init"
 
   bucket_name     = "poc-core-parameters-s3"
   parameter_node  = "org_management"

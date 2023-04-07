@@ -6,7 +6,7 @@ locals {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_reader_0001" {
-  source = "github.com/nuvibit/terraform-aws-core-parameters-s3//modules/reader?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters-s3//modules/reader?ref=feat-init"
 
   bucket_name = "poc-core-parameters-s3"
 

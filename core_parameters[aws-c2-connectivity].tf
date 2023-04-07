@@ -13,7 +13,7 @@ locals {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_reader_connectivity" {
-  source = "github.com/nuvibit/terraform-aws-ntc-parameters-s3//modules/reader?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
 
   bucket_name = "poc-core-parameters-s3"
 }
@@ -22,7 +22,7 @@ module "core_parameters_s3_reader_connectivity" {
 # ¦ CORE PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_s3_writer_connectivity" {
-  source = "github.com/nuvibit/terraform-aws-ntc-parameters-s3//modules/writer?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer?ref=feat-init"
 
   bucket_name     = "poc-core-parameters-s3"
   parameter_node  = "core_connectivity"

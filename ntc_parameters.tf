@@ -32,7 +32,7 @@ module "ntc_parameters_bucket" {
   bucket_name     = "ntc-parameters-c2"
   org_id          = data.aws_organizations_organization.current.id
   parameter_nodes = local.ntc_parameter_nodes
-  force_delete    = false
+  force_destroy   = false
 }
 
 # # ---------------------------------------------------------------------------------------------------------------------

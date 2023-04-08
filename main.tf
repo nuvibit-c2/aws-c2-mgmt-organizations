@@ -80,7 +80,7 @@ locals {
 
   default_tags = {
     "AccountType" = "Core Org Management"
-    "ManagedBy"   = "Terraform Pipeline - ${local.management_account_name}"
+    "ManagedBy"   = "Terraform Pipeline ${local.management_account_name}"
   }
 
   active_org_accounts = [

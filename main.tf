@@ -188,7 +188,7 @@ locals {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ IAM IDENTITY CENTER - SSO
 # ---------------------------------------------------------------------------------------------------------------------
-module "sso_identity_center" {
+module "identity_center" {
   source = "github.com/nuvibit/terraform-aws-ntc-identity-center?ref=feat-init"
 
   permission_sets     = local.sso_permission_sets

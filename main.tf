@@ -85,7 +85,6 @@ locals {
 
   active_org_accounts = [
     for a in data.aws_organizations_resource_tags.account : a.resource_id
-    if a.resource_id == data.aws_caller_identity.current.account_id || try(a.tags.recycled == "false", false)
   ]
 
   sso_permission_sets = [
@@ -132,6 +131,11 @@ locals {
           managed_by : "aws"
           policy_name : "SupportUser"
           policy_path : "/job-function/"
+        },
+        {
+          managed_by : "aws"
+          policy_name : "ReadOnlyAccess"
+          policy_path : "/job-function/"
         }
       ]
       boundary_policy : {}
@@ -146,10 +150,10 @@ locals {
           permission_set_name : "AdministratorAccess"
           users : [
             "stefano.franco@nuvibit.com",
-            "jonas.saegesser@nuvibit.com",
-            "andreas.moor@nuvibit.com",
-            "roman.plessl@nuvibit.com",
-            "michael.ullrich@nuvibit.com",
+            # "jonas.saegesser@nuvibit.com",
+            # "andreas.moor@nuvibit.com",
+            # "roman.plessl@nuvibit.com",
+            # "michael.ullrich@nuvibit.com",
           ]
           groups = []
         },

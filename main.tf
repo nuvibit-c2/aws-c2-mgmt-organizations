@@ -135,7 +135,7 @@ locals {
         {
           managed_by : "aws"
           policy_name : "ReadOnlyAccess"
-          policy_path : "/job-function/"
+          policy_path : "/"
         }
       ]
       boundary_policy : {}

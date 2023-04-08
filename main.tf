@@ -4,7 +4,7 @@
 provider "aws" {
   region = "eu-central-1"
   default_tags {
-    tags = local.resource_tags
+    tags = local.default_tags
   }
 }
 
@@ -12,7 +12,7 @@ provider "aws" {
   alias  = "euc1"
   region = "eu-central-1"
   default_tags {
-    tags = local.resource_tags
+    tags = local.default_tags
   }
 }
 
@@ -20,7 +20,7 @@ provider "aws" {
   alias  = "use1"
   region = "us-east-1"
   default_tags {
-    tags = local.resource_tags
+    tags = local.default_tags
   }
 }
 
@@ -42,14 +42,14 @@ terraform {
       version               = "~> 4.10, != 4.34"
       configuration_aliases = []
     }
-    tfe = {
-      source  = "hashicorp/tfe"
-      version = "~> 0.31"
-    }
-    github = {
-      source  = "integrations/github"
-      version = "~> 5.0"
-    }
+    # tfe = {
+    #   source  = "hashicorp/tfe"
+    #   version = "~> 0.31"
+    # }
+    # github = {
+    #   source  = "integrations/github"
+    #   version = "~> 5.0"
+    # }
   }
 }
 
@@ -74,13 +74,11 @@ data "aws_organizations_resource_tags" "account" {
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
   env                      = "c2"
-  organization             = "nuvibit"
-  management_account_name  = "aws-${local.env}-org-mgmt"
+  organization             = "nuvibit-c2"
+  management_account_name  = "aws-${local.env}-management"
   management_account_email = "accounts+${local.management_account_name}@nuvibit.com"
-  tf_version               = "1.3.6"
-  github_template          = "template-terraform-aws-workspace"
 
-  resource_tags = {
+  default_tags = {
     "AccountType" = "Core Org Management"
     "ManagedBy"   = "Terraform Pipeline - ${local.management_account_name}"
   }
@@ -89,8 +87,6 @@ locals {
     for a in data.aws_organizations_resource_tags.account : a.resource_id
     if a.resource_id == data.aws_caller_identity.current.account_id || try(a.tags.recycled == "false", false)
   ]
-  org_accounts_prod    = length([for a in data.aws_organizations_resource_tags.account : a.resource_id if try(a.tags.environment == "prod", false)])
-  org_accounts_nonprod = length([for a in data.aws_organizations_resource_tags.account : a.resource_id if try(a.tags.environment == "nonprod", true)])
 
   sso_permission_sets = [
     {
@@ -181,43 +177,15 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ ORG MANAGEMENT ACCOUNT & PIPELINE
+# ¦ ORGANIZATION
 # ---------------------------------------------------------------------------------------------------------------------
-# Import org-mgmt account!
-resource "aws_organizations_account" "org_management" {
-  name      = local.management_account_name
-  email     = local.management_account_email
-  parent_id = null
-  tags = {
-    account_email = local.management_account_email
-    account_name  = local.management_account_name
-  }
-}
 
-module "org_mgmt_pipline" {
-  source  = "app.terraform.io/nuvibit/org-mgmt-piplines/aws"
-  version = "1.2.2"
-
-  workspace_name  = local.management_account_name
-  organization    = local.organization
-  env             = local.env
-  tf_version      = local.tf_version
-  github_template = local.github_template
-
-  providers = {
-    aws    = aws.euc1
-    tfe    = tfe
-    github = github
-  }
-}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ IAM IDENTITY CENTER - SSO
 # ---------------------------------------------------------------------------------------------------------------------
 module "sso_identity_center" {
-  # source = "github.com/nuvibit/terraform-aws-sso?ref=feat-branch"
-  source  = "app.terraform.io/nuvibit/sso/aws"
-  version = "1.0.0"
+  source = "github.com/nuvibit/terraform-aws-ntc-identity-center?ref=feat-init"
 
   permission_sets     = local.sso_permission_sets
   account_assignments = local.sso_account_assignments

@@ -3,11 +3,11 @@
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
   cloud {
-    organization = "nuvibit"
+    organization = "nuvibit-c2"
     hostname     = "app.terraform.io"
 
     workspaces {
-      name = "aws-c2-org-mgmt"
+      name = "aws-c2-management"
     }
   }
 }

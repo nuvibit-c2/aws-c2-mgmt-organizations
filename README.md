@@ -1,4 +1,4 @@
-# Terraform workspace repository for aws-c2-org-mgmt
+# Terraform workspace repository for aws-c2-management
 
 <!-- LOGO -->
 <a href="https://nuvibit.com">
@@ -71,8 +71,8 @@ This repository is maintained by [Nuvibit][nuvibit-url] with help from [these am
 <!-- MARKDOWN LINKS & IMAGES -->
 [nuvibit-shield]: https://img.shields.io/badge/maintained%20by-nuvibit.com-%235849a6.svg?style=flat&color=1c83ba
 [nuvibit-url]: https://nuvibit.com
-[terraform-version-shield]: https://img.shields.io/badge/tf-%3E%3D0.15.0-blue.svg?style=flat&color=blueviolet
-[terraform-version-url]: https://www.terraform.io/upgrade-guides/0-15.html
-[contributors-url]: https://github.com/nuvibit/aws-c2-org-mgmt/graphs/contributors
-[terraform-workspace-url]: https://app.terraform.io/app/nuvibit/workspaces/aws-c2-org-mgmt
+[terraform-version-shield]: https://img.shields.io/badge/terraform-%3E%3D1.2-blue.svg?style=flat&color=blueviolet
+[terraform-version-url]: https://developer.hashicorp.com/terraform/language/v1.2.x/upgrade-guides
+[contributors-url]: https://github.com/nuvibit-c2/aws-c2-management/graphs/contributors
+[terraform-workspace-url]: https://app.terraform.io/app/nuvibit-c2/workspaces/aws-c2-management
 [aws-url]: https://aws.amazon.com

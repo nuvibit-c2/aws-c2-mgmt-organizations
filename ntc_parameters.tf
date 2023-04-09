@@ -1,5 +1,5 @@
 locals {
-  ntc_parameters = {} # module.ntc_parameters_reader.parameter_map
+  ntc_parameters = module.ntc_parameters_reader.parameter_map
   ntc_parameters_management = {
     # this node contains global parameters which are used across entire organization
     "global" : { "core_regions" : ["eu-central-1", "eu-central-2"], "env_prefix" : "fdnt", "env_suffix" : "p" },
@@ -35,15 +35,15 @@ module "ntc_parameters_bucket" {
   force_destroy   = false
 }
 
-# # ---------------------------------------------------------------------------------------------------------------------
-# # ¦ CORE PARAMETERS - READER
-# # ---------------------------------------------------------------------------------------------------------------------
-# module "ntc_parameters_reader" {
-#   source      = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
-#   depends_on  = [module.ntc_parameters_bucket]
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ CORE PARAMETERS - READER
+# ---------------------------------------------------------------------------------------------------------------------
+module "ntc_parameters_reader" {
+  source      = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
+  depends_on  = [module.ntc_parameters_bucket]
 
-#   bucket_name = "ntc-parameters-c2"
-# }
+  bucket_name = "ntc-parameters-c2"
+}
 
 # # ---------------------------------------------------------------------------------------------------------------------
 # # ¦ CORE PARAMETERS - WRITER

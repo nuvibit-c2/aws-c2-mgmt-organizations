@@ -19,6 +19,10 @@ locals {
     {
       "node_name"             = "security"
       "node_owner_account_id" = "769269768678"
+    },
+    {
+      "node_name"             = "log_archive"
+      "node_owner_account_id" = "872327204802"
     }
   ]
 }

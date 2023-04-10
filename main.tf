@@ -24,12 +24,6 @@ provider "aws" {
   }
 }
 
-# provider "aws" {
-#   alias                  = "euc2"
-#   region                 = "eu-central-2"
-#   skip_region_validation = true
-# }
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ REQUIREMENTS
 # ---------------------------------------------------------------------------------------------------------------------
@@ -73,16 +67,6 @@ data "aws_organizations_resource_tags" "account" {
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  env                      = "c2"
-  organization             = "nuvibit-c2"
-  management_account_name  = "aws-${local.env}-management"
-  management_account_email = "accounts+${local.management_account_name}@nuvibit.com"
-
-  default_tags = {
-    "AccountType" = "Core Org Management"
-    "ManagedBy"   = "Terraform Pipeline ${local.management_account_name}"
-  }
-
   active_org_accounts = [
     for a in data.aws_organizations_resource_tags.account : a.resource_id
   ]

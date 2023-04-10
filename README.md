@@ -22,7 +22,7 @@ This repository is maintained by [Nuvibit][nuvibit-url] with help from [these am
 <!-- COPYRIGHT -->
 <br />
 <br />
-<p align="center">Copyright &copy; 2022 Nuvibit AG</p>
+<p align="center">Copyright &copy; 2023 Nuvibit AG</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [nuvibit-shield]: https://img.shields.io/badge/maintained%20by-nuvibit.com-%235849a6.svg?style=flat&color=1c83ba

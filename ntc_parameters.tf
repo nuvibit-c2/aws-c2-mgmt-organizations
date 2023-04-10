@@ -39,8 +39,8 @@ module "ntc_parameters_bucket" {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
-  source      = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
-  depends_on  = [module.ntc_parameters_bucket]
+  source     = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
+  depends_on = [module.ntc_parameters_bucket]
 
   bucket_name = "ntc-parameters-c2"
 }

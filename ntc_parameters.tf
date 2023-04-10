@@ -40,7 +40,6 @@ module "ntc_parameters_bucket" {
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
   source     = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
-  depends_on = [module.ntc_parameters_bucket]
 
   bucket_name = "ntc-parameters-c2"
 }
@@ -50,7 +49,6 @@ module "ntc_parameters_reader" {
 # # ---------------------------------------------------------------------------------------------------------------------
 # module "core_parameters_writer" {
 #   source      = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer?ref=feat-init"
-#   depends_on  = [module.ntc_parameters_bucket]
 
 #   bucket_name     = "ntc-parameters-c2"
 #   parameter_node  = "management"

@@ -28,7 +28,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - BUCKET OWNER
+# ¦ CORE PARAMETERS - BUCKET (DEPLOY FIRST)
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_bucket" {
   source = "github.com/nuvibit/terraform-aws-ntc-parameters?ref=feat-init"

@@ -21,24 +21,6 @@ locals {
     "sso.amazonaws.com"
   ]
 
-  organizational_unit_paths = [
-    "/root/infrastructure",
-    "/root/security",
-    "/root/sandbox",
-    "/root/workloads",
-    "/root/workloads/prod",
-    "/root/workloads/nonprod"
-  ]
-
-  service_control_policies = [
-    # {
-    #   scp_name               = "DenyAll",
-    #   scp_target_ou_paths    = ["/root/workloads/prod"]
-    #   scp_target_account_ids = []
-    #   scp_content_json       = data.aws_iam_policy_document.scp_allow_all.json
-    # }
-  ]
-
   delegated_administrators = [
     {
       service_principal = "securityhub.amazonaws.com"
@@ -53,6 +35,36 @@ locals {
       admin_account_id  = "769269768678"
     }
   ]
+
+  organizational_unit_paths = [
+    "/root/infrastructure",
+    "/root/security",
+    "/root/sandbox",
+    "/root/workloads",
+    "/root/workloads/prod",
+    "/root/workloads/nonprod"
+  ]
+
+  service_control_policies = [
+    # {
+    #   policy_name        = "AllowAll",
+    #   target_ou_paths    = ["/root/workloads/prod"]
+    #   target_account_ids = []
+    #   policy_json        = data.aws_iam_policy_document.scp_allow_all.json
+    # }
+  ]
+
+  member_accounts = [
+    # {
+    #   account_name      = "aws-c2-1681243342"
+    #   account_email     = "accounts+aws-c2-1681243342@nuvibit.com"
+    #   ou_path           = "/root"
+    #   close_on_deletion = true
+    #   account_tags = {
+    #     "Owner" : "stefano.franco@nuvibit.com"
+    #   }
+    # }
+  ]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -62,9 +74,10 @@ module "organization" {
   source = "github.com/nuvibit/terraform-aws-ntc-organization?ref=feat-init"
 
   service_access_principals = local.service_access_principals
+  delegated_administrators  = local.delegated_administrators
   organizational_unit_paths = local.organizational_unit_paths
   service_control_policies  = local.service_control_policies
-  delegated_administrators  = local.delegated_administrators
+  member_accounts           = local.member_accounts
 
   providers = {
     aws = aws.euc1

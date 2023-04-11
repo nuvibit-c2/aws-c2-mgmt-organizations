@@ -4,7 +4,7 @@ locals {
     # this node contains global parameters which are used across entire organization
     "global" : { "core_regions" : ["eu-central-1", "eu-central-2"], "env_prefix" : "fdnt", "env_suffix" : "p" },
     # this node contains module parameters which are provisioned in org_mgmt account
-    "sso_module" : { "input1" : "value1", "input2" : ["value2"], "input3" : 3 },
+    "identity_center_module" : { "input1" : "value1", "input2" : ["value2"], "input3" : 3 },
     "organization_module" : { "input1" : "value1", "input2" : ["value2"], "input3" : 3 },
   }
   ntc_parameter_nodes = [
@@ -43,7 +43,7 @@ module "ntc_parameters_bucket" {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
-  source     = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
 
   bucket_name = "ntc-parameters-c2"
 }

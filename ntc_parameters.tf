@@ -1,25 +1,22 @@
 locals {
+  # map of parameters merged from all parameter nodes
   ntc_parameters = module.ntc_parameters_reader.parameter_map
+
   # parameters that are managed by org management account
   ntc_parameters_management = {
     global : {
       "core_regions" : ["eu-central-1", "eu-central-2"]
-      "env_prefix" : "fdnt"
-      "env_suffix" : "p"
+      "workload_regions" : ["eu-central-1", "eu-central-2"]
+      "baseline_regions" : ["eu-central-1", "eu-central-2", "us-east-1"]
+    }
+    identity_center : {}
+    organization : {
       "account_map" : local.organization_accounts_enriched
       "org_id" : module.organization.organization_id
-    },
-    identity_center_module : {
-      "input1" : "value1"
-      "input2" : ["value2"]
-      "input3" : 3
-    },
-    organization_module : {
-      "input1" : "value1"
-      "input2" : ["value2"]
-      "input3" : 3
-    },
+      "ou_ids" : module.organization.organizational_unit_ids
+    }
   }
+
   # all organization accounts have read permission for all parameters
   # only parameter node owners have write access in the corresponding parameter node
   ntc_parameter_nodes = [
@@ -43,7 +40,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - BUCKET (DEPLOY FIRST)
+# ¦ NTC PARAMETERS - BUCKET (DEPLOY FIRST)
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_bucket" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters?ref=beta"
@@ -55,7 +52,7 @@ module "ntc_parameters_bucket" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - READER
+# ¦ NTC PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=beta"
@@ -64,7 +61,7 @@ module "ntc_parameters_reader" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - WRITER
+# ¦ NTC PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
 module "core_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"

@@ -2,6 +2,18 @@
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
+  # global administrators permissions in all accounts
+  global_sso_admin_users   = ["stefano.franco@nuvibit.com"]
+  global_sso_billing_users = ["christoph.siegrist@nuvibit.com"]
+  global_sso_support_users = [
+    "stefano.franco@nuvibit.com",
+    "jonas.saegesser@nuvibit.com",
+    "andreas.moor@nuvibit.com",
+    "roman.plessl@nuvibit.com",
+    "michael.ullrich@nuvibit.com",
+  ]
+
+  # permissions sets which should be created and which can be referenced for account assignments
   sso_permission_sets = [
     {
       name : "AdministratorAccess"
@@ -57,24 +69,37 @@ locals {
     }
   ]
 
+  # account assignments can be done for individual accounts or ideally an account map can be used to loop
   sso_account_assignments = [for account in local.organization_accounts_enriched :
     {
       account_id = account.account_id
       permissions = [
         {
           permission_set_name : "AdministratorAccess"
-          users : account.sso_admin_users
+          # combine users with global permissions and users from account map
+          users : concat(local.global_sso_admin_users, account.sso_admin_users)
+          # groups can be referenced from account map or group names can be dynamically generated
           groups = []
+          # groups = concat(local.global_sso_admin_groups, account.sso_admin_groups)
+          # groups = ["sg-aws-admins-${account.account_id}"]
         },
         {
           permission_set_name : "OrgBilling"
-          users : account.sso_billing_users
+          # combine users with global permissions and users from account map
+          users : concat(local.global_sso_billing_users, account.sso_billing_users)
+          # groups can be referenced from account map or group names can be dynamically generated
           groups = []
+          # groups = concat(local.global_sso_billing_groups, account.sso_billing_groups)
+          # groups = ["sg-aws-billing-${account.account_id}"]
         },
         {
           permission_set_name : "SupportUser"
-          users : account.sso_support_users
+          # combine users with global permissions and users from account map
+          users : concat(local.global_sso_support_users, account.sso_support_users)
+          # groups can be referenced from account map or group names can be dynamically generated
           groups = []
+          # groups = concat(local.global_sso_support_groups, account.sso_support_groups)
+          # groups = ["sg-aws-support-${account.account_id}"]
         }
       ]
     }
@@ -84,7 +109,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ IAM IDENTITY CENTER - SSO
+# ¦ NTC IDENTITY CENTER - SSO
 # ---------------------------------------------------------------------------------------------------------------------
 module "identity_center" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"

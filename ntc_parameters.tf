@@ -31,7 +31,7 @@ locals {
 # ¦ CORE PARAMETERS - BUCKET (DEPLOY FIRST)
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_bucket" {
-  source = "github.com/nuvibit/terraform-aws-ntc-parameters?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters?ref=beta"
 
   bucket_name     = "ntc-parameters-c2"
   org_id          = data.aws_organizations_organization.current.id
@@ -43,7 +43,7 @@ module "ntc_parameters_bucket" {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
-  source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=feat-init"
+  source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=beta"
 
   bucket_name = "ntc-parameters-c2"
 }
@@ -52,7 +52,7 @@ module "ntc_parameters_reader" {
 # # ¦ CORE PARAMETERS - WRITER
 # # ---------------------------------------------------------------------------------------------------------------------
 # module "core_parameters_writer" {
-#   source      = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer?ref=feat-init"
+#   source      = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
 #   bucket_name     = "ntc-parameters-c2"
 #   parameter_node  = "management"

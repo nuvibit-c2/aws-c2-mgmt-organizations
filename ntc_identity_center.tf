@@ -87,7 +87,7 @@ locals {
 # ¦ IAM IDENTITY CENTER - SSO
 # ---------------------------------------------------------------------------------------------------------------------
 module "identity_center" {
-  source = "github.com/nuvibit/terraform-aws-ntc-identity-center?ref=beta"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"
 
   permission_sets     = local.sso_permission_sets
   account_assignments = local.sso_account_assignments

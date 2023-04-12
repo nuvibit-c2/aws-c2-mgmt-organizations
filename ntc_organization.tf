@@ -1,10 +1,10 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ DATA
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_iam_policy_document" "scp_allow_all" {
+data "aws_iam_policy_document" "scp_deny_leave_org" {
   statement {
-    effect    = "Allow"
-    actions   = ["*"]
+    effect    = "Deny"
+    actions   = ["organizations:LeaveOrganization"]
     resources = ["*"]
   }
 }
@@ -18,7 +18,8 @@ locals {
     "securityhub.amazonaws.com",
     "config.amazonaws.com",
     "guardduty.amazonaws.com",
-    "sso.amazonaws.com"
+    "sso.amazonaws.com",
+    "ipam.amazonaws.com"
   ]
 
   delegated_administrators = [
@@ -40,30 +41,19 @@ locals {
     "/root/infrastructure",
     "/root/security",
     "/root/sandbox",
+    "/root/suspended",
     "/root/workloads",
     "/root/workloads/prod",
-    "/root/workloads/nonprod"
+    "/root/workloads/sdlc"
   ]
 
   service_control_policies = [
-    # {
-    #   policy_name        = "AllowAll",
-    #   target_ou_paths    = ["/root/workloads/prod"]
-    #   target_account_ids = []
-    #   policy_json        = data.aws_iam_policy_document.scp_allow_all.json
-    # }
-  ]
-
-  member_accounts = [
-    # {
-    #   account_name      = "aws-c2-1681243342"
-    #   account_email     = "accounts+aws-c2-1681243342@nuvibit.com"
-    #   ou_path           = "/root"
-    #   close_on_deletion = true
-    #   account_tags = {
-    #     "Owner" : "stefano.franco@nuvibit.com"
-    #   }
-    # }
+    {
+      policy_name        = "DenyLeaveOrg",
+      target_ou_paths    = ["/root"]
+      target_account_ids = []
+      policy_json        = data.aws_iam_policy_document.scp_deny_leave_org.json
+    }
   ]
 }
 
@@ -77,7 +67,7 @@ module "organization" {
   delegated_administrators  = local.delegated_administrators
   organizational_unit_paths = local.organizational_unit_paths
   service_control_policies  = local.service_control_policies
-  member_accounts           = local.member_accounts
+  organization_accounts     = local.organization_accounts
 
   providers = {
     aws = aws.euc1

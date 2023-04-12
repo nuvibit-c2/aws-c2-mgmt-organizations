@@ -1,24 +1,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ DATA
-# ---------------------------------------------------------------------------------------------------------------------
-data "aws_organizations_organization" "current" {}
-data "aws_organizations_resource_tags" "account" {
-  for_each = {
-    for a in data.aws_organizations_organization.current.accounts : a.id => a
-    if a.status == "ACTIVE"
-  }
-
-  resource_id = each.key
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  active_org_accounts = [
-    for a in data.aws_organizations_resource_tags.account : a.resource_id
-  ]
-
   sso_permission_sets = [
     {
       name : "AdministratorAccess"
@@ -74,41 +57,29 @@ locals {
     }
   ]
 
-  sso_account_assignments = [for account in local.active_org_accounts :
+  sso_account_assignments = [for account in local.organization_accounts_enriched :
     {
-      account_id = account
+      account_id = account.account_id
       permissions = [
         {
           permission_set_name : "AdministratorAccess"
-          users : [
-            "stefano.franco@nuvibit.com",
-            # "jonas.saegesser@nuvibit.com",
-            # "andreas.moor@nuvibit.com",
-            # "roman.plessl@nuvibit.com",
-            # "michael.ullrich@nuvibit.com",
-          ]
+          users : account.sso_admin_users
           groups = []
         },
         {
           permission_set_name : "OrgBilling"
-          users : [
-            "christoph.siegrist@nuvibit.com",
-          ]
+          users : account.sso_billing_users
           groups = []
         },
         {
           permission_set_name : "SupportUser"
-          users : [
-            "stefano.franco@nuvibit.com",
-            "jonas.saegesser@nuvibit.com",
-            "andreas.moor@nuvibit.com",
-            "roman.plessl@nuvibit.com",
-            "michael.ullrich@nuvibit.com",
-          ]
+          users : account.sso_support_users
           groups = []
         }
       ]
     }
+    # only add sso permissions if account is not suspended
+    if account.ou_path != "/root/suspended" && account.account_status == "ACTIVE"
   ]
 }
 

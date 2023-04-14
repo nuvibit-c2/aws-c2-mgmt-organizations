@@ -16,15 +16,15 @@ locals {
   delegated_administrators = [
     {
       service_principal = "securityhub.amazonaws.com"
-      admin_account_id  = "769269768678"
+      admin_account_id  = local.organization_account_ids["aws-c2-security"]
     },
     {
       service_principal = "config.amazonaws.com"
-      admin_account_id  = "769269768678"
+      admin_account_id  = local.organization_account_ids["aws-c2-security"]
     },
     {
       service_principal = "guardduty.amazonaws.com"
-      admin_account_id  = "769269768678"
+      admin_account_id  = local.organization_account_ids["aws-c2-security"]
     }
   ]
 
@@ -47,6 +47,19 @@ locals {
       target_account_ids = []
       policy_json        = file("${path.module}/scp-examples/scp_deny_leaving_organization.json")
     }
+  ]
+
+  # account map can be stored as HCL map or alternatively as JSON for easy integration e.g. self service portal integration via git
+  organization_accounts = lookup(jsondecode(file("${path.module}/ntc_organization_accounts.json")), "organization_accounts", false)
+
+  # original account map enriched with addition values e.g. account id
+  organization_account_ids = module.organization.organization_account_ids
+  organization_accounts_enriched = [
+    for account in local.organization_accounts : merge(account,
+      {
+        account_id = local.organization_account_ids[account.account_name]
+      }
+    )
   ]
 }
 

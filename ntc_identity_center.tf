@@ -2,18 +2,19 @@
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  # global administrators permissions in all accounts
-  global_sso_admin_users   = ["stefano.franco@nuvibit.com"]
-  global_sso_billing_users = ["christoph.siegrist@nuvibit.com"]
-  global_sso_support_users = [
-    "stefano.franco@nuvibit.com",
-    "jonas.saegesser@nuvibit.com",
-    "andreas.moor@nuvibit.com",
-    "roman.plessl@nuvibit.com",
-    "michael.ullrich@nuvibit.com",
-  ]
+  # global sso permissions for all accounts
+  global_sso_permissions = {
+    admin_users = [
+      "stefano.franco@nuvibit.com"
+    ]
+    admin_groups   = []
+    billing_users  = []
+    billing_groups = []
+    support_users  = []
+    support_groups = []
+  }
 
-  # permissions sets which should be created and which can be referenced for account assignments
+  # permissions sets which can be referenced for account assignments
   sso_permission_sets = [
     {
       name : "AdministratorAccess"
@@ -69,42 +70,40 @@ locals {
     }
   ]
 
-  # account assignments can be done for individual accounts or ideally an account map can be used to loop
-  sso_account_assignments = [for account in local.organization_accounts_enriched :
+  # account assignments can be done for individual accounts or an account map can be used for dynamic assigments
+  sso_account_assignments = [
+    for account in local.organization_accounts_enriched :
     {
-      account_id = account.account_id
+      account_id = account.account_id // FIXME: new accounts will generate a for_each error because account id is not know before apply - get account ids from parameters or data source?
       permissions = [
         {
           permission_set_name : "AdministratorAccess"
-          # combine users with global permissions and users from account map
-          users : concat(local.global_sso_admin_users, account.sso_admin_users)
-          # groups can be referenced from account map or group names can be dynamically generated
-          groups = []
-          # groups = concat(local.global_sso_admin_groups, account.sso_admin_groups)
-          # groups = ["sg-aws-admins-${account.account_id}"]
+          # combine users with global sso permissions and users with sso permissions from account map
+          users : concat(local.global_sso_permissions.admin_users, account.sso_permissions.admin_users)
+          groups : concat(local.global_sso_permissions.admin_groups, account.sso_permissions.admin_groups)
+          # alternatively groups names can also be dynamically generated
+          # groups : ["sg-aws-admins-${account.account_id}"]
         },
         {
           permission_set_name : "OrgBilling"
-          # combine users with global permissions and users from account map
-          users : concat(local.global_sso_billing_users, account.sso_billing_users)
-          # groups can be referenced from account map or group names can be dynamically generated
-          groups = []
-          # groups = concat(local.global_sso_billing_groups, account.sso_billing_groups)
-          # groups = ["sg-aws-billing-${account.account_id}"]
+          # combine users with global sso permissions and users with sso permissions from account map
+          users : concat(local.global_sso_permissions.billing_users, account.sso_permissions.billing_users)
+          groups : concat(local.global_sso_permissions.billing_groups, account.sso_permissions.billing_groups)
+          # alternatively groups names can also be dynamically generated
+          # groups : ["sg-aws-billing-${account.account_id}"]
         },
         {
           permission_set_name : "SupportUser"
-          # combine users with global permissions and users from account map
-          users : concat(local.global_sso_support_users, account.sso_support_users)
-          # groups can be referenced from account map or group names can be dynamically generated
-          groups = []
-          # groups = concat(local.global_sso_support_groups, account.sso_support_groups)
-          # groups = ["sg-aws-support-${account.account_id}"]
+          # combine users with global sso permissions and users with sso permissions from account map
+          users : concat(local.global_sso_permissions.support_users, account.sso_permissions.support_users)
+          groups : concat(local.global_sso_permissions.support_groups, account.sso_permissions.support_groups)
+          # alternatively groups names can also be dynamically generated
+          # groups : ["sg-aws-support-${account.account_id}"]
         }
       ]
     }
     # only add sso permissions if account is not suspended
-    if account.ou_path != "/root/suspended" && account.account_status == "ACTIVE"
+    if account.ou_path != "/root/suspended"
   ]
 }
 
@@ -112,7 +111,7 @@ locals {
 # ¦ NTC IDENTITY CENTER - SSO
 # ---------------------------------------------------------------------------------------------------------------------
 module "identity_center" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"
+  source     = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"
 
   permission_sets     = local.sso_permission_sets
   account_assignments = local.sso_account_assignments

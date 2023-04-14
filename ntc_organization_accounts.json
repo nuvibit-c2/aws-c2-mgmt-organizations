@@ -1,0 +1,137 @@
+{
+    "organization_accounts": [
+        {
+            "account_name": "aws-c2-management",
+            "account_email": "accounts+aws-c2-management@nuvibit.com",
+            "ou_path": "/root",
+            "close_on_deletion": false,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Core Organization Management",
+                "Description": "This account manages the AWS Organization"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        },
+        {
+            "account_name": "aws-c2-connectivity",
+            "account_email": "accounts+aws-c2-connectivity@nuvibit.com",
+            "ou_path": "/root/infrastructure",
+            "close_on_deletion": false,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Core Connectivity",
+                "Description": "This account manages centralized connectivity"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        },
+        {
+            "account_name": "aws-c2-security",
+            "account_email": "accounts+aws-c2-security@nuvibit.com",
+            "ou_path": "/root/security",
+            "close_on_deletion": false,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Core Security",
+                "Description": "This account manages centralized security"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        },
+        {
+            "account_name": "aws-c2-log-archive",
+            "account_email": "accounts+aws-c2-log-archive@nuvibit.com",
+            "ou_path": "/root/security",
+            "close_on_deletion": false,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Core Log Archive",
+                "Description": "This account manages the centralized log archive"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        },
+        {
+            "account_name": "aws-c2-0001",
+            "account_email": "accounts+aws-c2-0001@nuvibit.com",
+            "ou_path": "/root/workloads/prod",
+            "close_on_deletion": true,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Workload",
+                "Description": "This account manages workload in prod stage"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        },
+        {
+            "account_name": "aws-c2-0002",
+            "account_email": "accounts+aws-c2-0002@nuvibit.com",
+            "ou_path": "/root/workloads/sdlc",
+            "close_on_deletion": true,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Workload",
+                "Description": "This account manages workload in dev stage"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        },
+        {
+            "account_name": "aws-c2-1251125",
+            "account_email": "accounts+aws-c2-1251125@nuvibit.com",
+            "ou_path": "/root/sandbox",
+            "close_on_deletion": true,
+            "account_tags": {
+                "Owner": "stefano.franco@nuvibit.com",
+                "Function": "Sandbox",
+                "Description": "This account is a sandbox"
+            },
+            "sso_permissions": {
+                "admin_users": [],
+                "admin_groups": [],
+                "billing_users": [],
+                "billing_groups": [],
+                "support_users": [],
+                "support_groups": []
+            }
+        }
+    ]
+}

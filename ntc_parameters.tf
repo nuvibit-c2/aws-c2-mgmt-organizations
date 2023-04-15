@@ -11,9 +11,9 @@ locals {
     }
     identity_center : {}
     organization : {
-      "account_map" : local.organization_accounts_enriched
       "org_id" : module.organization.organization_id
       "ou_ids" : module.organization.organizational_unit_ids
+      "core_account_ids" : local.organization_core_account_ids
     }
   }
 
@@ -49,7 +49,7 @@ module "ntc_parameters_bucket" {
   bucket_name     = "ntc-parameters-c2"
   org_id          = module.organization.organization_id
   parameter_nodes = local.ntc_parameter_nodes
-  force_destroy   = false
+  account_map     = local.organization_accounts_enriched
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

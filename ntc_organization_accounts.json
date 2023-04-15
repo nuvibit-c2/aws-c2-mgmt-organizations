@@ -6,9 +6,9 @@
             "ou_path": "/root",
             "close_on_deletion": false,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Core Organization Management",
-                "Description": "This account manages the AWS Organization"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "core",
+                "AccountDescription": "This account manages the AWS Organization"
             },
             "sso_permissions": {
                 "admin_users": [],
@@ -25,9 +25,9 @@
             "ou_path": "/root/infrastructure",
             "close_on_deletion": false,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Core Connectivity",
-                "Description": "This account manages centralized connectivity"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "core",
+                "AccountDescription": "This account manages centralized connectivity"
             },
             "sso_permissions": {
                 "admin_users": [],
@@ -44,9 +44,9 @@
             "ou_path": "/root/security",
             "close_on_deletion": false,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Core Security",
-                "Description": "This account manages centralized security"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "core",
+                "AccountDescription": "This account manages centralized security"
             },
             "sso_permissions": {
                 "admin_users": [],
@@ -63,9 +63,9 @@
             "ou_path": "/root/security",
             "close_on_deletion": false,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Core Log Archive",
-                "Description": "This account manages the centralized log archive"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "core",
+                "AccountDescription": "This account manages the centralized log archive"
             },
             "sso_permissions": {
                 "admin_users": [],
@@ -82,9 +82,9 @@
             "ou_path": "/root/workloads/prod",
             "close_on_deletion": true,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Workload",
-                "Description": "This account manages workload in prod stage"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "workload",
+                "AccountDescription": "This account manages workload in prod stage"
             },
             "sso_permissions": {
                 "admin_users": [],
@@ -101,9 +101,9 @@
             "ou_path": "/root/workloads/sdlc",
             "close_on_deletion": true,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Workload",
-                "Description": "This account manages workload in dev stage"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "workload",
+                "AccountDescription": "This account manages application XY in dev stage"
             },
             "sso_permissions": {
                 "admin_users": [],
@@ -120,9 +120,9 @@
             "ou_path": "/root/sandbox",
             "close_on_deletion": true,
             "account_tags": {
-                "Owner": "stefano.franco@nuvibit.com",
-                "Function": "Sandbox",
-                "Description": "This account is a sandbox"
+                "AccountOwner": "stefano.franco@nuvibit.com",
+                "AccountType": "sandbox",
+                "AccountDescription": "This account is a sandbox"
             },
             "sso_permissions": {
                 "admin_users": [],

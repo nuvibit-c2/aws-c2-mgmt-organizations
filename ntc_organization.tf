@@ -52,8 +52,14 @@ locals {
   # account map can be stored as HCL map or alternatively as JSON for easy integration e.g. self service portal integration via git
   organization_accounts = lookup(jsondecode(file("${path.module}/ntc_organization_accounts.json")), "organization_accounts", false)
 
-  # original account map enriched with addition values e.g. account id
+  # store account ids for all accounts and for core accounts
   organization_account_ids = module.organization.organization_account_ids
+  organization_core_account_ids = {
+    for account in local.organization_accounts_enriched : account.account_name => account.account_id
+    if account.account_tags.AccountType == "core"
+  }
+
+  # original account map enriched with addition values e.g. account id
   organization_accounts_enriched = [
     for account in local.organization_accounts : merge(account,
       {

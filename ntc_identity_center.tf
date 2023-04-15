@@ -18,8 +18,8 @@ locals {
   sso_permission_sets = [
     {
       name : "AdministratorAccess"
-      description : "This permission set grants full admin access"
-      session_duration : 10
+      description : "This permission set grants administrator access"
+      session_duration : 2
       inline_policy_json : ""
       managed_policies : [
         {
@@ -31,8 +31,8 @@ locals {
       boundary_policy : {}
     },
     {
-      name : "OrgBilling"
-      description : "This permission set grants organizational billing access"
+      name : "Billing+ViewOnlyAccess"
+      description : "This permission set grants billing and read-only access"
       session_duration : 10
       inline_policy_json : ""
       managed_policies : [
@@ -50,8 +50,8 @@ locals {
       boundary_policy : {}
     },
     {
-      name : "SupportUser"
-      description : "This permission set grants access for support users"
+      name : "SupportUser+ReadOnlyAccess"
+      description : "This permission set grants support and read-only access"
       session_duration : 10
       inline_policy_json : ""
       managed_policies : [
@@ -74,7 +74,8 @@ locals {
   sso_account_assignments = [
     for account in local.organization_accounts_enriched :
     {
-      account_id = account.account_id // FIXME: new accounts will generate a for_each error because account id is not know before apply - get account ids from parameters or data source?
+      account_name = account.account_name
+      account_id   = account.account_id
       permissions = [
         {
           permission_set_name : "AdministratorAccess"
@@ -85,7 +86,7 @@ locals {
           # groups : ["sg-aws-admins-${account.account_id}"]
         },
         {
-          permission_set_name : "OrgBilling"
+          permission_set_name : "Billing+ViewOnlyAccess"
           # combine users with global sso permissions and users with sso permissions from account map
           users : concat(local.global_sso_permissions.billing_users, account.sso_permissions.billing_users)
           groups : concat(local.global_sso_permissions.billing_groups, account.sso_permissions.billing_groups)
@@ -93,7 +94,7 @@ locals {
           # groups : ["sg-aws-billing-${account.account_id}"]
         },
         {
-          permission_set_name : "SupportUser"
+          permission_set_name : "SupportUser+ReadOnlyAccess"
           # combine users with global sso permissions and users with sso permissions from account map
           users : concat(local.global_sso_permissions.support_users, account.sso_permissions.support_users)
           groups : concat(local.global_sso_permissions.support_groups, account.sso_permissions.support_groups)
@@ -111,7 +112,7 @@ locals {
 # ¦ NTC IDENTITY CENTER - SSO
 # ---------------------------------------------------------------------------------------------------------------------
 module "identity_center" {
-  source     = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"
 
   permission_sets     = local.sso_permission_sets
   account_assignments = local.sso_account_assignments

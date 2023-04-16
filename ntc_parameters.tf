@@ -17,9 +17,9 @@ locals {
     }
   }
 
-  # the ntc parameter bucket needs to be configured centrally in a single account
-  # all organization accounts have read permission for all parameters
-  # only parameter node owners have write access in the corresponding parameter node
+  # the ntc parameter bucket should ideally be created in org management account
+  ## all organization accounts are granted read permission for all parameters
+  ## only the parameter node owner account is granted write access to his corresponding parameters
   ntc_parameter_nodes = [
     {
       "node_name"             = "management",

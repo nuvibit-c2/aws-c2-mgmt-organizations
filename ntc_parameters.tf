@@ -46,10 +46,11 @@ locals {
 module "ntc_parameters_bucket" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters?ref=beta"
 
-  bucket_name     = "ntc-parameters-c2"
+  bucket_name     = "aws-c2-ntc-parameters"
   org_id          = module.organization.organization_id
   parameter_nodes = local.ntc_parameter_nodes
   account_map     = local.organization_accounts_enriched
+  force_destroy   = false
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ module "ntc_parameters_bucket" {
 module "ntc_parameters_reader" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=beta"
 
-  bucket_name = "ntc-parameters-c2"
+  bucket_name = "aws-c2-ntc-parameters"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -67,7 +68,7 @@ module "ntc_parameters_reader" {
 module "core_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
-  bucket_name     = "ntc-parameters-c2"
+  bucket_name     = "aws-c2-ntc-parameters"
   parameter_node  = "management"
   node_parameters = local.ntc_parameters_management
 }

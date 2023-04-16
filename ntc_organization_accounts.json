@@ -113,25 +113,6 @@
                 "support_users": [],
                 "support_groups": []
             }
-        },
-        {
-            "account_name": "aws-c2-1251125",
-            "account_email": "accounts+aws-c2-1251125@nuvibit.com",
-            "ou_path": "/root/sandbox",
-            "close_on_deletion": true,
-            "account_tags": {
-                "AccountOwner": "stefano.franco@nuvibit.com",
-                "AccountType": "sandbox",
-                "AccountDescription": "This account is a sandbox"
-            },
-            "sso_permissions": {
-                "admin_users": [],
-                "admin_groups": [],
-                "billing_users": [],
-                "billing_groups": [],
-                "support_users": [],
-                "support_groups": []
-            }
         }
     ]
 }

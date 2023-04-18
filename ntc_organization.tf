@@ -46,6 +46,12 @@ locals {
       target_ou_paths    = ["/root"]
       target_account_ids = []
       policy_json        = file("${path.module}/scp-examples/scp_deny_leaving_organization.json")
+    },
+    {
+      policy_name        = "scp_deny_all_suspended",
+      target_ou_paths    = ["/root/suspended"]
+      target_account_ids = []
+      policy_json        = file("${path.module}/scp-examples/scp_deny_all_suspended.json")
     }
   ]
 

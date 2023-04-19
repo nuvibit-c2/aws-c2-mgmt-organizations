@@ -2,17 +2,52 @@
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  # global sso permissions for all accounts
+  # users and groups with global permissions for all accounts
   global_sso_permissions = {
-    admin_users = [
-      "stefano.franco@nuvibit.com"
-    ]
-    admin_groups   = []
+    #
+    admin_users = []
     billing_users  = []
-    billing_groups = []
     support_users  = []
-    support_groups = []
+    #
+    admin_groups   = [
+      "sg-aws-c2-admin"
+    ]
+    billing_groups = [
+      "sg-aws-c2-billing"
+    ]
+    support_groups = [
+      "sg-aws-c2-support"
+    ]
   }
+
+  # users that should be manually provisioned in IAM Identity Center via Terraform. Automatic provisioning must be disabled.
+  # Users will not be synced back to external identitiy provider!
+  sso_users = [
+    {
+      first_name : "Stefano"
+      last_name : "Franco"
+      primary_email : "stefano.franco@nuvibit.com"
+    }
+  ]
+
+  # groups that should be manually provisioned in IAM Identity Center via Terraform. Automatic provisioning must be disabled.
+  # Groups will not be synced back to external identitiy provider!
+  sso_groups = [
+    {
+      group_name : "sg-aws-c2-admin"
+      group_members_email : [
+        "stefano.franco@nuvibit.com"
+      ]
+    },
+    {
+      group_name : "sg-aws-c2-billing"
+      group_members_email : []
+    },
+    {
+      group_name : "sg-aws-c2-support"
+      group_members_email : []
+    }
+  ]
 
   # permissions sets which can be referenced for account assignments
   sso_permission_sets = [
@@ -115,8 +150,8 @@ module "identity_center" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-identity-center?ref=beta"
 
   automatic_provisioning_disabled = true
-  manual_provisioning_users       = []
-  manual_provisioning_groups      = []
+  manual_provisioning_users       = local.sso_users
+  manual_provisioning_groups      = local.sso_groups
   permission_sets                 = local.sso_permission_sets
   account_assignments             = local.sso_account_assignments
 

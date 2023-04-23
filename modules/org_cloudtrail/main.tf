@@ -69,7 +69,7 @@ data "aws_iam_policy_document" "org_cloudtrail_kms" {
 }
 
 resource "aws_kms_alias" "org_cloudtrail_kms" {
-  name          = format("alias/%s", var.org_cloudtrail_kms_alias
+  name          = format("alias/%s", var.org_cloudtrail_kms_alias)
   target_key_id = aws_kms_key.org_cloudtrail_bucket_kms.key_id
 }
 
@@ -82,7 +82,7 @@ resource "aws_cloudtrail" "org_cloudtrail" {
   s3_bucket_name = var.org_cloudtrail_bucket_name
   kms_key_id     = aws_kms_key.org_cloudtrail_kms.arn
 
-  is_organization_trail = true
+  is_organization_trail         = true
   include_global_service_events = true
-  is_multi_region_trail = true
+  is_multi_region_trail         = true
 }

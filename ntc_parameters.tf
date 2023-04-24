@@ -28,7 +28,7 @@ module "ntc_parameters_reader" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
-module "core_parameters_writer" {
+module "ntc_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
   bucket_name     = "aws-c2-ntc-parameters"

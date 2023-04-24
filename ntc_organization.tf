@@ -16,15 +16,15 @@ locals {
   delegated_administrators = [
     {
       service_principal = "securityhub.amazonaws.com"
-      admin_account_id  = local.account_factory_core_account_ids["aws-c2-security"]
+      admin_account_id  = "769269768678" # aws-c2-security
     },
     {
       service_principal = "config.amazonaws.com"
-      admin_account_id  = local.account_factory_core_account_ids["aws-c2-security"]
+      admin_account_id  = "769269768678" # aws-c2-security
     },
     {
       service_principal = "guardduty.amazonaws.com"
-      admin_account_id  = local.account_factory_core_account_ids["aws-c2-security"]
+      admin_account_id  = "769269768678" # aws-c2-security
     }
   ]
 

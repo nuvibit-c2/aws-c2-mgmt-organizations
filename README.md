@@ -10,7 +10,7 @@
 [![Terraform Version][terraform-version-shield]][terraform-version-url]
 
 <!-- DESCRIPTION -->
-[Terraform workspace][terraform-workspace-url] repository to deploy resources on [AWS][aws-url]
+[Terraform workspace][terraform-workspace-url] repository to provision and manage AWS Organizations
 
 <!-- BEGIN_TF_DOCS -->
 <!-- END_TF_DOCS -->
@@ -31,4 +31,3 @@ This repository is maintained by [Nuvibit][nuvibit-url] with help from [these am
 [terraform-version-url]: https://developer.hashicorp.com/terraform/language/v1.2.x/upgrade-guides
 [contributors-url]: https://github.com/nuvibit-terraform-collection/aws-c2-management/graphs/contributors
 [terraform-workspace-url]: https://app.terraform.io/app/nuvibit-c2/workspaces/aws-c2-management
-[aws-url]: https://aws.amazon.com

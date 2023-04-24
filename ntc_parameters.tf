@@ -3,10 +3,10 @@ locals {
   ntc_parameters_writer_node = "management"
 
   # map of parameters merged from all parameter nodes
-  ntc_parameters = module.ntc_parameters_reader.parameter_map
+  ntc_parameters = module.ntc_parameters_reader.all_parameters
 
   # parameters that are managed by org management account
-  ntc_parameters_management = {
+  ntc_parameters_to_write = {
     global : {
       "core_regions" : ["eu-central-1", "eu-central-2"]
       "workload_regions" : ["eu-central-1", "eu-central-2"]
@@ -36,5 +36,5 @@ module "ntc_parameters_writer" {
 
   bucket_name     = local.ntc_parameters_bucket_name
   parameter_node  = local.ntc_parameters_writer_node
-  node_parameters = local.ntc_parameters_management
+  node_parameters = local.ntc_parameters_to_write
 }

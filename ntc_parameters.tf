@@ -1,4 +1,7 @@
 locals {
+  ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
+  ntc_parameters_writer_node = "management"
+
   # map of parameters merged from all parameter nodes
   ntc_parameters = module.ntc_parameters_reader.parameter_map
 
@@ -10,7 +13,7 @@ locals {
     }
     organization : {
       "org_id" : module.organization.org_id
-      "org_root_ou_id": module.organization.org_root_ou_id
+      "org_root_ou_id" : module.organization.org_root_ou_id
       "ou_ids" : module.organization.organizational_unit_ids
     }
   }
@@ -22,7 +25,7 @@ locals {
 module "ntc_parameters_reader" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=beta"
 
-  bucket_name = "aws-c2-ntc-parameters"
+  bucket_name = local.ntc_parameters_bucket_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -31,7 +34,7 @@ module "ntc_parameters_reader" {
 module "ntc_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
-  bucket_name     = "aws-c2-ntc-parameters"
-  parameter_node  = "management"
+  bucket_name     = local.ntc_parameters_bucket_name
+  parameter_node  = local.ntc_parameters_writer_node
   node_parameters = local.ntc_parameters_management
 }

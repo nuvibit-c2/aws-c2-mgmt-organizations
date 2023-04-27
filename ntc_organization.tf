@@ -60,7 +60,7 @@ locals {
 # ¦ NTC ORGANIZATION
 # ---------------------------------------------------------------------------------------------------------------------
 module "organization" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organization?ref=beta"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=beta"
 
   service_access_principals = local.service_access_principals
   delegated_administrators  = local.delegated_administrators

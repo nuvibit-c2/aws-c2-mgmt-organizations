@@ -24,7 +24,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.64.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.0 |
 
 ## Modules
 
@@ -32,7 +32,7 @@
 |------|--------|---------|
 | <a name="module_ntc_parameters_reader"></a> [ntc\_parameters\_reader](#module\_ntc\_parameters\_reader) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader | beta |
 | <a name="module_ntc_parameters_writer"></a> [ntc\_parameters\_writer](#module\_ntc\_parameters\_writer) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer | beta |
-| <a name="module_organization"></a> [organization](#module\_organization) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organization | beta |
+| <a name="module_organization"></a> [organization](#module\_organization) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations | beta |
 
 ## Resources
 

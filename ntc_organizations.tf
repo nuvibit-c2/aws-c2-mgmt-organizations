@@ -4,6 +4,7 @@
 locals {
   # list of services which should be enabled in Organizations
   service_access_principals = [
+    "account.amazonaws.com",
     "cloudtrail.amazonaws.com",
     "securityhub.amazonaws.com",
     "config.amazonaws.com",

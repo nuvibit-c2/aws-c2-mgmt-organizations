@@ -55,6 +55,9 @@
             "eu-central-1",
             "eu-central-2"
           ]
+        },
+        "StringNotLike": {
+          "aws:PrincipalArn" : ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
         }
       }
     }

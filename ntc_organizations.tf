@@ -62,6 +62,12 @@ locals {
       policy_json        = file("${path.module}/scp-examples/scp_deny_all_outside_eu_regions.json")
     }
   ]
+
+  # s3 log archive bucket must be provisioned before creating the organization trail
+  organization_trail = {
+    kms_key_arn    = try(local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["cloudtrail"], null)
+    s3_bucket_name = try(local.ntc_parameters["log-archive"]["log_bucket_ids"]["cloudtrail"], null)
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -74,6 +80,7 @@ module "organization" {
   delegated_administrators  = local.delegated_administrators
   organizational_unit_paths = local.organizational_unit_paths
   service_control_policies  = local.service_control_policies
+  organization_trail        = local.organization_trail
 
   providers = {
     aws = aws.euc1

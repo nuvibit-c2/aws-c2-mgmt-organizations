@@ -1,1 +1,0 @@
-https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html

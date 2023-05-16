@@ -33,6 +33,7 @@
 | <a name="module_ntc_parameters_reader"></a> [ntc\_parameters\_reader](#module\_ntc\_parameters\_reader) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader | beta |
 | <a name="module_ntc_parameters_writer"></a> [ntc\_parameters\_writer](#module\_ntc\_parameters\_writer) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer | beta |
 | <a name="module_organization"></a> [organization](#module\_organization) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations | beta |
+| <a name="module_service_control_policy_templates"></a> [service\_control\_policy\_templates](#module\_service\_control\_policy\_templates) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates | beta |
 
 ## Resources
 

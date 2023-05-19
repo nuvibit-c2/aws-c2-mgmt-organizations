@@ -8,9 +8,11 @@ locals {
     "cloudtrail.amazonaws.com",
     "securityhub.amazonaws.com",
     "config.amazonaws.com",
+    "config-multiaccountsetup.amazonaws.com",
     "guardduty.amazonaws.com",
     "sso.amazonaws.com",
-    "ipam.amazonaws.com"
+    "ipam.amazonaws.com",
+    "ram.amazonaws.com"
   ]
 
   # list of services which should be delegated to an administrator account
@@ -26,6 +28,10 @@ locals {
     {
       service_principal = "guardduty.amazonaws.com"
       admin_account_id  = "769269768678" # aws-c2-security
+    },
+    {
+      service_principal = "ipam.amazonaws.com"
+      admin_account_id  = "944538260333" # aws-c2-connectivity
     }
   ]
 
@@ -107,6 +113,7 @@ module "organization" {
   organization_trail        = local.organization_trail
 
   providers = {
-    aws = aws.euc1
+    aws           = aws.euc1
+    aws.us_east_1 = aws.use1 # required for optional firewall manager delegation
   }
 }

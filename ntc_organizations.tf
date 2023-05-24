@@ -3,6 +3,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
   # list of services which should be enabled in Organizations
+  # the following services will be enabled by default, but can be overwritten
   service_access_principals = [
     "account.amazonaws.com",
     "cloudtrail.amazonaws.com",
@@ -10,29 +11,10 @@ locals {
     "config.amazonaws.com",
     "config-multiaccountsetup.amazonaws.com",
     "guardduty.amazonaws.com",
+    "malware-protection.guardduty.amazonaws.com",
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
     "ram.amazonaws.com"
-  ]
-
-  # list of services which should be delegated to an administrator account
-  delegated_administrators = [
-    {
-      service_principal = "securityhub.amazonaws.com"
-      admin_account_id  = "769269768678" # aws-c2-security
-    },
-    {
-      service_principal = "config.amazonaws.com"
-      admin_account_id  = "769269768678" # aws-c2-security
-    },
-    {
-      service_principal = "guardduty.amazonaws.com"
-      admin_account_id  = "769269768678" # aws-c2-security
-    },
-    {
-      service_principal = "ipam.amazonaws.com"
-      admin_account_id  = "944538260333" # aws-c2-connectivity
-    }
   ]
 
   # list of nested (up to 5 levels) organizational units
@@ -107,13 +89,11 @@ module "organization" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=beta"
 
   service_access_principals = local.service_access_principals
-  delegated_administrators  = local.delegated_administrators
   organizational_unit_paths = local.organizational_unit_paths
   service_control_policies  = local.service_control_policies
   organization_trail        = local.organization_trail
 
   providers = {
-    aws           = aws.euc1
-    aws.us_east_1 = aws.use1 # required for optional firewall manager delegation
+    aws = aws.euc1
   }
 }

@@ -83,9 +83,9 @@ module "service_control_policy_templates" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ NTC ORGANIZATION
+# ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
-module "organization" {
+module "organizations" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=beta"
 
   service_access_principals = local.service_access_principals

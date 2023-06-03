@@ -12,9 +12,9 @@ locals {
       "workload_regions" : ["eu-central-1", "eu-central-2"]
     }
     organization : {
-      "org_id" : module.organization.org_id
-      "org_root_ou_id" : module.organization.org_root_ou_id
-      "ou_ids" : module.organization.organizational_unit_ids
+      "org_id" : module.organizations.org_id
+      "org_root_ou_id" : module.organizations.org_root_ou_id
+      "ou_ids" : module.organizations.organizational_unit_ids
     }
   }
 

@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "ntc_org_account_reader_trust" {
   statement {
     effect = "Allow"
     principals {
-      type        = "AWS"
+      type = "AWS"
       identifiers = [
         local.ntc_parameters["account-factory"]["core_accounts"]["aws-c2-security"]
       ]
@@ -69,7 +69,7 @@ data "aws_iam_policy_document" "ntc_org_account_reader" {
     effect = "Allow"
     actions = [
       "account:GetAlternateContact",
-			"account:GetContactInformation"
+      "account:GetContactInformation"
     ]
     resources = ["*"]
   }

@@ -2,9 +2,6 @@ locals {
   ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
   ntc_parameters_writer_node = "management"
 
-  # map of parameters merged from all parameter nodes
-  ntc_parameters = module.ntc_parameters_reader.all_parameters
-
   # parameters that are managed by org management account
   ntc_parameters_to_write = {
     global : {
@@ -20,6 +17,9 @@ locals {
 
   # by default existing node parameters will be merged with new parameters to avoid deleting parameters
   replace_parameters = true
+
+  # map of parameters merged from all parameter nodes
+  ntc_parameters = module.ntc_parameters_reader.all_parameters
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

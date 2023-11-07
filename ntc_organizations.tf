@@ -31,9 +31,6 @@ module "organizations" {
     "/root/workloads/test"
   ]
 
-  # template module outputs service control policies (SCP)
-  service_control_policy_templates_outputs = module.service_control_policy_templates.service_control_policies
-
   # list of SCPs which should be attached to multiple organizational units and/or accounts
   service_control_policies = [
     # {
@@ -42,9 +39,9 @@ module "organizations" {
     #   target_account_ids = []
     #   policy_json        = "INSERT_SCP_JSON"
     # }
-    local.service_control_policy_templates_outputs["scp_root_ou"],
-    local.service_control_policy_templates_outputs["scp_suspended_ou"],
-    local.service_control_policy_templates_outputs["scp_workloads_ou"],
+    module.service_control_policy_templates.service_control_policies["scp_root_ou"],
+    module.service_control_policy_templates.service_control_policies["scp_suspended_ou"],
+    module.service_control_policy_templates.service_control_policies["scp_workloads_ou"],
   ]
 
   # s3 log archive bucket must be provisioned before creating the organization trail

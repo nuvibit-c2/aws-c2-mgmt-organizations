@@ -1,7 +1,9 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ LOCALS
+# ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
-locals {
+module "organizations" {
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.0"
+
   # list of services which should be enabled in Organizations
   # the following services will be enabled by default, but can be overwritten
   service_access_principals = [
@@ -55,18 +57,6 @@ locals {
     # cloud_watch_logs_group_name = "organization-trail-logs"
     # cloud_watch_logs_role_name  = "organization-trail-logs"
   }
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ NTC ORGANIZATIONS
-# ---------------------------------------------------------------------------------------------------------------------
-module "organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.0"
-
-  service_access_principals = local.service_access_principals
-  organizational_unit_paths = local.organizational_unit_paths
-  service_control_policies  = local.service_control_policies
-  organization_trail        = local.organization_trail
 
   providers = {
     aws = aws.euc1

@@ -1,7 +1,9 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ LOCALS
+# ¦ NTC SERVICE CONTROL POLICY TEMPLATES
 # ---------------------------------------------------------------------------------------------------------------------
-locals {
+module "service_control_policy_templates" {
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates?ref=1.0.0"
+
   # service control policies can either be defined by customer or consumed via template module
   # https://github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates
   service_control_policy_templates = [
@@ -24,13 +26,4 @@ locals {
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     }
   ]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ NTC SERVICE CONTROL POLICY TEMPLATES
-# ---------------------------------------------------------------------------------------------------------------------
-module "service_control_policy_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates?ref=1.0.0"
-
-  service_control_policy_templates = local.service_control_policy_templates
 }

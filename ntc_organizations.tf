@@ -13,6 +13,7 @@ module "organizations" {
     "config.amazonaws.com",
     "config-multiaccountsetup.amazonaws.com",
     "guardduty.amazonaws.com",
+    "inspector2.amazonaws.com",
     "malware-protection.guardduty.amazonaws.com",
     "sso.amazonaws.com",
     "ipam.amazonaws.com",

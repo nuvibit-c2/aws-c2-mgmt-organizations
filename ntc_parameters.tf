@@ -1,18 +1,14 @@
 locals {
   ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
-  ntc_parameters_writer_node = "management"
+  ntc_parameters_writer_node = "mgmt-organizations"
 
   # parameters that are managed by org management account
   ntc_parameters_to_write = {
-    global : {
-      "core_regions" : ["eu-central-1", "eu-central-2"]
-      "workload_regions" : ["eu-central-1", "eu-central-2"]
-    }
-    organization : {
-      "org_id" : module.organizations.org_id
-      "org_root_ou_id" : module.organizations.org_root_ou_id
-      "ou_ids" : module.organizations.organizational_unit_ids
-    }
+    core_regions     = ["eu-central-1", "eu-central-2"]
+    workload_regions = ["eu-central-1", "eu-central-2"]
+    org_id           = module.organizations.org_id
+    org_root_ou_id   = module.organizations.org_root_ou_id
+    ou_ids           = module.organizations.organizational_unit_ids
   }
 
   # by default existing node parameters will be merged with new parameters to avoid deleting parameters

@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "ntc_org_account_reader_trust" {
     principals {
       type = "AWS"
       identifiers = [
-        local.ntc_parameters["account-factory"]["core_accounts"]["aws-c2-security"]
+        local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
       ]
     }
     actions = ["sts:AssumeRole"]

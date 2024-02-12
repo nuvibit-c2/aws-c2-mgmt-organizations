@@ -64,6 +64,8 @@ data "aws_iam_policy_document" "ntc_org_account_reader_trust" {
   }
 }
 
+# allow reading contact information from all organization accounts
+# trivy:ignore:AVD-AWS-0057
 data "aws_iam_policy_document" "ntc_org_account_reader" {
   statement {
     effect = "Allow"

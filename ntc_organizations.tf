@@ -2,7 +2,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.2"
 
   # list of services which should be enabled in Organizations
   # the following services will be enabled by default, but can be overwritten

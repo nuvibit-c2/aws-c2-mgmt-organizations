@@ -26,6 +26,7 @@ module "organizations" {
     "/root/security",
     "/root/sandbox",
     "/root/suspended",
+    "/root/decommission",
     "/root/workloads",
     "/root/workloads/prod",
     "/root/workloads/dev",

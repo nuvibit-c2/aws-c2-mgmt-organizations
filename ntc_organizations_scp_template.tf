@@ -14,7 +14,7 @@ module "service_control_policy_templates" {
     },
     {
       policy_name            = "scp_suspended_ou"
-      target_ou_paths        = ["/root/suspended"]
+      target_ou_paths        = ["/root/suspended", "/root/decommission"]
       template_names         = ["deny_all"]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },

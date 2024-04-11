@@ -2,7 +2,10 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.2"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.3"
+
+  # if you enable sharing with your organization, you can share resources without using invitations
+  enable_ram_sharing_in_organization = true
 
   # list of services which should be enabled in Organizations
   # the following services will be enabled by default, but can be overwritten
@@ -17,7 +20,6 @@ module "organizations" {
     "malware-protection.guardduty.amazonaws.com",
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
-    "ram.amazonaws.com"
   ]
 
   # list of nested (up to 5 levels) organizational units

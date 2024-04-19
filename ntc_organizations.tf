@@ -1,11 +1,17 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
-module "organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.3"
+module "ntc_organizations" {
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.3"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=feat-quotas"
 
   # if you enable sharing with your organization, you can share resources without using invitations
   enable_ram_sharing_in_organization = true
+
+  # in some cases (e.g. 'enable_ram_sharing_in_organization') service access principals are managed by different resources causing terraform to delete and recreate them
+  # enabling 'include_existing_service_access_principals' will include all existing service access principals to the list of 'service_access_principals'
+  # this option cannot be enabled before organization exists (must be disabled for the initial deployment of organizations)
+  include_existing_service_access_principals = true
 
   # list of services which should be enabled in Organizations
   # the following services will be enabled by default, but can be overwritten
@@ -21,8 +27,6 @@ module "organizations" {
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
   ]
-  # FIXME: service_access_principals can be added from other resources causing a loop (create, destroy)
-  # https://github.com/hashicorp/terraform-provider-aws/issues/35295
 
   # list of nested (up to 5 levels) organizational units
   organizational_unit_paths = [
@@ -45,9 +49,9 @@ module "organizations" {
     #   target_account_ids = []
     #   policy_json        = "INSERT_SCP_JSON"
     # }
-    module.service_control_policy_templates.service_control_policies["scp_root_ou"],
-    module.service_control_policy_templates.service_control_policies["scp_suspended_ou"],
-    module.service_control_policy_templates.service_control_policies["scp_workloads_ou"],
+    module.ntc_scp_templates.service_control_policies["scp_root_ou"],
+    module.ntc_scp_templates.service_control_policies["scp_suspended_ou"],
+    module.ntc_scp_templates.service_control_policies["scp_workloads_ou"],
   ]
 
   # s3 log archive bucket must be provisioned before creating the organization trail
@@ -69,7 +73,7 @@ module "organizations" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC ORGANIZATIONS - SERVICE QUOTAS
 # ---------------------------------------------------------------------------------------------------------------------
-module "organization_quotas" {
+module "ntc_organization_quotas" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=feat-quotas"
 
   # increase service quotas for the org management account
@@ -90,4 +94,14 @@ module "organization_quotas" {
   providers = {
     aws.us_east_1 = aws.use1 # organization service quotas and service quota templates must be created in us-east-1
   }
+}
+
+moved {
+  from = module.organizations
+  to = module.ntc_organizations
+}
+
+moved {
+  from = module.organization_quotas
+  to = module.ntc_organization_quotas
 }

@@ -4,7 +4,7 @@
 /*
 import {
   # AWS Organization cannot simply be deleted if accounts exist and is therefore easier to import
-  to = module.organizations.aws_organizations_organization.ntc_org[0]
+  to = module.ntc_organizations.aws_organizations_organization.ntc_org[0]
   id = "o-m29e8d9awz"
 }
 */

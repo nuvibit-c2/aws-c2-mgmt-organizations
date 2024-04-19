@@ -84,7 +84,7 @@ module "ntc_organization_quotas" {
   # service quota templates will apply service quotas to all new organization accounts (existing accounts won't be updated)
   aws_service_quota_templates = [
     # {
-    #   regions      = ["eu-central-1", "eu-central-2"]
+    #   regions      = ["eu-central-1"]
     #   quota_name   = "Services per namespace"
     #   service_code = "ecs"
     #   new_value    = 120
@@ -94,14 +94,4 @@ module "ntc_organization_quotas" {
   providers = {
     aws.us_east_1 = aws.use1 # organization service quotas and service quota templates must be created in us-east-1
   }
-}
-
-moved {
-  from = module.organizations
-  to = module.ntc_organizations
-}
-
-moved {
-  from = module.organization_quotas
-  to = module.ntc_organization_quotas
 }

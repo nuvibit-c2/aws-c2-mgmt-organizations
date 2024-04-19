@@ -63,3 +63,29 @@ module "organizations" {
     aws = aws.euc1
   }
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ NTC ORGANIZATIONS - SERVICE QUOTAS
+# ---------------------------------------------------------------------------------------------------------------------
+module "organization_quotas" {
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=feat-quotas"
+
+  # increase service quotas for the org management account
+  increase_aws_service_quotas = {
+    organizations_maximum_number_of_accounts = 100
+  }
+
+  # service quota templates will apply service quotas to all new organization accounts (existing accounts won't be updated)
+  aws_service_quota_templates = [
+    # {
+    #   regions      = ["eu-central-1", "eu-central-2"]
+    #   quota_name   = "Services per namespace"
+    #   service_code = "ecs"
+    #   new_value    = 120
+    # }
+  ]
+
+  providers = {
+    aws.us_east_1 = aws.use1 # organization service quotas and service quota templates must be created in us-east-1
+  }
+}

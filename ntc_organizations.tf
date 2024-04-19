@@ -21,6 +21,8 @@ module "organizations" {
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
   ]
+  # FIXME: service_access_principals can be added from other resources causing a loop (create, destroy)
+  # https://github.com/hashicorp/terraform-provider-aws/issues/35295
 
   # list of nested (up to 5 levels) organizational units
   organizational_unit_paths = [

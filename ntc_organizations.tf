@@ -2,8 +2,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.0.3"
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=feat-quotas"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.1.0"
 
   # if you enable sharing with your organization, you can share resources without using invitations
   enable_ram_sharing_in_organization = true
@@ -74,7 +73,7 @@ module "ntc_organizations" {
 # ¦ NTC ORGANIZATIONS - SERVICE QUOTAS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organization_quotas" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=feat-quotas"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=1.1.0"
 
   # increase service quotas for the org management account
   increase_aws_service_quotas = {

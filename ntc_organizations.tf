@@ -2,7 +2,8 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.1.0"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.1.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=feat-reader-role"
 
   # if you enable sharing with your organization, you can share resources without using invitations
   enable_ram_sharing_in_organization = true
@@ -62,6 +63,20 @@ module "ntc_organizations" {
     # cloud_watch_logs_existing   = false
     # cloud_watch_logs_group_name = "organization-trail-logs"
     # cloud_watch_logs_role_name  = "organization-trail-logs"
+  }
+
+  # create an organization reader IAM role which can be assumed by specified principals
+  # optional for 'ntc-security-tooling' and required for 'ntc-cross-account-orchestration'
+  organization_reader = {
+    enabled = true
+    # list of IAM principals which can assume the org_reader role (e.g. account ids)
+    allowed_principals = [
+      local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"],
+      local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-connectivity"]
+    ]
+    iam_role_name   = "ntc-org-account-reader"
+    iam_role_path   = "/"
+    iam_policy_name = "ntc-org-account-reader-policy"
   }
 
   providers = {

@@ -4,11 +4,11 @@ locals {
 
   # parameters that are managed by org management account
   ntc_parameters_to_write = {
-    core_regions     = ["eu-central-1", "eu-central-2"]
-    workload_regions = ["eu-central-1", "eu-central-2"]
-    org_id           = module.ntc_organizations.org_id
-    org_root_ou_id   = module.ntc_organizations.org_root_ou_id
-    ou_ids           = module.ntc_organizations.organizational_unit_ids
+    "core_regions"     = ["eu-central-1", "eu-central-2"]
+    "workload_regions" = ["eu-central-1", "eu-central-2"]
+    "org_id"           = module.ntc_organizations.org_id
+    "org_root_ou_id"   = module.ntc_organizations.org_root_ou_id
+    "ou_ids"           = module.ntc_organizations.organizational_unit_ids
   }
 
   # by default existing node parameters will be merged with new parameters to avoid deleting parameters

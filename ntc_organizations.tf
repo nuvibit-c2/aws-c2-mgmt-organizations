@@ -5,6 +5,7 @@ module "ntc_organizations" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.2.0"
 
   # if you enable sharing with your organization, you can share resources without using invitations
+  # WARNING: enable in a second step after creating aws organizations
   enable_ram_sharing_in_organization = true
 
   # in some cases (e.g. 'enable_ram_sharing_in_organization') service access principals are managed by different resources causing terraform to delete and recreate them

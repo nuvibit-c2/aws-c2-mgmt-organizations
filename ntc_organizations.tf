@@ -2,7 +2,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.2.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.0"
 
   # if you enable sharing with your organization, you can share resources without using invitations
   # WARNING: enable in a second step after creating aws organizations
@@ -88,11 +88,11 @@ module "ntc_organizations" {
 # ¦ NTC ORGANIZATIONS - SERVICE QUOTAS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organization_quotas" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=1.2.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=1.3.0"
 
   # increase service quotas for the org management account
   increase_aws_service_quotas = {
-    organizations_maximum_number_of_accounts = 100
+    # organizations_maximum_number_of_accounts = 100
   }
 
   # service quota templates will apply service quotas to all new organization accounts (existing accounts won't be updated)

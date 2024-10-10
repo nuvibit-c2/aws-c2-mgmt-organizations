@@ -1,4 +1,4 @@
-# Terraform workspace repository for aws-c2-management
+# Terraform workspace repository for aws-c2-mgmt-organizations
 
 <!-- LOGO -->
 <a href="https://nuvibit.com">

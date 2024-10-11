@@ -33,7 +33,7 @@ module "ntc_delegated_admins_euc1" {
 module "ntc_delegated_admins_euc2" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.3.0"
 
-  delegated_administrators = local.delegated_security_services
+  delegated_administrators = local.delegated_administrators
 
   providers = {
     aws = aws.euc2
@@ -43,7 +43,7 @@ module "ntc_delegated_admins_euc2" {
 module "ntc_delegated_admins_use1" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.3.0"
 
-  delegated_administrators = local.delegated_security_services
+  delegated_administrators = local.delegated_administrators
 
   providers = {
     aws = aws.use1

@@ -2,7 +2,7 @@
 # ¦ NTC SERVICE CONTROL POLICY TEMPLATES
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_scp_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates?ref=1.0.2"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates?ref=1.0.3"
 
   # service control policies can either be defined by customer or consumed via template module
   # https://github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates

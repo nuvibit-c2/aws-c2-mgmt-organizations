@@ -3,7 +3,7 @@ locals {
   global_delegated_administrators = [
     {
       service_principal = "config.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["nivel-int-security-tooling"]
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },
   ]
   
@@ -11,15 +11,15 @@ locals {
   regional_delegated_administrators = [
     {
       service_principal = "securityhub.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["nivel-int-security-tooling"]
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },
     {
       service_principal = "guardduty.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["nivel-int-security-tooling"]
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },
     {
       service_principal = "inspector2.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["nivel-int-security-tooling"]
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     }
   ]
 }

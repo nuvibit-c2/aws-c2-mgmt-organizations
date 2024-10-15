@@ -3,6 +3,10 @@ locals {
   # WARNING: firewall manager can only be delegated in us-east-1
   delegated_administrators = [
     {
+      service_principal = "config.amazonaws.com"
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+    },
+    {
       service_principal = "securityhub.amazonaws.com"
       admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },

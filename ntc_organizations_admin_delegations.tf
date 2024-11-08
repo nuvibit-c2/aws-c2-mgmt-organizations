@@ -1,5 +1,5 @@
 locals {
-  # some services like aws config are delegated once and not for each region
+  # some services like 'aws config' and 'iam access analyzer' are delegated once and not for each region
   global_delegated_administrators = [
     {
       service_principal = "config.amazonaws.com"

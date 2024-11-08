@@ -5,6 +5,10 @@ locals {
       service_principal = "config.amazonaws.com"
       admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },
+    {
+      service_principal = "access-analyzer.amazonaws.com"
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+    },
   ]
   
   # some services like amazon guardduty need to be delegated for each region
@@ -21,10 +25,6 @@ locals {
       service_principal = "inspector2.amazonaws.com"
       admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },
-    {
-      service_principal = "access-analyzer.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
-    }
   ]
 }
 

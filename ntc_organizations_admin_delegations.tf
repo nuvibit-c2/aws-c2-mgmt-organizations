@@ -20,6 +20,10 @@ locals {
     {
       service_principal = "inspector2.amazonaws.com"
       admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+    },
+    {
+      service_principal = "access-analyzer.amazonaws.com"
+      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     }
   ]
 }

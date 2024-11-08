@@ -2,18 +2,15 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.0"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=fix-ram-sharing"
 
   # if you enable sharing with your organization, you can share resources without using invitations
   # WARNING: enable in a second step after creating aws organizations
   enable_ram_sharing_in_organization = true
 
-  # in some cases (e.g. 'enable_ram_sharing_in_organization') service access principals are managed by different resources causing terraform to delete and recreate them
-  # enabling 'include_existing_service_access_principals' will include all existing service access principals to the list of 'service_access_principals'
-  # this option cannot be enabled before organization exists (must be disabled for the initial deployment of organizations)
-  include_existing_service_access_principals = true
-
   # list of services which should be enabled in Organizations
+  # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services_list.html
   # the following services will be enabled by default, but can be overwritten
   service_access_principals = [
     "account.amazonaws.com",
@@ -22,8 +19,9 @@ module "ntc_organizations" {
     "config.amazonaws.com",
     "config-multiaccountsetup.amazonaws.com",
     "guardduty.amazonaws.com",
-    "inspector2.amazonaws.com",
     "malware-protection.guardduty.amazonaws.com",
+    "inspector2.amazonaws.com",
+    "access-analyzer.amazonaws.com",
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
   ]

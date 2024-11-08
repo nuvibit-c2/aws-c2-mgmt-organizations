@@ -14,6 +14,7 @@ module "ntc_organizations" {
   # the following services will be enabled by default, but can be overwritten
   service_access_principals = [
     "account.amazonaws.com",
+    "servicequotas.amazonaws.com",
     "cloudtrail.amazonaws.com",
     "securityhub.amazonaws.com",
     "config.amazonaws.com",

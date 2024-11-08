@@ -32,6 +32,7 @@ locals {
 # this role gets created when creating up an access analyzer for the first time (analyzer can be deleted afterwards)
 # https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-using-service-linked-roles.html#create-slr
 resource "aws_accessanalyzer_analyzer" "init" {
+  count         = 0
   analyzer_name = "init-service-linked-role"
 }
 

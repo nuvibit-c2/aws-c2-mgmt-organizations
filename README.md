@@ -30,20 +30,21 @@
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_ntc_delegated_admins_euc1"></a> [ntc\_delegated\_admins\_euc1](#module\_ntc\_delegated\_admins\_euc1) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations | 1.3.0 |
+| <a name="module_ntc_delegated_admins_euc2"></a> [ntc\_delegated\_admins\_euc2](#module\_ntc\_delegated\_admins\_euc2) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations | 1.3.1 |
+| <a name="module_ntc_delegated_admins_use1"></a> [ntc\_delegated\_admins\_use1](#module\_ntc\_delegated\_admins\_use1) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations | 1.3.0 |
+| <a name="module_ntc_organization_quotas"></a> [ntc\_organization\_quotas](#module\_ntc\_organization\_quotas) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas | 1.3.0 |
+| <a name="module_ntc_organizations"></a> [ntc\_organizations](#module\_ntc\_organizations) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations | 1.3.1 |
 | <a name="module_ntc_parameters_reader"></a> [ntc\_parameters\_reader](#module\_ntc\_parameters\_reader) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader | 1.1.2 |
 | <a name="module_ntc_parameters_writer"></a> [ntc\_parameters\_writer](#module\_ntc\_parameters\_writer) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer | 1.1.2 |
-| <a name="module_organizations"></a> [organizations](#module\_organizations) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations | 1.0.2 |
-| <a name="module_service_control_policy_templates"></a> [service\_control\_policy\_templates](#module\_service\_control\_policy\_templates) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates | 1.0.2 |
+| <a name="module_ntc_scp_templates"></a> [ntc\_scp\_templates](#module\_ntc\_scp\_templates) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates | 1.0.3 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [aws_iam_role.ntc_org_account_reader](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy.ntc_org_account_reader](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_accessanalyzer_analyzer.init](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/accessanalyzer_analyzer) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_iam_policy_document.ntc_org_account_reader](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.ntc_org_account_reader_trust](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs

@@ -4,6 +4,9 @@
 module "ntc_organizations" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.1"
 
+  # enable sharing resources within your organization
+  enable_ram_sharing_in_organization = true
+
   # list of services which should be enabled in Organizations
   # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services_list.html
   # the following services will be enabled by default, but can be overwritten

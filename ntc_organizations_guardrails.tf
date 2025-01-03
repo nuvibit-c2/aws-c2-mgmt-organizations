@@ -1,11 +1,11 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ NTC SERVICE CONTROL POLICY TEMPLATES
+# ¦ NTC GUARDRAIL TEMPLATES
 # ---------------------------------------------------------------------------------------------------------------------
-module "ntc_scp_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates?ref=1.0.3"
+module "ntc_guardrail_templates" {
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=1.0.3"
 
-  # service control policies can either be defined by customer or consumed via template module
-  # https://github.com/nuvibit-terraform-collection/terraform-aws-ntc-scp-templates
+  # service control policies (SCPs) can apply permission guardrails at the organization, organizational unit, or account level
+  # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html
   service_control_policy_templates = [
     {
       policy_name     = "scp_root_ou"

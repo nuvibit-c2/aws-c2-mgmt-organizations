@@ -48,7 +48,7 @@ module "ntc_organizations" {
     # }
     module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
     module.ntc_guardrail_templates.service_control_policies["scp_suspended_ou"],
-    module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou"],
+    # module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou"],
   ]
 
   # s3 log archive bucket must be provisioned before creating the organization trail

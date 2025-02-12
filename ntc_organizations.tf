@@ -23,6 +23,7 @@ module "ntc_organizations" {
     "access-analyzer.amazonaws.com",
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
+    "iam.amazonaws.com",
   ]
 
   # list of nested (up to 5 levels) organizational units

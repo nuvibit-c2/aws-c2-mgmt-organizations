@@ -14,7 +14,7 @@ locals {
       admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     },
   ]
-  
+
   # some services like amazon guardduty need to be delegated for each region
   regional_delegated_administrators = [
     {

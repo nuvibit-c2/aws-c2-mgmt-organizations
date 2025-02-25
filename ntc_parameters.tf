@@ -27,7 +27,7 @@ module "ntc_parameters_reader" {
   bucket_name = local.ntc_parameters_bucket_name
 
   providers = {
-    aws = aws.euc1
+    aws = aws.euc2
   }
 }
 

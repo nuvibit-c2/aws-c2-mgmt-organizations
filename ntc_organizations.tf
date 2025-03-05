@@ -21,6 +21,7 @@ module "ntc_organizations" {
     "config-multiaccountsetup.amazonaws.com",
     "guardduty.amazonaws.com",
     "inspector2.amazonaws.com",
+    "macie.amazonaws.com",
     "malware-protection.guardduty.amazonaws.com",
     "access-analyzer.amazonaws.com",
     "sso.amazonaws.com",

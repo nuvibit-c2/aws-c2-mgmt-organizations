@@ -69,7 +69,7 @@ module "ntc_organizations" {
   # new accounts you create in Organizations will have no root user credentials by default
   # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-enable-root-access.html
   centralize_root_access = {
-    enabled  = true
+    enabled = true
     features = [
       # You can delete and audit root credentials of member accounts. You can also allow password recovery for specific member accounts.
       "RootCredentialsManagement",

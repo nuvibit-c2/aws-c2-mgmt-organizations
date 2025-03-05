@@ -70,7 +70,9 @@ module "ntc_organizations" {
   centralize_root_access = {
     enabled  = true
     features = [
+      # You can delete and audit root credentials of member accounts. You can also allow password recovery for specific member accounts.
       "RootCredentialsManagement",
+      # You can take certain root actions in member accounts like deleting misconfigured policies in Amazon SQS or Amazon S3.
       "RootSessions",
     ]
   }

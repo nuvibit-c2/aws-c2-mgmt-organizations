@@ -2,7 +2,8 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.1"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=centralize-root-access"
 
   # enable sharing resources within your organization
   enable_ram_sharing_in_organization = true
@@ -11,6 +12,7 @@ module "ntc_organizations" {
   # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services_list.html
   # the following services will be enabled by default, but can be overwritten
   service_access_principals = [
+    # "iam.amazonaws.com",
     "account.amazonaws.com",
     "servicequotas.amazonaws.com",
     "cloudtrail.amazonaws.com",
@@ -18,8 +20,8 @@ module "ntc_organizations" {
     "config.amazonaws.com",
     "config-multiaccountsetup.amazonaws.com",
     "guardduty.amazonaws.com",
-    "malware-protection.guardduty.amazonaws.com",
     "inspector2.amazonaws.com",
+    "malware-protection.guardduty.amazonaws.com",
     "access-analyzer.amazonaws.com",
     "sso.amazonaws.com",
     "ipam.amazonaws.com",
@@ -60,6 +62,17 @@ module "ntc_organizations" {
     # cloud_watch_logs_existing   = false
     # cloud_watch_logs_group_name = "organization-trail-logs"
     # cloud_watch_logs_role_name  = "organization-trail-logs"
+  }
+
+  # after centralizing root access, you can delete root user credentials from member accounts
+  # new accounts you create in Organizations will have no root user credentials by default
+  # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-enable-root-access.html
+  centralize_root_access = {
+    enabled  = true
+    features = [
+      "RootCredentialsManagement",
+      "RootSessions",
+    ]
   }
 
   # create an organization reader IAM role which can be assumed by specified principals

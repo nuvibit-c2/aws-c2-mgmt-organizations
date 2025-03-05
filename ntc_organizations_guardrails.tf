@@ -28,6 +28,7 @@ module "ntc_guardrail_templates" {
       template_names  = ["deny_outside_allowed_regions"]
       allowed_regions = ["eu-central-1", "eu-central-2"]
       whitelist_for_other_regions = [
+        # allowed global actions
         "a4b:*",
         "acm:*",
         "aws-marketplace-management:*",

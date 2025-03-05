@@ -12,7 +12,7 @@ module "ntc_organizations" {
   # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services_list.html
   # the following services will be enabled by default, but can be overwritten
   service_access_principals = [
-    # "iam.amazonaws.com",
+    "iam.amazonaws.com",
     "account.amazonaws.com",
     "servicequotas.amazonaws.com",
     "cloudtrail.amazonaws.com",

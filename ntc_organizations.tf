@@ -2,8 +2,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.3.1"
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=centralize-root-access"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.4.0"
 
   # enable sharing resources within your organization
   enable_ram_sharing_in_organization = true

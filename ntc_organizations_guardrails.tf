@@ -182,11 +182,12 @@ module "ntc_guardrail_templates" {
     }
   ]
 
+  # resource control policies (RCPs) can apply permission guardrails at the resource level
+  # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html
   resource_control_policy_templates = [
     {
       # this rcp prevents the confused deputy problem for s3, sqs, kms, secretsmanager and sts
       policy_name     = "rcp_enforce_confused_deputy_protection"
-      policy_type     = "RESOURCE_CONTROL_POLICY"
       target_ou_paths = ["/root"]
       template_names  = ["enforce_confused_deputy_protection"]
       # template specific parameters

@@ -45,7 +45,7 @@ module "ntc_organizations" {
   service_control_policies = []
 
   # apply governance policies across organizational units (OUs) and member accounts
-  # there are different types of policies like service control policies (SCP). resource control policies (RCP) and tag policies
+  # there are different types of policies like RESOURCE_CONTROL_POLICY, SERVICE_CONTROL_POLICY, AISERVICES_OPT_OUT_POLICY, BACKUP_POLICY, and TAG_POLICY 
   # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies.html#orgs-policy-types
   organization_policies = [
     # {

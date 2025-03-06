@@ -42,9 +42,7 @@ module "ntc_organizations" {
   ]
 
   # DEPRECATED: use 'organization_policies' instead
-  service_control_policies = [
-    module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
-  ]
+  service_control_policies = []
 
   # apply governance policies across organizational units (OUs) and member accounts
   # there are different types of policies like service control policies (SCP). resource control policies (RCP) and tag policies
@@ -57,7 +55,7 @@ module "ntc_organizations" {
     #   target_account_ids = []
     #   policy_json        = "INSERT_SCP_JSON"
     # }
-    # module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
+    module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
     module.ntc_guardrail_templates.service_control_policies["scp_suspended_ou"],
     # module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou"],
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_confused_deputy_protection"],

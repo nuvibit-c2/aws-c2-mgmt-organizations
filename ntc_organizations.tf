@@ -2,7 +2,8 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.4.0"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.4.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=feat-org-policies"
 
   # enable sharing resources within your organization
   enable_ram_sharing_in_organization = true
@@ -40,17 +41,26 @@ module "ntc_organizations" {
     "/root/workloads/test"
   ]
 
-  # list of SCPs which should be attached to multiple organizational units and/or accounts
+  # DEPRECATED: use 'organization_policies' instead
   service_control_policies = [
+    module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
+  ]
+
+  # apply governance policies across organizational units (OUs) and member accounts
+  # there are different types of policies like service control policies (SCP). resource control policies (RCP) and tag policies
+  # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies.html#orgs-policy-types
+  organization_policies = [
     # {
-    #   policy_name        = "scp_deny_all_outside_eu_regions",
+    #   policy_name        = "scp_deny_all_outside_eu_regions" 
+    #   policy_type        = "SERVICE_CONTROL_POLICY"
     #   target_ou_paths    = ["/root/workloads"]
     #   target_account_ids = []
     #   policy_json        = "INSERT_SCP_JSON"
     # }
-    module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
+    # module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
     module.ntc_guardrail_templates.service_control_policies["scp_suspended_ou"],
     # module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou"],
+    module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_confused_deputy_protection"],
   ]
 
   # s3 log archive bucket must be provisioned before creating the organization trail

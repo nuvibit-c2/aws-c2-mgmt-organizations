@@ -11,14 +11,12 @@ module "ntc_guardrail_templates" {
     {
       # this scp denys member accounts from leaving the organization and any root user actions except for centralized root privilege tasks
       policy_name     = "scp_root_ou"
-      minify_policy   = false
       target_ou_paths = ["/root"]
       template_names  = ["deny_leaving_organizations", "deny_actions_as_root_except_centralized_root"]
     },
     {
       # this scp denys all actions for suspended accounts
       policy_name     = "scp_suspended_ou"
-      minify_policy   = false
       target_ou_paths = ["/root/suspended", "/root/decommission"]
       template_names  = ["deny_all"]
       # template specific parameters
@@ -27,7 +25,6 @@ module "ntc_guardrail_templates" {
     {
       # this scp denys all actions outside allowed regions except global services
       policy_name     = "scp_workloads_ou"
-      minify_policy   = false
       target_ou_paths = ["/root/workloads"]
       template_names  = ["deny_outside_allowed_regions"]
       # template specific parameters
@@ -83,7 +80,6 @@ module "ntc_guardrail_templates" {
       # this scp limits actions both inside and outside allowed regions
       policy_name     = "scp_sandbox_ou"
       policy_type     = "SERVICE_CONTROL_POLICY"
-      minify_policy   = true
       target_ou_paths = ["/root/sandbox"]
       template_names  = ["deny_outside_allowed_regions", "deny_inside_allowed_regions"]
       # template specific parameters
@@ -191,7 +187,6 @@ module "ntc_guardrail_templates" {
       # this rcp prevents the confused deputy problem for s3, sqs, kms, secretsmanager and sts
       policy_name     = "rcp_enforce_confused_deputy_protection"
       policy_type     = "RESOURCE_CONTROL_POLICY"
-      minify_policy   = false
       target_ou_paths = ["/root"]
       template_names  = ["enforce_confused_deputy_protection"]
       # template specific parameters

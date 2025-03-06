@@ -27,7 +27,7 @@ module "ntc_guardrail_templates" {
     {
       # this scp denys all actions outside allowed regions except global services
       policy_name     = "scp_workloads_ou"
-      minify_policy   = true
+      minify_policy   = false
       target_ou_paths = ["/root/workloads"]
       template_names  = ["deny_outside_allowed_regions"]
       # template specific parameters
@@ -76,6 +76,111 @@ module "ntc_guardrail_templates" {
         "waf:*",
         "wafv2:*",
         "wellarchitected:*"
+      ]
+      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+    },
+    {
+      # this scp limits actions both inside and outside allowed regions
+      policy_name     = "scp_sandbox_ou"
+      policy_type     = "SERVICE_CONTROL_POLICY"
+      minify_policy   = true
+      target_ou_paths = ["/root/sandbox"]
+      template_names  = ["deny_outside_allowed_regions", "deny_inside_allowed_regions"]
+      # template specific parameters
+      allowed_regions = ["eu-central-1", "eu-central-2", "eu-west-1", "us-east-1"]
+      whitelist_for_other_regions = [
+        # allowed global actions
+        "a4b:*",
+        "acm:*",
+        "aws-marketplace-management:*",
+        "aws-marketplace:*",
+        "aws-portal:*",
+        "budgets:*",
+        "ce:*",
+        "chime:*",
+        "cloudfront:*",
+        "config:*",
+        "cur:*",
+        "directconnect:*",
+        "ec2:DescribeRegions",
+        "ec2:DescribeTransitGateways",
+        "ec2:DescribeVpnGateways",
+        "fms:*",
+        "globalaccelerator:*",
+        "health:*",
+        "iam:*",
+        "importexport:*",
+        "kms:*",
+        "mobileanalytics:*",
+        "networkmanager:*",
+        "organizations:*",
+        "pricing:*",
+        "route53:*",
+        "route53domains:*",
+        "route53-recovery-cluster:*",
+        "route53-recovery-control-config:*",
+        "route53-recovery-readiness:*",
+        "s3:GetAccountPublic*",
+        "s3:ListAllMyBuckets",
+        "s3:ListMultiRegionAccessPoints",
+        "s3:PutAccountPublic*",
+        "shield:*",
+        "sts:*",
+        "support:*",
+        "trustedadvisor:*",
+        "waf-regional:*",
+        "waf:*",
+        "wafv2:*",
+        "wellarchitected:*"
+      ]
+      whitelist_for_allowed_regions = [
+        # allowed global actions
+        "a4b:*",
+        "acm:*",
+        "aws-marketplace-management:*",
+        "aws-marketplace:*",
+        "aws-portal:*",
+        "budgets:*",
+        "ce:*",
+        "chime:*",
+        "cloudfront:*",
+        "config:*",
+        "cur:*",
+        "directconnect:*",
+        "ec2:DescribeRegions",
+        "ec2:DescribeTransitGateways",
+        "ec2:DescribeVpnGateways",
+        "fms:*",
+        "globalaccelerator:*",
+        "health:*",
+        "iam:*",
+        "importexport:*",
+        "kms:*",
+        "mobileanalytics:*",
+        "networkmanager:*",
+        "organizations:*",
+        "pricing:*",
+        "route53:*",
+        "route53domains:*",
+        "route53-recovery-cluster:*",
+        "route53-recovery-control-config:*",
+        "route53-recovery-readiness:*",
+        "s3:GetAccountPublic*",
+        "s3:ListAllMyBuckets",
+        "s3:ListMultiRegionAccessPoints",
+        "s3:PutAccountPublic*",
+        "shield:*",
+        "sts:*",
+        "support:*",
+        "trustedadvisor:*",
+        "waf-regional:*",
+        "waf:*",
+        "wafv2:*",
+        "wellarchitected:*",
+        # allowed regional actions
+        "lambda:*",
+        "s3:*",
+        "ec2:*"
       ]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     }

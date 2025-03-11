@@ -188,19 +188,77 @@ module "ntc_guardrail_templates" {
     {
       # this rcp prevents the confused deputy problem for s3, sqs, kms, secretsmanager and sts
       policy_name     = "rcp_enforce_confused_deputy_protection"
+      policy_type     = "RESOURCE_CONTROL_POLICY"
       target_ou_paths = ["/root"]
       template_names  = ["enforce_confused_deputy_protection"]
       # template specific parameters
-      org_id = local.ntc_parameters["mgmt-organizations"]["org_id"] # to avoid cyclic dependency do not reference 'ntc_organizations' directly
+      # WARNING: to avoid cyclic dependency do not reference 'module.ntc_organizations.org_id' directly
+      # you can use ntc_paramters as a workaround to pass the org_id
+      org_id = local.ntc_parameters["mgmt-organizations"]["org_id"]
       # list of service actions supported by RCPs
       # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html#rcp-supported-services
-      confused_deputy_protected_actions = [
+      enforced_service_actions = [
         "s3:*",
         "sqs:*",
         "kms:*",
         "secretsmanager:*",
         "sts:*",
       ]
+      # add exception for certain resources
+      exclude_resource_arns = []
+    },
+    {
+      # this rcp prevents aws principals outside your organization to access resources
+      policy_name     = "rcp_enforce_principal_access_from_organization"
+      policy_type     = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths = ["/root"]
+      template_names  = ["enforce_principal_access_from_organization"]
+      # template specific parameters
+      # WARNING: to avoid cyclic dependency do not reference 'module.ntc_organizations.org_id' directly
+      # you can use ntc_paramters as a workaround to pass the org_id
+      org_id = local.ntc_parameters["mgmt-organizations"]["org_id"]
+      # list of service actions supported by RCPs
+      # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html#rcp-supported-services
+      enforced_service_actions = [
+        "s3:*",
+        "sqs:*",
+        "kms:*",
+        "secretsmanager:*",
+        "sts:*",
+      ]
+      # add exception for certain resources
+      exclude_resource_arns = []
+      # add exception for certain principals outside your organization
+      exclude_principal_arns = []
+    },
+    {
+      # this rcp enforces that access to resources only occurs on encrypted connections over HTTPS
+      policy_name     = "rcp_enforce_secure_transport"
+      policy_type     = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths = ["/root"]
+      template_names  = ["enforce_secure_transport"]
+      # list of service actions supported by RCPs
+      # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html#rcp-supported-services
+      enforced_service_actions = [
+        "s3:*",
+        "sqs:*",
+        "kms:*",
+        "secretsmanager:*",
+        "sts:*",
+      ]
+      # add exception for certain resources
+      exclude_resource_arns = []
+    },
+    {
+      # this rcp enforces access controls on S3 buckets by requiring kms encryption and a minimum TLS version
+      policy_name     = "rcp_enforce_s3_encryption_and_tls_version"
+      policy_type     = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths = ["/root"]
+      template_names  = ["enforce_s3_kms_encryption", "enforce_s3_tls_version"]
+      # set the minimum TLS version for access to S3 buckets
+      s3_tls_minimum_version = "1.3"
+      # add exception for certain resources
+      exclude_resource_arns = []
     },
   ]
 }

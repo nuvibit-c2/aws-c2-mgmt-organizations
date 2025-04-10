@@ -30,8 +30,6 @@ module "ntc_organizations" {
 
   # list of nested (up to 5 levels) organizational units
   organizational_unit_paths = [
-    "/root/infrastructure",
-    "/root/security",
     "/root/core",
     "/root/sandbox",
     "/root/suspended",

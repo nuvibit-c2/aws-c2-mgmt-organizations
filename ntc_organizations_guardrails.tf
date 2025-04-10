@@ -22,7 +22,7 @@ module "ntc_guardrail_templates" {
       policy_name     = "scp_suspended_ou"
       target_ou_paths = [
         "/root/suspended", 
-        "/root/decommission"
+        "/root/transitional"
       ]
       template_names  = ["deny_all"]
       # template specific parameters

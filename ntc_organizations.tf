@@ -32,9 +32,10 @@ module "ntc_organizations" {
   organizational_unit_paths = [
     "/root/infrastructure",
     "/root/security",
+    "/root/core",
     "/root/sandbox",
     "/root/suspended",
-    "/root/decommission",
+    "/root/transitional",
     "/root/workloads",
     "/root/workloads/prod",
     "/root/workloads/dev",

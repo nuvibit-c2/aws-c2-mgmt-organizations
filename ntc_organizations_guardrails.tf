@@ -12,12 +12,18 @@ module "ntc_guardrail_templates" {
       # this scp denys member accounts from leaving the organization and any root user actions except for centralized root privilege tasks
       policy_name     = "scp_root_ou"
       target_ou_paths = ["/root"]
-      template_names  = ["deny_leaving_organizations", "deny_actions_as_root_except_centralized_root"]
+      template_names  = [
+        "deny_leaving_organizations", 
+        "deny_actions_as_root_except_centralized_root"
+      ]
     },
     {
       # this scp denys all actions for suspended accounts
       policy_name     = "scp_suspended_ou"
-      target_ou_paths = ["/root/suspended", "/root/decommission"]
+      target_ou_paths = [
+        "/root/suspended", 
+        "/root/decommission"
+      ]
       template_names  = ["deny_all"]
       # template specific parameters
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
@@ -28,7 +34,10 @@ module "ntc_guardrail_templates" {
       target_ou_paths = ["/root/workloads"]
       template_names  = ["deny_outside_allowed_regions"]
       # template specific parameters
-      allowed_regions = ["eu-central-1", "eu-central-2"]
+      allowed_regions = [
+        "eu-central-1", 
+        "eu-central-2"
+      ]
       whitelist_for_other_regions = [
         # allowed global actions
         "a4b:*",
@@ -81,9 +90,17 @@ module "ntc_guardrail_templates" {
       policy_name     = "scp_sandbox_ou"
       policy_type     = "SERVICE_CONTROL_POLICY"
       target_ou_paths = ["/root/sandbox"]
-      template_names  = ["deny_outside_allowed_regions", "deny_inside_allowed_regions"]
+      template_names  = [
+        "deny_outside_allowed_regions", 
+        "deny_inside_allowed_regions"
+      ]
       # template specific parameters
-      allowed_regions = ["eu-central-1", "eu-central-2", "eu-west-1", "us-east-1"]
+      allowed_regions = [
+        "eu-central-1", 
+        "eu-central-2", 
+        "eu-west-1", 
+        "us-east-1"
+      ]
       whitelist_for_other_regions = [
         # allowed global actions
         "a4b:*",
@@ -224,7 +241,9 @@ module "ntc_guardrail_templates" {
         "sqs:*",
         "kms:*",
         "secretsmanager:*",
-        "sts:*",
+        # WARNING: do not include all sts actions to avoid conflicts with identity center
+        "sts:AssumeRole",                
+        "sts:SetContext",
       ]
       # add exception for certain resources
       exclude_resource_arns = []
@@ -254,7 +273,10 @@ module "ntc_guardrail_templates" {
       policy_name     = "rcp_enforce_s3_encryption_and_tls_version"
       policy_type     = "RESOURCE_CONTROL_POLICY"
       target_ou_paths = ["/root"]
-      template_names  = ["enforce_s3_kms_encryption", "enforce_s3_tls_version"]
+      template_names  = [
+        "enforce_s3_kms_encryption", 
+        "enforce_s3_tls_version"
+      ]
       # set the minimum TLS version for access to S3 buckets
       s3_tls_minimum_version = "1.3"
       # add exception for certain resources

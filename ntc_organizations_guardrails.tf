@@ -278,7 +278,7 @@ module "ntc_guardrail_templates" {
         "enforce_s3_tls_version"
       ]
       # set the minimum TLS version for access to S3 buckets
-      s3_tls_minimum_version = "1.3"
+      s3_tls_minimum_version = "1.2"
       # add exception for certain resources
       exclude_resource_arns = []
     },

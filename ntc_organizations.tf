@@ -64,17 +64,6 @@ module "ntc_organizations" {
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_s3_encryption_and_tls_version"],
   ]
 
-  # s3 log archive bucket must be provisioned before creating the organization trail
-  organization_trail = {
-    kms_key_arn    = try(local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["org_cloudtrail"], null)
-    s3_bucket_name = try(local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"], null)
-    # (optional) log cloudtrail to cloudwatch for real time analysis
-    cloud_watch_logs_enable = false
-    # cloud_watch_logs_existing   = false
-    # cloud_watch_logs_group_name = "organization-trail-logs"
-    # cloud_watch_logs_role_name  = "organization-trail-logs"
-  }
-
   # after centralizing root access, you can delete root user credentials from member accounts
   # new accounts you create in Organizations will have no root user credentials by default
   # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-enable-root-access.html
@@ -88,14 +77,24 @@ module "ntc_organizations" {
     ]
   }
 
+  # s3 log archive bucket must be provisioned before creating the organization trail
+  organization_trail = {
+    kms_key_arn    = try(local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["org_cloudtrail"], null)
+    s3_bucket_name = try(local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"], null)
+    # (optional) log cloudtrail to cloudwatch for real time analysis
+    cloud_watch_logs_enable = false
+    # cloud_watch_logs_existing   = false
+    # cloud_watch_logs_group_name = "organization-trail-logs"
+    # cloud_watch_logs_role_name  = "organization-trail-logs"
+  }
+
   # create an organization reader IAM role which can be assumed by specified principals
-  # optional for 'ntc-security-tooling' and required for 'ntc-cross-account-orchestration'
+  # can be used for 'ntc-security-tooling' to enrich findings with alternate contact information (e.g. security contact information)
   organization_reader = {
     enabled = true
     # list of IAM principals which can assume the org_reader role (e.g. account ids)
     allowed_principals = [
-      local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"],
-      local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-connectivity"]
+      local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
     ]
     iam_role_name   = "ntc-org-account-reader"
     iam_role_path   = "/"

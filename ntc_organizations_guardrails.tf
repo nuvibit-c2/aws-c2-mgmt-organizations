@@ -28,6 +28,7 @@ module "ntc_guardrail_templates" {
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
     {
+      # this scp denys all actions outside allowed regions except global services
       policy_name        = "scp_workloads_ou"
       policy_description = "Deny all actions outside allowed regions except global services"
       target_ou_paths    = ["/root/workloads"]
@@ -86,7 +87,7 @@ module "ntc_guardrail_templates" {
     },
     {
       policy_name        = "scp_sandbox_ou"
-      policy_description = "Deny all actions outside allowed regions except global services"
+      policy_description = "Deny all actions outside allowed regions and inside allowed regions except global services"
       policy_type        = "SERVICE_CONTROL_POLICY"
       target_ou_paths    = ["/root/sandbox"]
       template_names = [
@@ -225,7 +226,7 @@ module "ntc_guardrail_templates" {
     },
     {
       policy_name        = "rcp_enforce_principal_access_from_organization"
-      policy_description = "Enforce principal access from organization for s3, sqs, kms, secretsmanager and sts"
+      policy_description = "Prevent aws principals outside your organization to access resources"
       policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names     = ["enforce_principal_access_from_organization"]
@@ -251,7 +252,7 @@ module "ntc_guardrail_templates" {
     },
     {
       policy_name        = "rcp_enforce_secure_transport"
-      policy_description = "Enforce secure transport for s3, sqs, kms, secretsmanager and sts"
+      policy_description = "Enforce that access to resources only occurs on encrypted connections over HTTPS"
       policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names     = ["enforce_secure_transport"]
@@ -269,7 +270,7 @@ module "ntc_guardrail_templates" {
     },
     {
       policy_name        = "rcp_enforce_s3_encryption_and_tls_version"
-      policy_description = "Enforce S3 encryption and TLS version"
+      policy_description = "Enforce access controls on S3 buckets by requiring kms encryption and a minimum TLS version"
       policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names = [

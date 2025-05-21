@@ -8,33 +8,33 @@ module "ntc_guardrail_templates" {
   # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html
   service_control_policy_templates = [
     {
-      # this scp denys member accounts from leaving the organization and any root user actions except for centralized root privilege tasks
-      policy_name     = "scp_root_ou"
-      target_ou_paths = ["/root"]
-      template_names  = [
-        "deny_leaving_organizations", 
+      policy_name        = "scp_root_ou"
+      policy_description = "Deny leaving the organization and root user actions except for centralized root privilege tasks"
+      target_ou_paths    = ["/root"]
+      template_names = [
+        "deny_leaving_organizations",
         "deny_actions_as_root_except_centralized_root"
       ]
     },
     {
-      # this scp denys all actions for suspended accounts
-      policy_name     = "scp_suspended_ou"
+      policy_name        = "scp_suspended_ou"
+      policy_description = "Deny all actions for suspended accounts"
       target_ou_paths = [
-        "/root/suspended", 
+        "/root/suspended",
         "/root/transitional"
       ]
-      template_names  = ["deny_all"]
+      template_names = ["deny_all"]
       # template specific parameters
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
     {
-      # this scp denys all actions outside allowed regions except global services
-      policy_name     = "scp_workloads_ou"
-      target_ou_paths = ["/root/workloads"]
-      template_names  = ["deny_outside_allowed_regions"]
+      policy_name        = "scp_workloads_ou"
+      policy_description = "Deny all actions outside allowed regions except global services"
+      target_ou_paths    = ["/root/workloads"]
+      template_names     = ["deny_outside_allowed_regions"]
       # template specific parameters
       allowed_regions = [
-        "eu-central-1", 
+        "eu-central-1",
         "eu-central-2"
       ]
       whitelist_for_other_regions = [
@@ -85,19 +85,19 @@ module "ntc_guardrail_templates" {
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
     {
-      # this scp limits actions both inside and outside allowed regions
-      policy_name     = "scp_sandbox_ou"
-      policy_type     = "SERVICE_CONTROL_POLICY"
-      target_ou_paths = ["/root/sandbox"]
-      template_names  = [
-        "deny_outside_allowed_regions", 
+      policy_name        = "scp_sandbox_ou"
+      policy_description = "Deny all actions outside allowed regions except global services"
+      policy_type        = "SERVICE_CONTROL_POLICY"
+      target_ou_paths    = ["/root/sandbox"]
+      template_names = [
+        "deny_outside_allowed_regions",
         "deny_inside_allowed_regions"
       ]
       # template specific parameters
       allowed_regions = [
-        "eu-central-1", 
-        "eu-central-2", 
-        "eu-west-1", 
+        "eu-central-1",
+        "eu-central-2",
+        "eu-west-1",
         "us-east-1"
       ]
       whitelist_for_other_regions = [
@@ -202,11 +202,11 @@ module "ntc_guardrail_templates" {
   # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html
   resource_control_policy_templates = [
     {
-      # this rcp prevents the confused deputy problem for s3, sqs, kms, secretsmanager and sts
-      policy_name     = "rcp_enforce_confused_deputy_protection"
-      policy_type     = "RESOURCE_CONTROL_POLICY"
-      target_ou_paths = ["/root"]
-      template_names  = ["enforce_confused_deputy_protection"]
+      policy_name        = "rcp_enforce_confused_deputy_protection"
+      policy_description = "Enforce confused deputy protection for s3, sqs, kms, secretsmanager and sts"
+      policy_type        = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths    = ["/root"]
+      template_names     = ["enforce_confused_deputy_protection"]
       # template specific parameters
       # WARNING: to avoid cyclic dependency do not reference 'module.ntc_organizations.org_id' directly
       # you can use ntc_paramters as a workaround to pass the org_id
@@ -224,11 +224,11 @@ module "ntc_guardrail_templates" {
       exclude_resource_arns = []
     },
     {
-      # this rcp prevents aws principals outside your organization to access resources
-      policy_name     = "rcp_enforce_principal_access_from_organization"
-      policy_type     = "RESOURCE_CONTROL_POLICY"
-      target_ou_paths = ["/root"]
-      template_names  = ["enforce_principal_access_from_organization"]
+      policy_name        = "rcp_enforce_principal_access_from_organization"
+      policy_description = "Enforce principal access from organization for s3, sqs, kms, secretsmanager and sts"
+      policy_type        = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths    = ["/root"]
+      template_names     = ["enforce_principal_access_from_organization"]
       # template specific parameters
       # WARNING: to avoid cyclic dependency do not reference 'module.ntc_organizations.org_id' directly
       # you can use ntc_paramters as a workaround to pass the org_id
@@ -241,7 +241,7 @@ module "ntc_guardrail_templates" {
         "kms:*",
         "secretsmanager:*",
         # WARNING: do not include all sts actions to avoid conflicts with identity center
-        "sts:AssumeRole",                
+        "sts:AssumeRole",
         "sts:SetContext",
       ]
       # add exception for certain resources
@@ -250,11 +250,11 @@ module "ntc_guardrail_templates" {
       exclude_principal_arns = []
     },
     {
-      # this rcp enforces that access to resources only occurs on encrypted connections over HTTPS
-      policy_name     = "rcp_enforce_secure_transport"
-      policy_type     = "RESOURCE_CONTROL_POLICY"
-      target_ou_paths = ["/root"]
-      template_names  = ["enforce_secure_transport"]
+      policy_name        = "rcp_enforce_secure_transport"
+      policy_description = "Enforce secure transport for s3, sqs, kms, secretsmanager and sts"
+      policy_type        = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths    = ["/root"]
+      template_names     = ["enforce_secure_transport"]
       # list of service actions supported by RCPs
       # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html#rcp-supported-services
       enforced_service_actions = [
@@ -268,12 +268,12 @@ module "ntc_guardrail_templates" {
       exclude_resource_arns = []
     },
     {
-      # this rcp enforces access controls on S3 buckets by requiring kms encryption and a minimum TLS version
-      policy_name     = "rcp_enforce_s3_encryption_and_tls_version"
-      policy_type     = "RESOURCE_CONTROL_POLICY"
-      target_ou_paths = ["/root"]
-      template_names  = [
-        "enforce_s3_kms_encryption", 
+      policy_name        = "rcp_enforce_s3_encryption_and_tls_version"
+      policy_description = "Enforce S3 encryption and TLS version"
+      policy_type        = "RESOURCE_CONTROL_POLICY"
+      target_ou_paths    = ["/root"]
+      template_names = [
+        "enforce_s3_kms_encryption",
         "enforce_s3_tls_version"
       ]
       # set the minimum TLS version for access to S3 buckets

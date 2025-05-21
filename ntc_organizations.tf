@@ -78,15 +78,15 @@ module "ntc_organizations" {
   }
 
   # s3 log archive bucket must be provisioned before creating the organization trail
-  # organization_trail = {
-  #   kms_key_arn    = try(local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["org_cloudtrail"], null)
-  #   s3_bucket_name = try(local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"], null)
-  #   # (optional) log cloudtrail to cloudwatch for real time analysis
-  #   cloud_watch_logs_enable = false
-  #   # cloud_watch_logs_existing   = false
-  #   # cloud_watch_logs_group_name = "organization-trail-logs"
-  #   # cloud_watch_logs_role_name  = "organization-trail-logs"
-  # }
+  organization_trail = {
+    kms_key_arn    = try(local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["org_cloudtrail"], null)
+    s3_bucket_name = try(local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"], null)
+    # (optional) log cloudtrail to cloudwatch for real time analysis
+    cloud_watch_logs_enable = false
+    # cloud_watch_logs_existing   = false
+    # cloud_watch_logs_group_name = "organization-trail-logs"
+    # cloud_watch_logs_role_name  = "organization-trail-logs"
+  }
 
   # create an organization reader IAM role which can be assumed by specified principals
   # can be used for 'ntc-security-tooling' to enrich findings with alternate contact information (e.g. security contact information)

@@ -1,0 +1,27 @@
+name: TERRAFORM STACK
+
+on:
+  # NOTE: pull requests are enforced and therefore checks will always run on pull requests
+  pull_request:
+    branches:
+      - main
+  # NOTE: after merging a pull request, Spacelift will execute the plan and apply independently (no checks required)
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  terraform-stack:
+    uses: nuvibit/github-terraform-workflows/.github/workflows/terraform-stack.yml@feat-v2
+    with:
+      # Use OpenTofu instead of Terraform 
+      use_opentofu: "true"
+      # Spacelift will execute the plan and apply
+      # Github Actions will only run static code checks 
+      enable_terraform_execution: "false"
+      # Access NTC modules via GitHub App
+      terraform_modules_auth: "github-app"
+    secrets:
+      # GitHub App credentials for accessing NTC modules
+      TERRAFORM_MODULES_APP_ID: ${{ secrets.TERRAFORM_MODULES_APP_ID }}
+      TERRAFORM_MODULES_APP_PRIVATE_KEY: ${{ secrets.TERRAFORM_MODULES_APP_PRIVATE_KEY }}

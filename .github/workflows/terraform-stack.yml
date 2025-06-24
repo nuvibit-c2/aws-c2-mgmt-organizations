@@ -10,6 +10,13 @@ on:
   #   branches:
   #     - main
 
+# Grant necessary permissions for the workflow
+permissions:
+  contents: write        # Required to push changes back to the repository
+  pull-requests: write   # Required to update pull request comments
+  issues: write          # Required to create/update issue comments
+  checks: write          # Required for status checks
+
 jobs:
   terraform-stack:
     uses: nuvibit/github-terraform-workflows/.github/workflows/terraform-stack.yml@feat-v2

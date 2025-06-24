@@ -5,7 +5,7 @@ on:
   pull_request:
     branches:
       - main
-  # NOTE: after merging a pull request, Spacelift will execute the plan and apply independently (no checks required)
+  # NOTE: Spacelift will execute the plan and apply independently (run checks only on pull requests)
   # push:
   #   branches:
   #     - main

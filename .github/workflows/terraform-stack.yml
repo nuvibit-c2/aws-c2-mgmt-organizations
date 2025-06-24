@@ -21,6 +21,7 @@ jobs:
       enable_terraform_execution: "false"
       # Access NTC modules via GitHub App
       terraform_modules_auth: "github-app"
+      terraform_modules_github_owner: "nuvibit-terraform-collection"
     secrets:
       # GitHub App credentials for accessing NTC modules
       TERRAFORM_MODULES_APP_ID: ${{ secrets.TERRAFORM_MODULES_APP_ID }}

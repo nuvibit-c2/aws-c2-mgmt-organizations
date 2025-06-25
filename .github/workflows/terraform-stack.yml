@@ -12,7 +12,7 @@ on:
 
 jobs:
   terraform-stack:
-    uses: nuvibit/github-terraform-workflows/.github/workflows/terraform-stack.yml@feat-v2
+    uses: nuvibit/github-terraform-workflows/.github/workflows/terraform-stack.yml@feat-v2 # @v2 
     with:
       # Use OpenTofu instead of Terraform 
       use_opentofu: true

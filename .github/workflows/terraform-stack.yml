@@ -12,20 +12,14 @@ on:
 
 jobs:
   terraform-stack:
-    uses: nuvibit/github-terraform-workflows/.github/workflows/terraform-stack.yml@feat-v2
+    uses: nuvibit/github-terraform-workflows/.github/workflows/terraform-stack.yml@v2
     with:
       # Use OpenTofu instead of Terraform 
       use_opentofu: true
       # Spacelift will execute the plan and apply
       # Github Actions will only run static code checks 
       enable_terraform_execution: false
-      # Access NTC modules via GitHub App
-      terraform_modules_auth: "github-app"
-      terraform_modules_github_owner: "nuvibit-terraform-collection"
     secrets:
       # GitHub App credentials used instead of default GITHUB_TOKEN
-      ADMIN_APP_ID: ${{ secrets.ADMIN_APP_ID }}
-      ADMIN_APP_PRIVATE_KEY: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
-      # GitHub App credentials for accessing NTC modules
-      TERRAFORM_MODULES_APP_ID: ${{ secrets.TERRAFORM_MODULES_APP_ID }}
-      TERRAFORM_MODULES_APP_PRIVATE_KEY: ${{ secrets.TERRAFORM_MODULES_APP_PRIVATE_KEY }}
+      GH_APP_ID: ${{ secrets.GH_APP_ID }}
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}

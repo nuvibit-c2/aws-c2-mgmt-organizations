@@ -8,3 +8,8 @@ import {
   id = "o-m29e8d9awz"
 }
 */
+
+import {
+  to = module.ntc_parameters_bucket.aws_s3_bucket.ntc_parameters
+  id = "aws-c2-ntc-parameters"
+}

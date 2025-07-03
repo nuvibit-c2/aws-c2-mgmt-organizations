@@ -53,13 +53,21 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 data "aws_region" "default" {}
 data "aws_caller_identity" "current" {}
+data "aws_organizations_organization" "current" {}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
+  # default tags are applied to all resources the provider creates
   default_tags = {
     ManagedBy     = "OpenTofu"
     ProvisionedBy = "aws-c2-mgmt-organizations"
+  }
+
+  # get all aws account ids in the organization
+  org_account_ids = {
+    for account in data.aws_organizations_organization.current.accounts :
+    account.name => account.id if account.status == "ACTIVE"
   }
 }

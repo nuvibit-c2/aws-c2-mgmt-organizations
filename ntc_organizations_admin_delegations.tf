@@ -40,7 +40,7 @@ locals {
 # ¦ NTC ORGANIZATIONS - ADMIN DELEGATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_delegated_admins_euc1" {
-source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.5.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.5.0"
 
   delegated_administrators = concat(local.global_delegated_administrators, local.regional_delegated_administrators)
 
@@ -50,7 +50,7 @@ source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organization
 }
 
 module "ntc_delegated_admins_euc2" {
-source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.5.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.5.0"
 
   delegated_administrators = local.regional_delegated_administrators
 
@@ -60,7 +60,7 @@ source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organization
 }
 
 module "ntc_delegated_admins_use1" {
-source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.5.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations?ref=1.5.0"
 
   delegated_administrators = local.regional_delegated_administrators
 

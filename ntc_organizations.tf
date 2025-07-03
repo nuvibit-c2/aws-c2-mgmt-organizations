@@ -109,7 +109,7 @@ module "ntc_organizations" {
 # ¦ NTC ORGANIZATIONS - SERVICE QUOTAS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organization_quotas" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=1.3.0"
+source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas?ref=1.5.0"
 
   # increase service quotas for the org management account
   increase_aws_service_quotas = {

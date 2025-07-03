@@ -21,31 +21,31 @@ The following Modules are called:
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations
 
-Version: 1.4.0
+Version: 1.5.0
 
 ### ntc\_delegated\_admins\_euc2
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations
 
-Version: 1.4.0
+Version: 1.5.0
 
 ### ntc\_delegated\_admins\_use1
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/regional-admin-delegations
 
-Version: 1.4.0
+Version: 1.5.0
 
 ### ntc\_guardrail\_templates
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates
 
-Version: 1.2.0
+Version: 1.2.1
 
 ### ntc\_organization\_quotas
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations//modules/service-quotas
 
-Version: 1.3.0
+Version: 1.5.0
 
 ### ntc\_organizations
 

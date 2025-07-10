@@ -245,11 +245,7 @@ module "ntc_guardrail_templates" {
         "sts:SetContext",
       ]
       # add exception for certain resources
-      exclude_resource_arns = [
-        # s3 buckets are updated by github actions via OIDC
-        "arn:aws:s3:::docs.nuvibit.com",
-        "arn:aws:s3:::www.nuvibit.com",
-      ]
+      exclude_resource_arns = []
       # add exception for certain principals outside your organization
       exclude_principal_arns = []
     },

@@ -203,12 +203,17 @@ module "ntc_guardrail_templates" {
       policy_description = "Allow only C5 compliant services in EU regions"
       policy_type        = "SERVICE_CONTROL_POLICY"
       target_ou_paths    = ["/root/sandbox"] # change to '/root' to enforce for entire organization
+      # SCP template names that define the policy logic:
+      # - deny_outside_allowed_regions: blocks all actions outside allowed_regions (except whitelist_for_other_regions)
+      # - deny_inside_allowed_regions: blocks non-whitelisted actions inside allowed_regions (only allows whitelist_for_allowed_regions)
       template_names = [
         # scp templates to deny actions in all regions
         "deny_outside_allowed_regions",
         "deny_inside_allowed_regions",
       ]
-      # european regions inside C5 compliance scope
+      # European regions within C5 compliance scope
+      # These are the ONLY regions where C5 compliant services can be deployed
+      # All other regions will be blocked by the SCP
       allowed_regions = [
         "eu-central-1",
         "eu-central-2", 
@@ -219,8 +224,11 @@ module "ntc_guardrail_templates" {
         "eu-south-1",
         "eu-south-2"
       ]
+      # Services allowed to run in regions OUTSIDE of the allowed_regions list
+      # These are typically global services that don't have regional endpoints
+      # or services that must be accessed globally (like IAM, CloudFront, Route53)
       whitelist_for_other_regions = [
-        # allowed global services (C5 compliant)
+        # global C5 compliant services
         "acm:*",
         "budgets:*",
         "ce:*",
@@ -235,8 +243,10 @@ module "ntc_guardrail_templates" {
         "support:*",
         "waf:*"
       ]
+      # Services allowed to run WITHIN the allowed_regions list (EU regions for C5 compliance)
+      # This is the comprehensive list of ALL C5 compliant services that can be used
+      # in the specified European regions
       whitelist_for_allowed_regions = [
-        # only allow services in C5 compliance scope
         # Essential AWS services (always needed)
         "aws-portal:*",
         "budgets:*",

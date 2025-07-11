@@ -469,7 +469,7 @@ module "ntc_guardrail_templates" {
         "freertos:*"
       ]
       # NOTE: not even the 'OrganizationAccountAccessRole' is allowed to configure non C5 compliant services
-      # exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = []
     }
   ]
 

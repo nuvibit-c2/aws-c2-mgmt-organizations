@@ -207,7 +207,6 @@ module "ntc_guardrail_templates" {
       # - deny_outside_allowed_regions: blocks all actions outside allowed_regions (except whitelist_for_other_regions)
       # - deny_inside_allowed_regions: blocks non-whitelisted actions inside allowed_regions (only allows whitelist_for_allowed_regions)
       template_names = [
-        # scp templates to deny actions in all regions
         "deny_outside_allowed_regions",
         "deny_inside_allowed_regions",
       ]
@@ -215,260 +214,258 @@ module "ntc_guardrail_templates" {
       # These are the ONLY regions where C5 compliant services can be deployed
       # All other regions will be blocked by the SCP
       allowed_regions = [
-        "eu-central-1",
-        "eu-central-2",
-        "eu-west-1",
-        "eu-west-2",
-        "eu-west-3",
-        "eu-north-1",
-        "eu-south-1",
-        "eu-south-2"
+        "eu-central-1", # Frankfurt
+        "eu-central-2", # Zürich
+        "eu-west-1",    # Ireland
+        "eu-west-2",    # London
+        "eu-west-3",    # Paris
+        "eu-north-1",   # Stockholm
+        "eu-south-1",   # Milan
+        "eu-south-2",   # Spain
       ]
       # Services allowed to run in regions OUTSIDE of the allowed_regions list
       # These are typically global services that don't have regional endpoints
       # or services that must be accessed globally (like IAM, CloudFront, Route53)
       whitelist_for_other_regions = [
-        # global C5 compliant services
-        "acm:*",
-        "budgets:*",
-        "ce:*",
-        "cloudfront:*",
-        "health:*",
-        "iam:*",
-        "kms:*",
-        "organizations:*",
-        "route53:*",
-        "shield:*",
-        "sts:*",
-        "support:*",
-        "waf:*"
+        "acm:*",                     # AWS Certificate Manager
+        "budgets:*",                 # AWS Budgets
+        "ce:*",                      # AWS Cost Explorer Service
+        "cloudfront:*",              # Amazon CloudFront
+        "health:*",                  # AWS Health APIs and Notifications
+        "iam:*",                     # AWS Identity and Access Management
+        "kms:*",                     # AWS Key Management Service
+        "organizations:*",           # AWS Organizations
+        "route53:*",                 # Amazon Route 53
+        "shield:*",                  # AWS Shield
+        "sts:*",                     # AWS Security Token Service
+        "support:*",                 # AWS Support
+        "waf:*"                      # AWS WAF
       ]
       # Services allowed to run WITHIN the allowed_regions list (EU regions for C5 compliance)
       # This is the comprehensive list of ALL C5 compliant services that can be used
       # in the specified European regions
       whitelist_for_allowed_regions = [
-        # Essential AWS services (always needed)
-        "aws-portal:*",
-        "budgets:*",
-        "ce:*",
-        "health:*",
-        "iam:*",
-        "kms:*",
-        "organizations:*",
-        "pricing:*",
-        "sts:*",
-        "support:*",
-        "trustedadvisor:*",
+        # Essential AWS services
+        "aws-portal:*",                # AWS Billing and Cost Management
+        "budgets:*",                   # AWS Budgets
+        "ce:*",                        # AWS Cost Explorer
+        "health:*",                    # AWS Health Dashboard
+        "iam:*",                       # AWS Identity and Access Management (IAM)
+        "kms:*",                       # AWS Key Management Service
+        "organizations:*",             # AWS Organizations
+        "pricing:*",                   # AWS Price List API
+        "sts:*",                       # AWS Security Token Service (STS)
+        "support:*",                   # AWS Support
+        "trustedadvisor:*",            # AWS Trusted Advisor
 
-        # C5 Compliant Services - Compute & Containers
-        "ec2:*",
-        "ecs:*",
-        "eks:*",
-        "lambda:*",
-        "batch:*",
-        "apprunner:*",
-        "autoscaling:*",
-        "imagebuilder:*",
-        "elasticbeanstalk:*",
+        # Compute & Containers
+        "ec2:*",                       # Amazon EC2
+        "ecs:*",                       # Amazon ECS
+        "eks:*",                       # Amazon EKS
+        "lambda:*",                    # AWS Lambda
+        "batch:*",                     # AWS Batch
+        "apprunner:*",                 # AWS App Runner
+        "autoscaling:*",               # Amazon EC2 Auto Scaling
+        "imagebuilder:*",              # EC2 Image Builder
+        "elasticbeanstalk:*",          # AWS Elastic Beanstalk
 
-        # C5 Compliant Services - Storage
-        "s3:*",
-        "elasticfilesystem:*",
-        "fsx:*",
-        "glacier:*",
-        "storagegateway:*",
-        "backup:*",
+        # Storage
+        "s3:*",                        # Amazon S3
+        "elasticfilesystem:*",         # Amazon EFS
+        "fsx:*",                       # Amazon FSx
+        "glacier:*",                   # Amazon S3 Glacier
+        "storagegateway:*",            # AWS Storage Gateway
+        "backup:*",                    # AWS Backup
 
-        # C5 Compliant Services - Databases
-        "rds:*",
-        "dynamodb:*",
-        "docdb:*",
-        "elasticache:*",
-        "memorydb:*",
-        "neptune:*",
-        "redshift:*",
-        "timestream:*",
-        "qldb:*",
-        "cassandra:*",
+        # Databases
+        "rds:*",                       # Amazon RDS
+        "dynamodb:*",                  # Amazon DynamoDB
+        "docdb:*",                     # Amazon DocumentDB
+        "elasticache:*",               # Amazon ElastiCache
+        "memorydb:*",                  # Amazon MemoryDB
+        "neptune:*",                   # Amazon Neptune
+        "redshift:*",                  # Amazon Redshift
+        "timestream:*",                # Amazon Timestream
+        "qldb:*",                      # Amazon QLDB
+        "cassandra:*",                 # Amazon Keyspaces (for Apache Cassandra)
 
-        # C5 Compliant Services - Networking & Content Delivery
-        "cloudfront:*",
-        "route53:*",
-        "directconnect:*",
-        "elasticloadbalancing:*",
-        "globalaccelerator:*",
-        "appmesh:*",
-        "servicediscovery:*",
-        "apigateway:*",
+        # Networking & Content Delivery
+        "cloudfront:*",                # Amazon CloudFront
+        "route53:*",                   # Amazon Route 53
+        "directconnect:*",             # AWS Direct Connect
+        "elasticloadbalancing:*",      # Elastic Load Balancing
+        "globalaccelerator:*",         # AWS Global Accelerator
+        "appmesh:*",                   # AWS App Mesh
+        "servicediscovery:*",          # AWS Cloud Map
+        "apigateway:*",                # Amazon API Gateway
 
-        # C5 Compliant Services - Security, Identity & Compliance
-        "sso:*",
-        "cloudhsm:*",
-        "acm:*",
-        "secretsmanager:*",
-        "cloudtrail:*",
-        "config:*",
-        "securityhub:*",
-        "guardduty:*",
-        "inspector:*",
-        "macie:*",
-        "shield:*",
-        "waf:*",
-        "network-firewall:*",
-        "fms:*",
-        "detective:*",
-        "auditmanager:*",
-        "artifact:*",
-        "acm-pca:*",
-        "payment-cryptography:*",
-        "signer:*",
-        "securitylake:*",
+        # Security, Identity & Compliance
+        "sso:*",                       # AWS IAM Identity Center (successor to AWS SSO)
+        "cloudhsm:*",                  # AWS CloudHSM
+        "acm:*",                       # AWS Certificate Manager
+        "secretsmanager:*",            # AWS Secrets Manager
+        "cloudtrail:*",                # AWS CloudTrail
+        "config:*",                    # AWS Config
+        "securityhub:*",               # AWS Security Hub
+        "guardduty:*",                 # Amazon GuardDuty
+        "inspector:*",                 # Amazon Inspector
+        "macie:*",                     # Amazon Macie
+        "shield:*",                    # AWS Shield
+        "waf:*",                       # AWS WAF
+        "network-firewall:*",          # AWS Network Firewall
+        "fms:*",                       # AWS Firewall Manager
+        "detective:*",                 # Amazon Detective
+        "auditmanager:*",              # AWS Audit Manager
+        "artifact:*",                  # AWS Artifact
+        "acm-pca:*",                   # AWS Private CA
+        "payment-cryptography:*",      # AWS Payment Cryptography
+        "signer:*",                    # AWS Signer
+        "securitylake:*",              # Amazon Security Lake
 
-        # C5 Compliant Services - Analytics
-        "athena:*",
-        "elasticmapreduce:*",
-        "glue:*",
-        "databrew:*",
-        "kinesis:*",
-        "kinesisvideo:*",
-        "firehose:*",
-        "es:*",
-        "quicksight:*",
-        "lakeformation:*",
-        "datazone:*",
-        "kinesisanalytics:*",
-        "kafka:*",
-        "dataexchange:*",
-        "entityresolution:*",
-        "finspace:*",
+        # Analytics
+        "athena:*",                    # Amazon Athena
+        "elasticmapreduce:*",          # Amazon EMR
+        "glue:*",                      # AWS Glue
+        "databrew:*",                  # AWS Glue DataBrew
+        "kinesis:*",                   # Amazon Kinesis
+        "kinesisvideo:*",              # Amazon Kinesis Video Streams
+        "firehose:*",                  # Amazon Kinesis Data Firehose
+        "es:*",                        # Amazon OpenSearch Service
+        "quicksight:*",                # Amazon QuickSight
+        "lakeformation:*",             # AWS Lake Formation
+        "datazone:*",                  # Amazon DataZone
+        "kinesisanalytics:*",          # Amazon Kinesis Data Analytics
+        "kafka:*",                     # Amazon Managed Streaming for Apache Kafka (MSK)
+        "dataexchange:*",              # AWS Data Exchange
+        "entityresolution:*",          # AWS Entity Resolution
+        "finspace:*",                  # Amazon FinSpace
 
-        # C5 Compliant Services - Machine Learning
-        "sagemaker:*",
-        "comprehend:*",
-        "comprehendmedical:*",
-        "textract:*",
-        "rekognition:*",
-        "polly:*",
-        "transcribe:*",
-        "translate:*",
-        "lex:*",
-        "personalize:*",
-        "forecast:*",
-        "frauddetector:*",
-        "a2i:*",
-        "bedrock:*",
-        "qbusiness:*",
-        "codewhisperer:*",
-        "devops-guru:*",
-        "kendra:*",
-        "geo:*",
+        # Machine Learning
+        "sagemaker:*",                 # Amazon SageMaker
+        "comprehend:*",                # Amazon Comprehend
+        "comprehendmedical:*",         # Amazon Comprehend Medical
+        "textract:*",                  # Amazon Textract
+        "rekognition:*",               # Amazon Rekognition
+        "polly:*",                     # Amazon Polly
+        "transcribe:*",                # Amazon Transcribe
+        "translate:*",                 # Amazon Translate
+        "lex:*",                       # Amazon Lex
+        "personalize:*",               # Amazon Personalize
+        "forecast:*",                  # Amazon Forecast
+        "frauddetector:*",             # Amazon Fraud Detector
+        "a2i:*",                       # Amazon Augmented AI (A2I)
+        "bedrock:*",                   # Amazon Bedrock
+        "qbusiness:*",                 # Amazon Q Business
+        "codewhisperer:*",             # Amazon CodeWhisperer
+        "devops-guru:*",               # Amazon DevOps Guru
+        "kendra:*",                    # Amazon Kendra
+        "geo:*",                       # Amazon Location Service
 
-        # C5 Compliant Services - Developer Tools
-        "codecommit:*",
-        "codebuild:*",
-        "codedeploy:*",
-        "codepipeline:*",
-        "cloud9:*",
-        "cloudshell:*",
-        "xray:*",
-        "appsync:*",
+        # Developer Tools
+        "codecommit:*",                # AWS CodeCommit
+        "codebuild:*",                 # AWS CodeBuild
+        "codedeploy:*",                # AWS CodeDeploy
+        "codepipeline:*",              # AWS CodePipeline
+        "cloud9:*",                    # AWS Cloud9
+        "cloudshell:*",                # AWS CloudShell
+        "xray:*",                      # AWS X-Ray
+        "appsync:*",                   # AWS AppSync
 
-        # C5 Compliant Services - Management & Governance
-        "controltower:*",
-        "cloudformation:*",
-        "ssm:*",
-        "opsworks:*",
-        "servicecatalog:*",
-        "managedservices:*",
-        "license-manager:*",
-        "resource-groups:*",
-        "ram:*",
-        "notifications:*",
-        "resiliencehub:*",
+        # Management & Governance
+        "controltower:*",              # AWS Control Tower
+        "cloudformation:*",            # AWS CloudFormation
+        "ssm:*",                       # AWS Systems Manager
+        "opsworks:*",                  # AWS OpsWorks
+        "servicecatalog:*",            # AWS Service Catalog
+        "managedservices:*",           # AWS Managed Services
+        "license-manager:*",           # AWS License Manager
+        "resource-groups:*",           # AWS Resource Groups
+        "ram:*",                       # AWS Resource Access Manager
+        "notifications:*",             # AWS User Notifications
+        "resiliencehub:*",             # AWS Resilience Hub
 
-        # C5 Compliant Services - Migration & Transfer
-        "dms:*",
-        "datasync:*",
-        "mgn:*",
-        "drs:*",
-        "transfer:*",
-        "snowball:*",
-        "m2:*",
+        # Migration & Transfer
+        "dms:*",                       # AWS Database Migration Service
+        "datasync:*",                  # AWS DataSync
+        "mgn:*",                       # AWS Application Migration Service
+        "drs:*",                       # AWS Elastic Disaster Recovery
+        "transfer:*",                  # AWS Transfer Family
+        "snowball:*",                  # AWS Snowball
+        "m2:*",                        # AWS Mainframe Modernization (M2)
 
-        # C5 Compliant Services - Messaging
-        "sqs:*",
-        "sns:*",
-        "ses:*",
-        "chime:*",
-        "chatbot:*",
-        "connect:*",
-        "mobiletargeting:*",
-        "workmail:*",
+        # Messaging
+        "sqs:*",                       # Amazon SQS
+        "sns:*",                       # Amazon SNS
+        "ses:*",                       # Amazon SES
+        "chime:*",                     # Amazon Chime
+        "chatbot:*",                   # AWS Chatbot
+        "connect:*",                   # Amazon Connect
+        "mobiletargeting:*",           # Amazon Pinpoint
+        "workmail:*",                  # Amazon WorkMail
 
-        # C5 Compliant Services - Business Applications
-        "workspaces:*",
-        "workspaces-web:*",
-        "workspaces-thin-client:*",
-        "workdocs:*",
-        "appstream:*",
-        "wickr:*",
+        # Business Applications
+        "workspaces:*",                # Amazon WorkSpaces
+        "workspaces-web:*",            # Amazon WorkSpaces Web
+        "thinclient:*",                # Amazon WorkSpaces Thin Client
+        "workdocs:*",                  # Amazon WorkDocs
+        "appstream:*",                 # Amazon AppStream 2.0
+        "wickr:*",                     # Amazon Wickr
 
-        # C5 Compliant Services - IoT
-        "iot:*",
-        "iotevents:*",
-        "greengrass:*",
-        "iotsitewise:*",
-        "iottwinmaker:*",
+        # IoT
+        "iot:*",                       # AWS IoT Core
+        "iotevents:*",                 # AWS IoT Events
+        "greengrass:*",                # AWS IoT Greengrass
+        "iotsitewise:*",               # AWS IoT SiteWise
+        "iottwinmaker:*",              # AWS IoT TwinMaker
 
-        # C5 Compliant Services - Media Services
-        "mediaconnect:*",
-        "mediaconvert:*",
-        "medialive:*",
+        # Media Services
+        "mediaconnect:*",              # AWS Elemental MediaConnect
+        "mediaconvert:*",              # AWS Elemental MediaConvert
+        "medialive:*",                 # AWS Elemental MediaLive
 
-        # C5 Compliant Services - Quantum Computing
-        "braket:*",
+        # Quantum Computing
+        "braket:*",                    # Amazon Braket
 
-        # C5 Compliant Services - Robotics
-        "robomaker:*",
+        # Robotics
+        "robomaker:*",                 # AWS RoboMaker
 
-        # C5 Compliant Services - Healthcare
-        "medical-imaging:*",
-        "healthlake:*",
-        "omics:*",
+        # Healthcare
+        "medical-imaging:*",           # AWS HealthImaging
+        "healthlake:*",                # Amazon HealthLake
+        "omics:*",                     # AWS Omics
 
-        # C5 Compliant Services - Integration
-        "events:*",
-        "states:*",
-        "mq:*",
-        "appflow:*",
-        "swf:*",
-        "airflow:*",
+        # Integration
+        "events:*",                    # Amazon EventBridge
+        "states:*",                    # AWS Step Functions
+        "mq:*",                        # Amazon MQ
+        "appflow:*",                   # Amazon AppFlow
+        "swf:*",                       # Amazon SWF
+        "airflow:*",                   # Amazon Managed Workflows for Apache Airflow (MWAA)
 
-        # C5 Compliant Services - Containers
-        "ecr:*",
+        # Containers
+        "ecr:*",                       # Amazon Elastic Container Registry (ECR)
 
-        # C5 Compliant Services - Serverless
-        "serverlessrepo:*",
+        # Serverless
+        "serverlessrepo:*",            # AWS Serverless Application Repository
 
-        # C5 Compliant Services - Monitoring
-        "cloudwatch:*",
-        "logs:*",
-        "grafana:*",
-        "aps:*",
+        # Monitoring
+        "cloudwatch:*",                # Amazon CloudWatch
+        "logs:*",                      # Amazon CloudWatch Logs
+        "grafana:*",                   # Amazon Managed Grafana
+        "aps:*",                       # Amazon Managed Service for Prometheus
 
-        # C5 Compliant Services - Other Services
-        "amplify:*",
-        "clouddirectory:*",
-        "ds:*",
-        "appfabric:*",
-        "cleanrooms:*",
-        "fis:*",
-        "outposts:*",
-        "sdb:*",
-        "route53-recovery-control-config:*",
-        "freertos:*"
+        # Other
+        "amplify:*",                   # AWS Amplify
+        "clouddirectory:*",            # Amazon Cloud Directory
+        "ds:*",                        # AWS Directory Service
+        "appfabric:*",                 # Amazon AppFabric
+        "cleanrooms:*",                # AWS Clean Rooms
+        "fis:*",                       # AWS Fault Injection Simulator
+        "outposts:*",                  # AWS Outposts
+        "sdb:*",                       # Amazon SimpleDB
+        "freertos:*",                  # FreeRTOS
       ]
-      # NOTE: not even the 'OrganizationAccountAccessRole' is allowed to configure non C5 compliant services
+
       exclude_principal_arns = []
     }
   ]

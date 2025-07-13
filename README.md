@@ -53,6 +53,12 @@ Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations
 
 Version: 1.5.0
 
+### ntc\_parameters\_bucket
+
+Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters
+
+Version: 1.1.4
+
 ### ntc\_parameters\_reader
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader
@@ -70,6 +76,7 @@ Version: 1.1.4
 The following resources are used by this module:
 
 - [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) (data source)
+- [aws_organizations_organization.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) (data source)
 - [aws_region.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) (data source)
 
 ## Required Inputs

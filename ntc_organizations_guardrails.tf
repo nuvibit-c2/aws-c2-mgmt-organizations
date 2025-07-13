@@ -216,7 +216,7 @@ module "ntc_guardrail_templates" {
       # All other regions will be blocked by the SCP
       allowed_regions = [
         "eu-central-1",
-        "eu-central-2", 
+        "eu-central-2",
         "eu-west-1",
         "eu-west-2",
         "eu-west-3",
@@ -259,7 +259,7 @@ module "ntc_guardrail_templates" {
         "sts:*",
         "support:*",
         "trustedadvisor:*",
-        
+
         # C5 Compliant Services - Compute & Containers
         "ec2:*",
         "ecs:*",
@@ -270,7 +270,7 @@ module "ntc_guardrail_templates" {
         "autoscaling:*",
         "imagebuilder:*",
         "elasticbeanstalk:*",
-        
+
         # C5 Compliant Services - Storage
         "s3:*",
         "elasticfilesystem:*",
@@ -278,7 +278,7 @@ module "ntc_guardrail_templates" {
         "glacier:*",
         "storagegateway:*",
         "backup:*",
-        
+
         # C5 Compliant Services - Databases
         "rds:*",
         "dynamodb:*",
@@ -290,7 +290,7 @@ module "ntc_guardrail_templates" {
         "timestream:*",
         "qldb:*",
         "cassandra:*",
-        
+
         # C5 Compliant Services - Networking & Content Delivery
         "cloudfront:*",
         "route53:*",
@@ -300,7 +300,7 @@ module "ntc_guardrail_templates" {
         "appmesh:*",
         "servicediscovery:*",
         "apigateway:*",
-        
+
         # C5 Compliant Services - Security, Identity & Compliance
         "sso:*",
         "cloudhsm:*",
@@ -323,7 +323,7 @@ module "ntc_guardrail_templates" {
         "payment-cryptography:*",
         "signer:*",
         "securitylake:*",
-        
+
         # C5 Compliant Services - Analytics
         "athena:*",
         "elasticmapreduce:*",
@@ -341,7 +341,7 @@ module "ntc_guardrail_templates" {
         "dataexchange:*",
         "entityresolution:*",
         "finspace:*",
-        
+
         # C5 Compliant Services - Machine Learning
         "sagemaker:*",
         "comprehend:*",
@@ -362,7 +362,7 @@ module "ntc_guardrail_templates" {
         "devops-guru:*",
         "kendra:*",
         "geo:*",
-        
+
         # C5 Compliant Services - Developer Tools
         "codecommit:*",
         "codebuild:*",
@@ -372,7 +372,7 @@ module "ntc_guardrail_templates" {
         "cloudshell:*",
         "xray:*",
         "appsync:*",
-        
+
         # C5 Compliant Services - Management & Governance
         "controltower:*",
         "cloudformation:*",
@@ -385,7 +385,7 @@ module "ntc_guardrail_templates" {
         "ram:*",
         "notifications:*",
         "resiliencehub:*",
-        
+
         # C5 Compliant Services - Migration & Transfer
         "dms:*",
         "datasync:*",
@@ -394,7 +394,7 @@ module "ntc_guardrail_templates" {
         "transfer:*",
         "snowball:*",
         "m2:*",
-        
+
         # C5 Compliant Services - Messaging
         "sqs:*",
         "sns:*",
@@ -404,7 +404,7 @@ module "ntc_guardrail_templates" {
         "connect:*",
         "mobiletargeting:*",
         "workmail:*",
-        
+
         # C5 Compliant Services - Business Applications
         "workspaces:*",
         "workspaces-web:*",
@@ -412,30 +412,30 @@ module "ntc_guardrail_templates" {
         "workdocs:*",
         "appstream:*",
         "wickr:*",
-        
+
         # C5 Compliant Services - IoT
         "iot:*",
         "iotevents:*",
         "greengrass:*",
         "iotsitewise:*",
         "iottwinmaker:*",
-        
+
         # C5 Compliant Services - Media Services
         "mediaconnect:*",
         "mediaconvert:*",
         "medialive:*",
-        
+
         # C5 Compliant Services - Quantum Computing
         "braket:*",
-        
+
         # C5 Compliant Services - Robotics
         "robomaker:*",
-        
+
         # C5 Compliant Services - Healthcare
         "medical-imaging:*",
         "healthlake:*",
         "omics:*",
-        
+
         # C5 Compliant Services - Integration
         "events:*",
         "states:*",
@@ -443,19 +443,19 @@ module "ntc_guardrail_templates" {
         "appflow:*",
         "swf:*",
         "airflow:*",
-        
+
         # C5 Compliant Services - Containers
         "ecr:*",
-        
+
         # C5 Compliant Services - Serverless
         "serverlessrepo:*",
-        
+
         # C5 Compliant Services - Monitoring
         "cloudwatch:*",
         "logs:*",
         "grafana:*",
         "aps:*",
-        
+
         # C5 Compliant Services - Other Services
         "amplify:*",
         "clouddirectory:*",

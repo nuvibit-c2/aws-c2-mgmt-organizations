@@ -227,244 +227,244 @@ module "ntc_guardrail_templates" {
       # These are typically global services that don't have regional endpoints
       # or services that must be accessed globally (like IAM, CloudFront, Route53)
       whitelist_for_other_regions = [
-        "acm:*",                     # AWS Certificate Manager
-        "budgets:*",                 # AWS Budgets
-        "ce:*",                      # AWS Cost Explorer Service
-        "cloudfront:*",              # Amazon CloudFront
-        "health:*",                  # AWS Health APIs and Notifications
-        "iam:*",                     # AWS Identity and Access Management
-        "kms:*",                     # AWS Key Management Service
-        "organizations:*",           # AWS Organizations
-        "route53:*",                 # Amazon Route 53
-        "shield:*",                  # AWS Shield
-        "sts:*",                     # AWS Security Token Service
-        "support:*",                 # AWS Support
-        "waf:*"                      # AWS WAF
+        "acm:*",           # AWS Certificate Manager
+        "budgets:*",       # AWS Budgets
+        "ce:*",            # AWS Cost Explorer Service
+        "cloudfront:*",    # Amazon CloudFront
+        "health:*",        # AWS Health APIs and Notifications
+        "iam:*",           # AWS Identity and Access Management
+        "kms:*",           # AWS Key Management Service
+        "organizations:*", # AWS Organizations
+        "route53:*",       # Amazon Route 53
+        "shield:*",        # AWS Shield
+        "sts:*",           # AWS Security Token Service
+        "support:*",       # AWS Support
+        "waf:*"            # AWS WAF
       ]
       # Services allowed to run WITHIN the allowed_regions list (EU regions for C5 compliance)
       # This is the comprehensive list of ALL C5 compliant services that can be used
       # in the specified European regions
       whitelist_for_allowed_regions = [
         # Essential AWS services
-        "aws-portal:*",                # AWS Billing and Cost Management
-        "budgets:*",                   # AWS Budgets
-        "ce:*",                        # AWS Cost Explorer
-        "health:*",                    # AWS Health Dashboard
-        "iam:*",                       # AWS Identity and Access Management (IAM)
-        "kms:*",                       # AWS Key Management Service
-        "organizations:*",             # AWS Organizations
-        "pricing:*",                   # AWS Price List API
-        "sts:*",                       # AWS Security Token Service (STS)
-        "support:*",                   # AWS Support
-        "trustedadvisor:*",            # AWS Trusted Advisor
+        "aws-portal:*",     # AWS Billing and Cost Management
+        "budgets:*",        # AWS Budgets
+        "ce:*",             # AWS Cost Explorer
+        "health:*",         # AWS Health Dashboard
+        "iam:*",            # AWS Identity and Access Management (IAM)
+        "kms:*",            # AWS Key Management Service
+        "organizations:*",  # AWS Organizations
+        "pricing:*",        # AWS Price List API
+        "sts:*",            # AWS Security Token Service (STS)
+        "support:*",        # AWS Support
+        "trustedadvisor:*", # AWS Trusted Advisor
 
         # Compute & Containers
-        "ec2:*",                       # Amazon EC2
-        "ecs:*",                       # Amazon ECS
-        "eks:*",                       # Amazon EKS
-        "lambda:*",                    # AWS Lambda
-        "batch:*",                     # AWS Batch
-        "apprunner:*",                 # AWS App Runner
-        "autoscaling:*",               # Amazon EC2 Auto Scaling
-        "imagebuilder:*",              # EC2 Image Builder
-        "elasticbeanstalk:*",          # AWS Elastic Beanstalk
+        "ec2:*",              # Amazon EC2
+        "ecs:*",              # Amazon ECS
+        "eks:*",              # Amazon EKS
+        "lambda:*",           # AWS Lambda
+        "batch:*",            # AWS Batch
+        "apprunner:*",        # AWS App Runner
+        "autoscaling:*",      # Amazon EC2 Auto Scaling
+        "imagebuilder:*",     # EC2 Image Builder
+        "elasticbeanstalk:*", # AWS Elastic Beanstalk
 
         # Storage
-        "s3:*",                        # Amazon S3
-        "elasticfilesystem:*",         # Amazon EFS
-        "fsx:*",                       # Amazon FSx
-        "glacier:*",                   # Amazon S3 Glacier
-        "storagegateway:*",            # AWS Storage Gateway
-        "backup:*",                    # AWS Backup
+        "s3:*",                # Amazon S3
+        "elasticfilesystem:*", # Amazon EFS
+        "fsx:*",               # Amazon FSx
+        "glacier:*",           # Amazon S3 Glacier
+        "storagegateway:*",    # AWS Storage Gateway
+        "backup:*",            # AWS Backup
 
         # Databases
-        "rds:*",                       # Amazon RDS
-        "dynamodb:*",                  # Amazon DynamoDB
-        "docdb:*",                     # Amazon DocumentDB
-        "elasticache:*",               # Amazon ElastiCache
-        "memorydb:*",                  # Amazon MemoryDB
-        "neptune:*",                   # Amazon Neptune
-        "redshift:*",                  # Amazon Redshift
-        "timestream:*",                # Amazon Timestream
-        "qldb:*",                      # Amazon QLDB
-        "cassandra:*",                 # Amazon Keyspaces (for Apache Cassandra)
+        "rds:*",         # Amazon RDS
+        "dynamodb:*",    # Amazon DynamoDB
+        "docdb:*",       # Amazon DocumentDB
+        "elasticache:*", # Amazon ElastiCache
+        "memorydb:*",    # Amazon MemoryDB
+        "neptune:*",     # Amazon Neptune
+        "redshift:*",    # Amazon Redshift
+        "timestream:*",  # Amazon Timestream
+        "qldb:*",        # Amazon QLDB
+        "cassandra:*",   # Amazon Keyspaces (for Apache Cassandra)
 
         # Networking & Content Delivery
-        "cloudfront:*",                # Amazon CloudFront
-        "route53:*",                   # Amazon Route 53
-        "directconnect:*",             # AWS Direct Connect
-        "elasticloadbalancing:*",      # Elastic Load Balancing
-        "globalaccelerator:*",         # AWS Global Accelerator
-        "appmesh:*",                   # AWS App Mesh
-        "servicediscovery:*",          # AWS Cloud Map
-        "apigateway:*",                # Amazon API Gateway
+        "cloudfront:*",           # Amazon CloudFront
+        "route53:*",              # Amazon Route 53
+        "directconnect:*",        # AWS Direct Connect
+        "elasticloadbalancing:*", # Elastic Load Balancing
+        "globalaccelerator:*",    # AWS Global Accelerator
+        "appmesh:*",              # AWS App Mesh
+        "servicediscovery:*",     # AWS Cloud Map
+        "apigateway:*",           # Amazon API Gateway
 
         # Security, Identity & Compliance
-        "sso:*",                       # AWS IAM Identity Center (successor to AWS SSO)
-        "cloudhsm:*",                  # AWS CloudHSM
-        "acm:*",                       # AWS Certificate Manager
-        "secretsmanager:*",            # AWS Secrets Manager
-        "cloudtrail:*",                # AWS CloudTrail
-        "config:*",                    # AWS Config
-        "securityhub:*",               # AWS Security Hub
-        "guardduty:*",                 # Amazon GuardDuty
-        "inspector2:*",                # Amazon Inspector
-        "inspector:*",                 # Amazon Inspector Classic
-        "macie:*",                     # Amazon Macie
-        "shield:*",                    # AWS Shield
-        "waf:*",                       # AWS WAF
-        "network-firewall:*",          # AWS Network Firewall
-        "fms:*",                       # AWS Firewall Manager
-        "detective:*",                 # Amazon Detective
-        "auditmanager:*",              # AWS Audit Manager
-        "artifact:*",                  # AWS Artifact
-        "acm-pca:*",                   # AWS Private CA
-        "payment-cryptography:*",      # AWS Payment Cryptography
-        "signer:*",                    # AWS Signer
-        "securitylake:*",              # Amazon Security Lake
+        "sso:*",                  # AWS IAM Identity Center (successor to AWS SSO)
+        "cloudhsm:*",             # AWS CloudHSM
+        "acm:*",                  # AWS Certificate Manager
+        "secretsmanager:*",       # AWS Secrets Manager
+        "cloudtrail:*",           # AWS CloudTrail
+        "config:*",               # AWS Config
+        "securityhub:*",          # AWS Security Hub
+        "guardduty:*",            # Amazon GuardDuty
+        "inspector2:*",           # Amazon Inspector
+        "inspector:*",            # Amazon Inspector Classic
+        "macie:*",                # Amazon Macie
+        "shield:*",               # AWS Shield
+        "waf:*",                  # AWS WAF
+        "network-firewall:*",     # AWS Network Firewall
+        "fms:*",                  # AWS Firewall Manager
+        "detective:*",            # Amazon Detective
+        "auditmanager:*",         # AWS Audit Manager
+        "artifact:*",             # AWS Artifact
+        "acm-pca:*",              # AWS Private CA
+        "payment-cryptography:*", # AWS Payment Cryptography
+        "signer:*",               # AWS Signer
+        "securitylake:*",         # Amazon Security Lake
 
         # Analytics
-        "athena:*",                    # Amazon Athena
-        "elasticmapreduce:*",          # Amazon EMR
-        "glue:*",                      # AWS Glue
-        "databrew:*",                  # AWS Glue DataBrew
-        "kinesis:*",                   # Amazon Kinesis
-        "kinesisvideo:*",              # Amazon Kinesis Video Streams
-        "firehose:*",                  # Amazon Kinesis Data Firehose
-        "es:*",                        # Amazon OpenSearch Service
-        "quicksight:*",                # Amazon QuickSight
-        "lakeformation:*",             # AWS Lake Formation
-        "datazone:*",                  # Amazon DataZone
-        "kinesisanalytics:*",          # Amazon Kinesis Data Analytics
-        "kafka:*",                     # Amazon Managed Streaming for Apache Kafka (MSK)
-        "dataexchange:*",              # AWS Data Exchange
-        "entityresolution:*",          # AWS Entity Resolution
-        "finspace:*",                  # Amazon FinSpace
+        "athena:*",           # Amazon Athena
+        "elasticmapreduce:*", # Amazon EMR
+        "glue:*",             # AWS Glue
+        "databrew:*",         # AWS Glue DataBrew
+        "kinesis:*",          # Amazon Kinesis
+        "kinesisvideo:*",     # Amazon Kinesis Video Streams
+        "firehose:*",         # Amazon Kinesis Data Firehose
+        "es:*",               # Amazon OpenSearch Service
+        "quicksight:*",       # Amazon QuickSight
+        "lakeformation:*",    # AWS Lake Formation
+        "datazone:*",         # Amazon DataZone
+        "kinesisanalytics:*", # Amazon Kinesis Data Analytics
+        "kafka:*",            # Amazon Managed Streaming for Apache Kafka (MSK)
+        "dataexchange:*",     # AWS Data Exchange
+        "entityresolution:*", # AWS Entity Resolution
+        "finspace:*",         # Amazon FinSpace
 
         # Machine Learning
-        "sagemaker:*",                 # Amazon SageMaker
-        "comprehend:*",                # Amazon Comprehend
-        "comprehendmedical:*",         # Amazon Comprehend Medical
-        "textract:*",                  # Amazon Textract
-        "rekognition:*",               # Amazon Rekognition
-        "polly:*",                     # Amazon Polly
-        "transcribe:*",                # Amazon Transcribe
-        "translate:*",                 # Amazon Translate
-        "lex:*",                       # Amazon Lex
-        "personalize:*",               # Amazon Personalize
-        "forecast:*",                  # Amazon Forecast
-        "frauddetector:*",             # Amazon Fraud Detector
-        "a2i:*",                       # Amazon Augmented AI (A2I)
-        "bedrock:*",                   # Amazon Bedrock
-        "qbusiness:*",                 # Amazon Q Business
-        "codewhisperer:*",             # Amazon CodeWhisperer
-        "devops-guru:*",               # Amazon DevOps Guru
-        "kendra:*",                    # Amazon Kendra
-        "geo:*",                       # Amazon Location Service
+        "sagemaker:*",         # Amazon SageMaker
+        "comprehend:*",        # Amazon Comprehend
+        "comprehendmedical:*", # Amazon Comprehend Medical
+        "textract:*",          # Amazon Textract
+        "rekognition:*",       # Amazon Rekognition
+        "polly:*",             # Amazon Polly
+        "transcribe:*",        # Amazon Transcribe
+        "translate:*",         # Amazon Translate
+        "lex:*",               # Amazon Lex
+        "personalize:*",       # Amazon Personalize
+        "forecast:*",          # Amazon Forecast
+        "frauddetector:*",     # Amazon Fraud Detector
+        "a2i:*",               # Amazon Augmented AI (A2I)
+        "bedrock:*",           # Amazon Bedrock
+        "qbusiness:*",         # Amazon Q Business
+        "codewhisperer:*",     # Amazon CodeWhisperer
+        "devops-guru:*",       # Amazon DevOps Guru
+        "kendra:*",            # Amazon Kendra
+        "geo:*",               # Amazon Location Service
 
         # Developer Tools
-        "codecommit:*",                # AWS CodeCommit
-        "codebuild:*",                 # AWS CodeBuild
-        "codedeploy:*",                # AWS CodeDeploy
-        "codepipeline:*",              # AWS CodePipeline
-        "cloud9:*",                    # AWS Cloud9
-        "cloudshell:*",                # AWS CloudShell
-        "xray:*",                      # AWS X-Ray
-        "appsync:*",                   # AWS AppSync
+        "codecommit:*",   # AWS CodeCommit
+        "codebuild:*",    # AWS CodeBuild
+        "codedeploy:*",   # AWS CodeDeploy
+        "codepipeline:*", # AWS CodePipeline
+        "cloud9:*",       # AWS Cloud9
+        "cloudshell:*",   # AWS CloudShell
+        "xray:*",         # AWS X-Ray
+        "appsync:*",      # AWS AppSync
 
         # Management & Governance
-        "controltower:*",              # AWS Control Tower
-        "cloudformation:*",            # AWS CloudFormation
-        "ssm:*",                       # AWS Systems Manager
-        "opsworks:*",                  # AWS OpsWorks
-        "servicecatalog:*",            # AWS Service Catalog
-        "managedservices:*",           # AWS Managed Services
-        "license-manager:*",           # AWS License Manager
-        "resource-groups:*",           # AWS Resource Groups
-        "ram:*",                       # AWS Resource Access Manager
-        "notifications:*",             # AWS User Notifications
-        "resiliencehub:*",             # AWS Resilience Hub
+        "controltower:*",    # AWS Control Tower
+        "cloudformation:*",  # AWS CloudFormation
+        "ssm:*",             # AWS Systems Manager
+        "opsworks:*",        # AWS OpsWorks
+        "servicecatalog:*",  # AWS Service Catalog
+        "managedservices:*", # AWS Managed Services
+        "license-manager:*", # AWS License Manager
+        "resource-groups:*", # AWS Resource Groups
+        "ram:*",             # AWS Resource Access Manager
+        "notifications:*",   # AWS User Notifications
+        "resiliencehub:*",   # AWS Resilience Hub
 
         # Migration & Transfer
-        "dms:*",                       # AWS Database Migration Service
-        "datasync:*",                  # AWS DataSync
-        "mgn:*",                       # AWS Application Migration Service
-        "drs:*",                       # AWS Elastic Disaster Recovery
-        "transfer:*",                  # AWS Transfer Family
-        "snowball:*",                  # AWS Snowball
-        "m2:*",                        # AWS Mainframe Modernization (M2)
+        "dms:*",      # AWS Database Migration Service
+        "datasync:*", # AWS DataSync
+        "mgn:*",      # AWS Application Migration Service
+        "drs:*",      # AWS Elastic Disaster Recovery
+        "transfer:*", # AWS Transfer Family
+        "snowball:*", # AWS Snowball
+        "m2:*",       # AWS Mainframe Modernization (M2)
 
         # Messaging
-        "sqs:*",                       # Amazon SQS
-        "sns:*",                       # Amazon SNS
-        "ses:*",                       # Amazon SES
-        "chime:*",                     # Amazon Chime
-        "chatbot:*",                   # AWS Chatbot
-        "connect:*",                   # Amazon Connect
-        "mobiletargeting:*",           # Amazon Pinpoint
-        "workmail:*",                  # Amazon WorkMail
+        "sqs:*",             # Amazon SQS
+        "sns:*",             # Amazon SNS
+        "ses:*",             # Amazon SES
+        "chime:*",           # Amazon Chime
+        "chatbot:*",         # AWS Chatbot
+        "connect:*",         # Amazon Connect
+        "mobiletargeting:*", # Amazon Pinpoint
+        "workmail:*",        # Amazon WorkMail
 
         # Business Applications
-        "workspaces:*",                # Amazon WorkSpaces
-        "workspaces-web:*",            # Amazon WorkSpaces Web
-        "thinclient:*",                # Amazon WorkSpaces Thin Client
-        "workdocs:*",                  # Amazon WorkDocs
-        "appstream:*",                 # Amazon AppStream 2.0
-        "wickr:*",                     # Amazon Wickr
+        "workspaces:*",     # Amazon WorkSpaces
+        "workspaces-web:*", # Amazon WorkSpaces Web
+        "thinclient:*",     # Amazon WorkSpaces Thin Client
+        "workdocs:*",       # Amazon WorkDocs
+        "appstream:*",      # Amazon AppStream 2.0
+        "wickr:*",          # Amazon Wickr
 
         # IoT
-        "iot:*",                       # AWS IoT Core
-        "iotevents:*",                 # AWS IoT Events
-        "greengrass:*",                # AWS IoT Greengrass
-        "iotsitewise:*",               # AWS IoT SiteWise
-        "iottwinmaker:*",              # AWS IoT TwinMaker
+        "iot:*",          # AWS IoT Core
+        "iotevents:*",    # AWS IoT Events
+        "greengrass:*",   # AWS IoT Greengrass
+        "iotsitewise:*",  # AWS IoT SiteWise
+        "iottwinmaker:*", # AWS IoT TwinMaker
 
         # Media Services
-        "mediaconnect:*",              # AWS Elemental MediaConnect
-        "mediaconvert:*",              # AWS Elemental MediaConvert
-        "medialive:*",                 # AWS Elemental MediaLive
+        "mediaconnect:*", # AWS Elemental MediaConnect
+        "mediaconvert:*", # AWS Elemental MediaConvert
+        "medialive:*",    # AWS Elemental MediaLive
 
         # Quantum Computing
-        "braket:*",                    # Amazon Braket
+        "braket:*", # Amazon Braket
 
         # Robotics
-        "robomaker:*",                 # AWS RoboMaker
+        "robomaker:*", # AWS RoboMaker
 
         # Healthcare
-        "medical-imaging:*",           # AWS HealthImaging
-        "healthlake:*",                # Amazon HealthLake
-        "omics:*",                     # AWS Omics
+        "medical-imaging:*", # AWS HealthImaging
+        "healthlake:*",      # Amazon HealthLake
+        "omics:*",           # AWS Omics
 
         # Integration
-        "events:*",                    # Amazon EventBridge
-        "states:*",                    # AWS Step Functions
-        "mq:*",                        # Amazon MQ
-        "appflow:*",                   # Amazon AppFlow
-        "swf:*",                       # Amazon SWF
-        "airflow:*",                   # Amazon Managed Workflows for Apache Airflow (MWAA)
+        "events:*",  # Amazon EventBridge
+        "states:*",  # AWS Step Functions
+        "mq:*",      # Amazon MQ
+        "appflow:*", # Amazon AppFlow
+        "swf:*",     # Amazon SWF
+        "airflow:*", # Amazon Managed Workflows for Apache Airflow (MWAA)
 
         # Containers
-        "ecr:*",                       # Amazon Elastic Container Registry (ECR)
+        "ecr:*", # Amazon Elastic Container Registry (ECR)
 
         # Serverless
-        "serverlessrepo:*",            # AWS Serverless Application Repository
+        "serverlessrepo:*", # AWS Serverless Application Repository
 
         # Monitoring
-        "cloudwatch:*",                # Amazon CloudWatch
-        "logs:*",                      # Amazon CloudWatch Logs
-        "grafana:*",                   # Amazon Managed Grafana
-        "aps:*",                       # Amazon Managed Service for Prometheus
+        "cloudwatch:*", # Amazon CloudWatch
+        "logs:*",       # Amazon CloudWatch Logs
+        "grafana:*",    # Amazon Managed Grafana
+        "aps:*",        # Amazon Managed Service for Prometheus
 
         # Other
-        "amplify:*",                   # AWS Amplify
-        "clouddirectory:*",            # Amazon Cloud Directory
-        "ds:*",                        # AWS Directory Service
-        "appfabric:*",                 # Amazon AppFabric
-        "cleanrooms:*",                # AWS Clean Rooms
-        "fis:*",                       # AWS Fault Injection Simulator
-        "outposts:*",                  # AWS Outposts
-        "sdb:*",                       # Amazon SimpleDB
-        "freertos:*",                  # FreeRTOS
+        "amplify:*",        # AWS Amplify
+        "clouddirectory:*", # Amazon Cloud Directory
+        "ds:*",             # AWS Directory Service
+        "appfabric:*",      # Amazon AppFabric
+        "cleanrooms:*",     # AWS Clean Rooms
+        "fis:*",            # AWS Fault Injection Simulator
+        "outposts:*",       # AWS Outposts
+        "sdb:*",            # Amazon SimpleDB
+        "freertos:*",       # FreeRTOS
       ]
 
       exclude_principal_arns = []

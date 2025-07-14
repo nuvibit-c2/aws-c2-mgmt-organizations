@@ -47,6 +47,7 @@ locals {
 #
 # CREATED RESOURCES:
 # - S3 bucket for storing Terraform / OpenTofu state files
+# - KMS key for s3 operations encryption + OpenTofu state encryption. ( existing KMS can key be also used )
 # - Optional: DynamoDB table for state locking (legacy versions)
 # - Optional: OIDC configuration for CI/CD pipeline authentication
 module "ntc_bootstrap" {
@@ -57,7 +58,7 @@ module "ntc_bootstrap" {
     create_s3_state_bucket          = true
     s3_bucket_name                  = "${local.account_name}${local.bucket_suffix}"
     create_dynamodb_lock_table      = local.create_dynamodb
-    kms_key_deletion_window_in_days = 7
+    kms_key_deletion_window_in_days = 30
     kms_key_enable_key_rotation     = true
     create_state_backend_file       = local.create_state_backend_file
     state_backend_file_path         = local.state_backend_file_path

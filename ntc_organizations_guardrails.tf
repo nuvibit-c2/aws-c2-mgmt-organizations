@@ -308,7 +308,8 @@ module "ntc_guardrail_templates" {
         "config:*",                    # AWS Config
         "securityhub:*",               # AWS Security Hub
         "guardduty:*",                 # Amazon GuardDuty
-        "inspector:*",                 # Amazon Inspector
+        "inspector2:*",                # Amazon Inspector
+        "inspector:*",                 # Amazon Inspector Classic
         "macie:*",                     # Amazon Macie
         "shield:*",                    # AWS Shield
         "waf:*",                       # AWS WAF

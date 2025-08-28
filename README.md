@@ -51,7 +51,7 @@ Version: 1.5.0
 
 Source: github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations
 
-Version: 1.5.0
+Version: 1.6.0
 
 ### ntc\_parameters\_bucket
 

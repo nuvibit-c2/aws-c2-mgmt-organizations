@@ -7,6 +7,8 @@ locals {
     "org_id"         = module.ntc_organizations.org_id
     "org_root_ou_id" = module.ntc_organizations.org_root_ou_id
     "ou_ids"         = module.ntc_organizations.organizational_unit_ids
+    "ou_ids"         = module.ntc_organizations.organizational_unit_ids
+    "ou_path_ids"    = module.ntc_organizations.organization_unit_path_ids
   }
 
   # map of parameters merged from all parameter nodes

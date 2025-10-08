@@ -44,6 +44,7 @@ module "ntc_guardrail_templates" {
         "aws-marketplace-management:*",
         "aws-marketplace:*",
         "aws-portal:*",
+        "bcm-dashboards:*",
         "budgets:*",
         "ce:*",
         "chime:*",

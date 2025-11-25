@@ -96,6 +96,10 @@ The following outputs are exported:
 
 Description: The current account id
 
+### aws\_partition
+
+Description: The current AWS partition
+
 ### default\_region
 
 Description: The default region name

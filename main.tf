@@ -52,8 +52,8 @@ terraform {
 # ¦ DATA
 # ---------------------------------------------------------------------------------------------------------------------
 data "aws_region" "default" {}
+data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
-data "aws_organizations_organization" "current" {}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ LOCALS
@@ -64,10 +64,16 @@ locals {
     ManagedBy     = "OpenTofu"
     ProvisionedBy = "aws-c2-mgmt-organizations"
   }
+  default_region               = data.aws_region.default.region
+  current_partition            = data.aws_partition.current.partition  # e.g. "aws"
+  current_partition_dns_suffix = data.aws_partition.current.dns_suffix # e.g. "amazonaws.com"
+  current_account_id           = data.aws_caller_identity.current.account_id
 
-  # get all aws account ids in the organization
-  org_account_ids = {
-    for account in data.aws_organizations_organization.current.accounts :
-    account.name => account.id if account.status == "ACTIVE"
-  }
+  # NOTE: cannot be directly derived from module output to avoid cyclic dependency - replace with placeholder value for initial deployment
+  organization_id = local.ntc_parameters["mgmt-organizations"]["org_id"]
+
+  # NOTE: use placeholder value for initial deployment (e.g. 'local.current_account_id') until accounts are created by ntc-account-factory
+  security_account_id     = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]     # NOTE: replace account name for your deployment
+  log_archive_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-log-archive"]  # NOTE: replace account name for your deployment
+  connectivity_account_id = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-connectivity"] # NOTE: replace account name for your deployment
 }

@@ -5,13 +5,13 @@ The following requirements are needed by this module:
 
 - terraform (>= 1.3.0)
 
-- aws (~> 5.33)
+- aws (~> 6.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- aws (~> 5.33)
+- aws (~> 6.0)
 
 ## Modules
 

@@ -1,5 +1,5 @@
 locals {
-  ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
+  ntc_parameters_bucket_name = "aws-c2-ntc-parameters" # NOTE: bucket name must be globally unique - Choose a different prefix for your deployment.
   ntc_parameters_writer_node = "mgmt-organizations"
 
   # parameters that are managed by org management account
@@ -23,35 +23,37 @@ module "ntc_parameters_bucket" {
   bucket_name = local.ntc_parameters_bucket_name
 
   # grant read access to parameters for all organization members
-  org_id = data.aws_organizations_organization.current.id
+  org_id = module.ntc_organizations.org_id
 
   # only the parameter-node owner is granted write access to his corresponding parameters
   parameter_nodes = [
     {
       "node_name"             = "mgmt-organizations",
-      "node_owner_account_id" = local.org_account_ids["aws-c2-management"]
+      "node_owner_account_id" = local.current_account_id
     },
     {
       "node_name"                     = "mgmt-account-factory",
-      "node_owner_account_id"         = local.org_account_ids["aws-c2-management"]
+      "node_owner_account_id"         = local.current_account_id
       "node_owner_is_account_factory" = true
     },
     {
       "node_name"             = "mgmt-identity-center",
-      "node_owner_account_id" = local.org_account_ids["aws-c2-management"]
+      "node_owner_account_id" = local.current_account_id
     },
-    {
-      "node_name"             = "connectivity"
-      "node_owner_account_id" = local.org_account_ids["aws-c2-connectivity"]
-    },
+    # NOTE: the following nodes are created at a later stage once the accounts exist (provisioned by account factory)
+    # comment out the following parameter nodes for initial deployment and uncomment later
     {
       "node_name"             = "security-tooling"
-      "node_owner_account_id" = local.org_account_ids["aws-c2-security"]
+      "node_owner_account_id" = local.security_account_id
     },
     {
       "node_name"             = "log-archive"
-      "node_owner_account_id" = local.org_account_ids["aws-c2-log-archive"]
-    }
+      "node_owner_account_id" = local.log_archive_account_id
+    },
+    {
+      "node_name"             = "connectivity"
+      "node_owner_account_id" = local.connectivity_account_id
+    },
   ]
 
   providers = {
@@ -59,6 +61,7 @@ module "ntc_parameters_bucket" {
   }
 }
 
+# NOTE: deploy first 'ntc_parameters_bucket' module before deploying the following modules to avoid circular dependency issues - comment out for initial deployment
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------

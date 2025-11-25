@@ -486,7 +486,7 @@ module "ntc_guardrail_templates" {
       # template specific parameters
       # WARNING: to avoid cyclic dependency do not reference 'module.ntc_organizations.org_id' directly
       # you can use ntc_paramters as a workaround to pass the org_id
-      org_id = local.ntc_parameters["mgmt-organizations"]["org_id"]
+      org_id = local.organization_id
       # list of service actions supported by RCPs
       # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html#rcp-supported-services
       enforced_service_actions = [
@@ -508,7 +508,7 @@ module "ntc_guardrail_templates" {
       # template specific parameters
       # WARNING: to avoid cyclic dependency do not reference 'module.ntc_organizations.org_id' directly
       # you can use ntc_paramters as a workaround to pass the org_id
-      org_id = local.ntc_parameters["mgmt-organizations"]["org_id"]
+      org_id = local.organization_id
       # list of service actions supported by RCPs
       # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_rcps.html#rcp-supported-services
       enforced_service_actions = [

@@ -1,40 +1,39 @@
+# NOTE: administrator delegations require that the delegated admin account exists (e.g. security account) - deploy at a later stage
+
 locals {
   # some services like 'aws config' and 'iam access analyzer' are delegated once and not for each region
   global_delegated_administrators = [
     {
-      service_principal = "config.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+      service_principal = "config.${local.current_partition_dns_suffix}"
+      admin_account_id  = local.security_account_id
     },
     {
-      service_principal = "access-analyzer.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+      service_principal = "access-analyzer.${local.current_partition_dns_suffix}"
+      admin_account_id  = local.security_account_id
     },
   ]
 
   # some services like amazon guardduty need to be delegated for each region
   regional_delegated_administrators = [
     {
-      service_principal = "securityhub.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+      service_principal = "securityhub.${local.current_partition_dns_suffix}"
+      admin_account_id  = local.security_account_id
     },
     {
-      service_principal = "guardduty.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+      service_principal = "guardduty.${local.current_partition_dns_suffix}"
+      admin_account_id  = local.security_account_id
     },
     {
-      service_principal = "inspector2.amazonaws.com"
-      admin_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]
+      service_principal = "inspector2.${local.current_partition_dns_suffix}"
+      admin_account_id  = local.security_account_id
     },
   ]
 }
 
 # organizations integration of iam access analyzer requires a service linked role in org management account
-# this role gets created when creating up an access analyzer for the first time (analyzer can be deleted afterwards)
-# https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-using-service-linked-roles.html#create-slr
-
-# resource "aws_accessanalyzer_analyzer" "init" {
-#   analyzer_name = "init-service-linked-role"
-# }
+resource "aws_iam_service_linked_role" "access_analyzer" {
+  aws_service_name = "access-analyzer.${local.current_partition_dns_suffix}"
+}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC ORGANIZATIONS - ADMIN DELEGATIONS

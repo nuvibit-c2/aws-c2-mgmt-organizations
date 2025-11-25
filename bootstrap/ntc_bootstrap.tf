@@ -74,7 +74,7 @@ module "ntc_bootstrap" {
     # {
     #   # GitHub OIDC provider URL (standard for all GitHub repositories)
     #   provider_url   = "https://token.actions.githubusercontent.com"
-    #   client_id_list = ["sts.amazonaws.com"]
+    #   client_id_list = ["sts.${local.current_partition_dns_suffix}"]
     #   
     #   roles = [
     #     {

@@ -76,4 +76,5 @@ locals {
   security_account_id     = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-security"]     # NOTE: replace account name for your deployment
   log_archive_account_id  = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-log-archive"]  # NOTE: replace account name for your deployment
   connectivity_account_id = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-connectivity"] # NOTE: replace account name for your deployment
+  backup_account_id       = local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["aws-c2-backup"]       # NOTE: replace account name for your deployment
 }

@@ -1,5 +1,3 @@
-# NOTE: administrator delegations require that the delegated admin account exists (e.g. security account) - deploy at a later stage
-
 locals {
   # some services like 'aws config' and 'iam access analyzer' are delegated once and not for each region
   global_delegated_administrators = [
@@ -10,6 +8,10 @@ locals {
     {
       service_principal = "access-analyzer.${local.current_partition_dns_suffix}"
       admin_account_id  = local.security_account_id
+    },
+    {
+      service_principal = "backup.${local.current_partition_dns_suffix}"
+      admin_account_id  = local.backup_account_id
     },
   ]
 
@@ -26,7 +28,7 @@ locals {
     {
       service_principal = "inspector2.${local.current_partition_dns_suffix}"
       admin_account_id  = local.security_account_id
-    },
+    }
   ]
 }
 

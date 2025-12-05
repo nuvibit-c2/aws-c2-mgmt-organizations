@@ -85,7 +85,7 @@ module "ntc_guardrail_templates" {
         "/root/suspended",
         "/root/transitional"
       ]
-      template_names = ["deny_all"]
+      template_names         = ["deny_all"]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ module "ntc_guardrail_templates" {
       template_names     = ["deny_outside_allowed_regions"]
       allowed_regions = [
         "eu-central-1",
-        "eu-central-2"
+        "eu-central-2",
       ]
       # Global/multi-region services that can be accessed from any region
       # These typically don't store data in specific regions or are required for account functionality
@@ -168,7 +168,7 @@ module "ntc_guardrail_templates" {
         "waf-regional:*",
         "waf:*",
         "wafv2:*",
-        "wellarchitected:*"
+        "wellarchitected:*",
       ]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
@@ -211,13 +211,13 @@ module "ntc_guardrail_templates" {
       target_ou_paths    = ["/root/workloads"]
       template_names = [
         "deny_outside_allowed_regions",
-        "deny_inside_allowed_regions"
+        "deny_inside_allowed_regions",
       ]
       allowed_regions = [
         "eu-central-1",
         "eu-central-2",
         "eu-west-1",
-        "us-east-1"
+        "us-east-1",
       ]
       # Services allowed to run in regions OUTSIDE of the allowed_regions list
       # These are typically global services that don't have regional endpoints
@@ -264,7 +264,7 @@ module "ntc_guardrail_templates" {
         "waf-regional:*",
         "waf:*",
         "wafv2:*",
-        "wellarchitected:*"
+        "wellarchitected:*",
       ]
       # Regional services permitted within allowed_regions
       # CONFIGURATION STRATEGY:
@@ -318,7 +318,7 @@ module "ntc_guardrail_templates" {
         # allowed regional actions
         "lambda:*",
         "s3:*",
-        "ec2:*"
+        "ec2:*",
       ]
       # Principals exempt from this SCP (typically management roles)
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
@@ -398,7 +398,7 @@ module "ntc_guardrail_templates" {
         "shield:*",        # AWS Shield
         "sts:*",           # AWS Security Token Service
         "support:*",       # AWS Support
-        "waf:*"            # AWS WAF
+        "waf:*",           # AWS WAF
       ]
       # C5-compliant regional services (accessible within allowed EU regions)
       # This comprehensive list includes all AWS services certified under BSI C5
@@ -962,7 +962,7 @@ module "ntc_guardrail_templates" {
       target_ou_paths    = ["/root"]
       template_names = [
         "enforce_s3_kms_encryption",
-        "enforce_s3_tls_version"
+        "enforce_s3_tls_version",
       ]
       # Minimum TLS version for S3 access
       # CONFIGURATION OPTIONS:

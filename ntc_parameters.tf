@@ -36,12 +36,20 @@
 # LOCAL VARIABLES - NTC PARAMETERS CONFIGURATION
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  # S3 bucket name for centralized parameter storage
-  # NAMING: Prefix with environment/org identifier for uniqueness
+  # -------------------------------------------------------------------------------------------------------------------
+  # S3 Bucket Name
+  # -------------------------------------------------------------------------------------------------------------------
+  # Centralized parameter storage bucket (created by mgmt-organizations)
+  # ⚠️  Must match the bucket name across all accounts in the organization
+  # -------------------------------------------------------------------------------------------------------------------
   ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
 
-  # This account's parameter node name (namespace for our parameters)
-  # Each account/service writes to its own node to avoid conflicts
+  # -------------------------------------------------------------------------------------------------------------------
+  # Parameter Node Name
+  # -------------------------------------------------------------------------------------------------------------------
+  # This account's namespace in the parameter bucket
+  # Convention: <account-type>-<account-purpose>
+  # -------------------------------------------------------------------------------------------------------------------
   ntc_parameters_writer_node = "mgmt-organizations"
 
   # -----------------------------------------------------
@@ -273,7 +281,7 @@ module "ntc_parameters_reader" {
 #
 # WRITE PERMISSIONS:
 # ------------------
-# This account can ONLY write to its own parameter node (mgmt-organizations)
+# This account can ONLY write to its own parameter node (mgmt-identity-center)
 # Attempting to write to another node will fail with S3 AccessDenied
 #
 # REPLACE_PARAMETERS BEHAVIOR:
@@ -312,10 +320,10 @@ module "ntc_parameters_reader" {
 module "ntc_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=1.1.4"
 
-  bucket_name        = local.ntc_parameters_bucket_name
+  bucket_name        = local.ntc_parameters_bucket_name # S3 bucket for parameter storage
   parameter_node     = local.ntc_parameters_writer_node # This account's namespace
   node_parameters    = local.ntc_parameters_to_write    # Parameters to write
-  replace_parameters = true                             # Replace all parameters on each run (recommended)
+  replace_parameters = true                             # Always replace (prevent drift)
 
   providers = {
     aws = aws.euc1

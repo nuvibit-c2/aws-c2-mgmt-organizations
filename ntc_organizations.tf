@@ -235,7 +235,7 @@ module "ntc_organizations" {
     s3_bucket_name = local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"]
 
     # Enable real-time CloudWatch Logs for immediate visibility and alerting
-    cloud_watch_logs_enable = false
+    cloud_watch_logs_enable            = false
     cloud_watch_logs_retention_in_days = 30
     # cloud_watch_logs_existing   = false                    # Set to true if log group already exists
     # cloud_watch_logs_group_name = "organization-trail-logs" # Customize log group name

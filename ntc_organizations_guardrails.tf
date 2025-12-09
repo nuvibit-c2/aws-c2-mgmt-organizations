@@ -169,11 +169,51 @@ module "ntc_guardrail_templates" {
         "waf:*",
         "wafv2:*",
         "wellarchitected:*",
+        # -----------------------------------------------------------------------------------------------------------------
+        # EXCEPTIONS FOR SERVICES RUNNING IN OTHER REGIONS
+        # -----------------------------------------------------------------------------------------------------------------
+        # Some services may legitimately need to operate in regions outside the allowed_regions list
+        # Common use cases for regional exceptions:
+        #
+        # 1. LAMBDA@EDGE (CloudFront Functions):
+        #    - CloudFront is a global service but Lambda@Edge functions must be deployed in us-east-1
+        #    - Required for: Request/response manipulation, A/B testing, security headers
+        #    - Add: "lambda:*" or specific Lambda@Edge actions
+        #
+        # 2. DISASTER RECOVERY / BUSINESS CONTINUITY:
+        #    - Backup regions outside primary data residency requirements
+        #    - Required for: RTO/RPO compliance, resilience, failover capabilities
+        #    - Add: Service-specific actions (e.g., "s3:*", "dynamodb:*", "rds:*")
+        #
+        # 3. THIRD-PARTY INTEGRATIONS:
+        #    - SaaS vendors requiring specific regions (e.g., us-east-1, us-west-2)
+        #    - Required for: VPC endpoints, PrivateLink, data exchange
+        #    - Add: Service actions for specific integrations
+        #
+        # CONFIGURATION GUIDELINES:
+        #   ✓ Document WHY each service needs regional exceptions
+        #   ✓ Use specific actions (e.g., "lambda:InvokeFunction") instead of wildcards when possible
+        #   ✓ Regularly review and remove unused exceptions
+        #   ✓ Consider data residency and compliance implications
+        #   ✓ Validate exceptions with security and compliance teams
+        #
+        # SECURITY CONSIDERATIONS:
+        #   ⚠️  Exceptions bypass regional data residency controls
+        #   ⚠️  Ensure no sensitive data is processed in excepted regions
+        #   ⚠️  Monitor CloudTrail for unexpected cross-region activity
+        #   ⚠️  Use resource-based policies to further restrict access
+        #
+        # EXAMPLES:
+        #   Lambda@Edge:           "lambda:*"
+        #   DR to us-west-2:       "s3:*", "dynamodb:*", "rds:*"
+        #   Specific Lambda actions: "lambda:InvokeFunction", "lambda:GetFunction"
+        # -----------------------------------------------------------------------------------------------------------------
+        "lambda:*", # Lambda@Edge functions for CloudFront (requires us-east-1)
       ]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
-    # SCP 4: Service Whitelisting with Regional Restrictions (COMMENTED OUT - EXAMPLE)
+    # SCP 4: Service Whitelisting with Regional Restrictions
     # -----------------------------------------------------------------------------------------------------------------
     # PURPOSE: Implement defense-in-depth by combining regional restrictions with service whitelisting
     # 

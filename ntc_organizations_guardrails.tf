@@ -245,7 +245,7 @@ module "ntc_guardrail_templates" {
     #   - Coordinate with application teams to identify required services before deployment
     # -----------------------------------------------------------------------------------------------------------------
     {
-      policy_name        = "scp_workloads_ou_whitelisted_services"
+      policy_name        = "scp_workloads_ou_whitelisting"
       policy_description = "Deny all actions except whitelisted services"
       policy_type        = "SERVICE_CONTROL_POLICY"
       target_ou_paths    = ["/root/workloads"]

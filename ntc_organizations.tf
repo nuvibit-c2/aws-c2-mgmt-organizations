@@ -41,21 +41,21 @@ module "ntc_organizations" {
   # Reference: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_services_list.html
   # -------------------------------------------------------------------------------------------------------------------
   service_access_principals = [
-    "iam.${local.current_partition_dns_suffix}",                          # IAM - Identity and Access Management
-    "account.${local.current_partition_dns_suffix}",                      # AWS Account Management
-    "servicequotas.${local.current_partition_dns_suffix}",                # Service Quotas - Centralized quota management
-    "cloudtrail.${local.current_partition_dns_suffix}",                   # CloudTrail - Organization-wide audit logging
-    "securityhub.${local.current_partition_dns_suffix}",                  # Security Hub - Centralized security findings
-    "config.${local.current_partition_dns_suffix}",                       # AWS Config - Compliance and configuration tracking
-    "config-multiaccountsetup.${local.current_partition_dns_suffix}",     # AWS Config - Multi-account setup
-    "guardduty.${local.current_partition_dns_suffix}",                    # GuardDuty - Threat detection
-    "inspector2.${local.current_partition_dns_suffix}",                   # Inspector - Vulnerability management
-    "macie.${local.current_partition_dns_suffix}",                        # Macie - Sensitive data discovery
-    "malware-protection.guardduty.${local.current_partition_dns_suffix}", # GuardDuty Malware Protection
-    "access-analyzer.${local.current_partition_dns_suffix}",              # IAM Access Analyzer - Identify unintended access
-    "sso.${local.current_partition_dns_suffix}",                          # IAM Identity Center (SSO) - Centralized access
-    "ipam.${local.current_partition_dns_suffix}",                         # IPAM - IP address management
-    "backup.${local.current_partition_dns_suffix}",                       # AWS Backup - Centralized backup management
+    "iam.amazonaws.com",                          # IAM - Identity and Access Management
+    "account.amazonaws.com",                      # AWS Account Management
+    "servicequotas.amazonaws.com",                # Service Quotas - Centralized quota management
+    "cloudtrail.amazonaws.com",                   # CloudTrail - Organization-wide audit logging
+    "securityhub.amazonaws.com",                  # Security Hub - Centralized security findings
+    "config.amazonaws.com",                       # AWS Config - Compliance and configuration tracking
+    "config-multiaccountsetup.amazonaws.com",     # AWS Config - Multi-account setup
+    "guardduty.amazonaws.com",                    # GuardDuty - Threat detection
+    "inspector2.amazonaws.com",                   # Inspector - Vulnerability management
+    "macie.amazonaws.com",                        # Macie - Sensitive data discovery
+    "malware-protection.guardduty.amazonaws.com", # GuardDuty Malware Protection
+    "access-analyzer.amazonaws.com",              # IAM Access Analyzer - Identify unintended access
+    "sso.amazonaws.com",                          # IAM Identity Center (SSO) - Centralized access
+    "ipam.amazonaws.com",                         # IPAM - IP address management
+    "backup.amazonaws.com",                       # AWS Backup - Centralized backup management
   ]
 
   # -----------------------------------------------------------------------------------------------------------------

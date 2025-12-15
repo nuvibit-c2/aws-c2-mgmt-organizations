@@ -247,7 +247,6 @@ module "ntc_guardrail_templates" {
     {
       policy_name        = "scp_workloads_ou_whitelisting"
       policy_description = "Deny all actions except whitelisted services"
-      policy_type        = "SERVICE_CONTROL_POLICY"
       target_ou_paths    = ["/root/workloads"]
       template_names = [
         "deny_outside_allowed_regions",
@@ -403,7 +402,6 @@ module "ntc_guardrail_templates" {
     {
       policy_name        = "scp_workloads_ou_c5_compliance"
       policy_description = "Allow only C5 compliant services in EU regions"
-      policy_type        = "SERVICE_CONTROL_POLICY"
       target_ou_paths    = ["/root/workloads"]
       template_names = [
         "deny_outside_allowed_regions",
@@ -754,7 +752,6 @@ module "ntc_guardrail_templates" {
     {
       policy_name        = "rcp_enforce_confused_deputy_protection"
       policy_description = "Enforce confused deputy protection for s3, sqs, kms, secretsmanager and sts"
-      policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names     = ["enforce_confused_deputy_protection"]
       # Your AWS Organization ID - required for validating source account conditions
@@ -831,7 +828,6 @@ module "ntc_guardrail_templates" {
     {
       policy_name        = "rcp_enforce_principal_access_from_organization"
       policy_description = "Enforce principal access from organization for s3, sqs, kms, secretsmanager and sts"
-      policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names     = ["enforce_principal_access_from_organization"]
       # Your AWS Organization ID - used for aws:PrincipalOrgID condition validation
@@ -919,7 +915,6 @@ module "ntc_guardrail_templates" {
     {
       policy_name        = "rcp_enforce_secure_transport"
       policy_description = "Enforce secure transport for s3, sqs, kms, secretsmanager and sts"
-      policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names     = ["enforce_secure_transport"]
       # Services where secure transport (HTTPS/TLS) is mandatory
@@ -998,7 +993,6 @@ module "ntc_guardrail_templates" {
     {
       policy_name        = "rcp_enforce_s3_encryption_and_tls_version"
       policy_description = "Enforce S3 encryption and TLS version"
-      policy_type        = "RESOURCE_CONTROL_POLICY"
       target_ou_paths    = ["/root"]
       template_names = [
         "enforce_s3_kms_encryption",

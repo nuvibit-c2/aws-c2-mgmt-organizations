@@ -123,8 +123,9 @@ locals {
 # ⚠️  Other accounts will fail if bucket doesn't exist yet
 # =====================================================================================================================
 module "ntc_parameters_bucket" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters?ref=1.1.4"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters?ref=2.0.0"
 
+  region      = "eu-central-1"
   bucket_name = local.ntc_parameters_bucket_name
 
   # Grant read access to ALL organization members via PrincipalOrgID condition
@@ -258,13 +259,10 @@ module "ntc_parameters_bucket" {
 #   local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["INSERT_ACCOUNT_NAME"]
 # =====================================================================================================================
 module "ntc_parameters_reader" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=1.1.4"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=2.0.0"
 
+  region      = "eu-central-1"
   bucket_name = local.ntc_parameters_bucket_name
-
-  providers = {
-    aws = aws.euc1
-  }
 }
 
 # =====================================================================================================================
@@ -318,14 +316,11 @@ module "ntc_parameters_reader" {
 #   ✗ Large binary data (parameters should be small JSON-serializable values)
 # =====================================================================================================================
 module "ntc_parameters_writer" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=1.1.4"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=2.0.0"
 
+  region             = "eu-central-1"
   bucket_name        = local.ntc_parameters_bucket_name # S3 bucket for parameter storage
   parameter_node     = local.ntc_parameters_writer_node # This account's namespace
   node_parameters    = local.ntc_parameters_to_write    # Parameters to write
   replace_parameters = true                             # Always replace (prevent drift)
-
-  providers = {
-    aws = aws.euc1
-  }
 }

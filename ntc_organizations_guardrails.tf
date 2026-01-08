@@ -211,6 +211,9 @@ module "ntc_guardrail_templates" {
         "lambda:*", # Lambda@Edge functions for CloudFront (requires us-east-1)
       ]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
+      # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
+      exclude_bedrock_inference_profile_arns = ["arn:aws:bedrock:*:*:inference-profile/eu.*"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 4: Service Whitelisting with Regional Restrictions
@@ -361,6 +364,9 @@ module "ntc_guardrail_templates" {
       ]
       # Principals exempt from this SCP (typically management roles)
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
+      # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
+      exclude_bedrock_inference_profile_arns = ["arn:aws:bedrock:*:*:inference-profile/eu.*"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 5: BSI C5 Compliance Framework

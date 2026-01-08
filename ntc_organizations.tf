@@ -8,24 +8,9 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=1.6.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.0.0"
 
-  # -------------------------------------------------------------------------------------------------------------------
-  # AWS RESOURCE ACCESS MANAGER (RAM) - ORGANIZATION SHARING
-  # -------------------------------------------------------------------------------------------------------------------
-  # Enable sharing of AWS resources (VPCs, subnets, Transit Gateways, etc.) across accounts in your organization
-  # 
-  # IMPORTANT: Set to 'false' on FIRST deployment, then enable after organization is created
-  # WHY: Prevents circular dependency during initial organization setup
-  # 
-  # USE CASES:
-  #   - Share VPC subnets from network account to workload accounts
-  #   - Share Transit Gateway attachments across accounts
-  #   - Share Route53 Resolver rules for DNS
-  #   - Share AWS License Manager configurations
-  # -------------------------------------------------------------------------------------------------------------------
-  enable_ram_sharing_in_organization = true
-
+  region = "eu-central-1"
   # -------------------------------------------------------------------------------------------------------------------
   # AWS SERVICE INTEGRATIONS WITH ORGANIZATIONS
   # -------------------------------------------------------------------------------------------------------------------
@@ -56,6 +41,7 @@ module "ntc_organizations" {
     "sso.amazonaws.com",                          # IAM Identity Center (SSO) - Centralized access
     "ipam.amazonaws.com",                         # IPAM - IP address management
     "backup.amazonaws.com",                       # AWS Backup - Centralized backup management
+    "ram.amazonaws.com",                          # Resource Access Manager - Resource sharing
   ]
 
   # -----------------------------------------------------------------------------------------------------------------
@@ -321,7 +307,154 @@ module "ntc_organizations" {
     iam_policy_name = "ntc-org-account-reader-policy"
   }
 
+  # -------------------------------------------------------------------------------------------------------------------
+  # SERVICE QUOTA TEMPLATES - AUTOMATIC QUOTA INCREASES FOR NEW ACCOUNTS
+  # -------------------------------------------------------------------------------------------------------------------
+  # Automatically apply service quota increases to ALL new accounts created in the organization
+  # 
+  # HOW IT WORKS:
+  #   - Templates are applied when new accounts are created
+  #   - Eliminates manual quota increase requests for each new account
+  #   - Ensures consistent quotas across all accounts
+  # 
+  # IMPORTANT LIMITATIONS:
+  #   ⚠️  Only applies to NEW accounts (not existing accounts)
+  #   ⚠️  Not supported in opt-in regions (e.g., Zurich, Middle East, Africa regions)
+  #   ⚠️  Global quotas must be applied in us-east-1 region (aws commercial partition)
+  #   ⚠️  Some quotas require AWS support approval (not all can be auto-increased)
+  # 
+  # WHEN TO USE:
+  #   - Your organization frequently hits default quotas
+  #   - You create many accounts and need consistent quotas
+  #   - You want to prevent quota-related failures in new accounts
+  # 
+  # QUOTA TYPES:
+  #   - Regional quotas: Apply to specific regions (e.g., EC2 instances in eu-central-1)
+  #   - Global quotas: Apply account-wide (e.g., IAM policies per role)
+  # 
+  # FINDING QUOTA CODES:
+  #   1. AWS Console → Service Quotas → AWS services → Select service
+  #   2. AWS CLI: aws service-quotas list-service-quotas --service-code <code>
+  #   3. Common service codes: ec2, vpc, elasticloadbalancing, iam, lambda, s3, rds
+  # -------------------------------------------------------------------------------------------------------------------
+  service_quota_templates = [
+    {
+      # Regional quota: Increase SSL/TLS certificates per ALB in multiple regions
+      regions      = ["eu-central-1", "us-east-1"]
+      quota_name   = "Certificates per Application Load Balancer"
+      service_code = "elasticloadbalancing"
+      new_value    = 30 # Default: 25, Increased for multi-domain ALBs
+    },
+    {
+      # Increase managed IAM policies per role (useful for modular IAM design)
+      regions      = ["us-east-1"] # REQUIRED: Global IAM quotas use us-east-1
+      quota_name   = "Managed policies per role"
+      service_code = "iam"
+      new_value    = 20 # Default: 10, Increased for complex permission models
+    }
+  ]
+
+  # -------------------------------------------------------------------------------------------------------------------
+  # DELEGATED ADMINISTRATORS - SERVICE DELEGATION
+  # -------------------------------------------------------------------------------------------------------------------
+  # Delegate administration of specific AWS services to designated accounts (typically Security, Backup, or Network)
+  # 
+  # PREREQUISITES:
+  #   ⚠️  Service must be enabled in 'service_access_principals' above (enables trusted access with Organizations)
+  #   ⚠️  Delegated administrator account must already exist in the organization
+  #   ⚠️  Delegated admin must be a MEMBER account (cannot use management account)
+  # 
+  # WHY DELEGATE:
+  #   ✓ Centralized management from specialized accounts (security, backup, networking)
+  #   ✓ Separation of duties: Management account for org structure, specialized accounts for their domains
+  #   ✓ Reduced risk: Limits blast radius if management account is compromised
+  #   ✓ Best practice: AWS recommends minimal usage of management account
+  # 
+  # DELEGATION TYPES:
+  # 
+  #   GLOBAL DELEGATION (once per organization):
+  #     Services delegated organization-wide, not per region:
+  #     - AWS Config: Centrally manage compliance rules across organization
+  #     - IAM Access Analyzer: Analyze resource policies organization-wide
+  #     - AWS Backup: Centralized backup management and policies
+  #     - CloudFormation StackSets: Cross-account deployments
+  #     - Organizations, SSO/Identity Center, etc.
+  # 
+  #   REGIONAL DELEGATION (per region):
+  #     Services requiring delegation in EACH region you operate:
+  #     - Security Hub: Aggregate security findings per region
+  #     - GuardDuty: Threat detection per region
+  #     - Inspector: Vulnerability scanning per region
+  #     - Macie: Sensitive data discovery per region
+  #     - Audit Manager: Compliance auditing per region
+  #     - IPAM: IP address management per region (optional - can also run centralized without delegation)
+  # 
+  # DELEGATION PROCESS:
+  #   1. Service must be enabled in Organizations (via service_access_principals)
+  #   2. Delegated admin account receives permissions to manage service org-wide/regionally
+  #   3. Member accounts are automatically enrolled/managed by delegated admin
+  # 
+  # COMMON PATTERNS:
+  #   - Security services → Security account (creates centralized SOC)
+  #   - Backup → Backup/Log Archive account (centralized backup management)
+  #   - IPAM → Network account (centralized IP address management)
+  # -------------------------------------------------------------------------------------------------------------------
+  delegated_administrators = [
+    {
+      service_principal = "securityhub.amazonaws.com"
+      admin_account_id  = local.security_account_id
+      regions = [
+        "eu-central-1",
+        "eu-central-2",
+        "us-east-1",
+      ]
+    },
+    {
+      service_principal = "guardduty.amazonaws.com"
+      admin_account_id  = local.security_account_id
+      regions = [
+        "eu-central-1",
+        "eu-central-2",
+        "us-east-1",
+      ]
+    },
+    {
+      service_principal = "inspector2.amazonaws.com"
+      admin_account_id  = local.security_account_id
+      regions = [
+        "eu-central-1",
+        "eu-central-2",
+        "us-east-1",
+      ]
+    },
+    {
+      service_principal = "config.amazonaws.com"
+      admin_account_id  = local.security_account_id
+      regions = [
+        "eu-central-1",
+        "eu-central-2",
+        "us-east-1",
+      ]
+    },
+    {
+      service_principal = "access-analyzer.amazonaws.com"
+      admin_account_id  = local.security_account_id
+      regions = [
+        "eu-central-1",
+      ]
+    },
+    {
+      service_principal = "backup.amazonaws.com"
+      admin_account_id  = local.backup_account_id
+      regions = [
+        "eu-central-1",
+      ]
+    },
+  ]
+
+  # NOTE: 'aws.global_service_region' configuration_alias is only required for 'var.service_quota_templates'
+  # in aws commercial partition, service quota templates must be applied from the 'us-east-1' region
   providers = {
-    aws = aws.euc1
+    aws.global_service_region = aws.use1
   }
 }

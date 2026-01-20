@@ -15,7 +15,7 @@ output "aws_partition" {
 
 output "current_partition_dns_suffix" {
   description = "The current AWS partition DNS suffix"
-  value = local.current_partition_dns_suffix
+  value       = local.current_partition_dns_suffix
 }
 
 output "ntc_parameters" {

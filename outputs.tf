@@ -13,6 +13,11 @@ output "aws_partition" {
   value       = local.current_partition
 }
 
+output "current_partition_dns_suffix" {
+  description = "The current AWS partition DNS suffix"
+  value = local.current_partition_dns_suffix
+}
+
 output "ntc_parameters" {
   description = "Map of all ntc parameters"
   value       = local.ntc_parameters

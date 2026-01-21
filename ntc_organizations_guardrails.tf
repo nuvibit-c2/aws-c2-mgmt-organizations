@@ -136,6 +136,8 @@ module "ntc_guardrail_templates" {
         "ce:*",
         "chime:*",
         "cloudfront:*",
+        "cloudwatch:*",
+        "logs:*",
         "config:*",
         "cur:*",
         "directconnect:*",
@@ -175,10 +177,12 @@ module "ntc_guardrail_templates" {
         # Some services may legitimately need to operate in regions outside the allowed_regions list
         # Common use cases for regional exceptions:
         #
-        # 1. LAMBDA@EDGE (CloudFront Functions):
-        #    - CloudFront is a global service but Lambda@Edge functions must be deployed in us-east-1
-        #    - Required for: Request/response manipulation, A/B testing, security headers
+        # 1. LAMBDA@EDGE:
+        #    - Lambda@Edge functions must be deployed in us-east-1 (different from CloudFront Functions)
+        #    - CloudWatch Logs for Lambda@Edge will also be stored in us-east-1
+        #    - Required for: Complex request/response manipulation, A/B testing, security headers
         #    - Add: "lambda:*" or specific Lambda@Edge actions
+        #    - Note: CloudFront Functions (lightweight alternative) run at edge locations globally, not in regions
         #
         # 2. DISASTER RECOVERY / BUSINESS CONTINUITY:
         #    - Backup regions outside primary data residency requirements
@@ -274,6 +278,8 @@ module "ntc_guardrail_templates" {
         "ce:*",
         "chime:*",
         "cloudfront:*",
+        "cloudwatch:*",
+        "logs:*",
         "config:*",
         "cur:*",
         "directconnect:*",
@@ -324,6 +330,8 @@ module "ntc_guardrail_templates" {
         "ce:*",
         "chime:*",
         "cloudfront:*",
+        "cloudwatch:*",
+        "logs:*",
         "config:*",
         "cur:*",
         "directconnect:*",
@@ -434,6 +442,8 @@ module "ntc_guardrail_templates" {
         "budgets:*",       # AWS Budgets
         "ce:*",            # AWS Cost Explorer Service
         "cloudfront:*",    # Amazon CloudFront
+        "cloudwatch:*",    # Amazon CloudWatch
+        "logs:*",          # Amazon CloudWatch Logs
         "health:*",        # AWS Health APIs and Notifications
         "iam:*",           # AWS Identity and Access Management
         "kms:*",           # AWS Key Management Service

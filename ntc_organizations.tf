@@ -188,6 +188,56 @@ module "ntc_organizations" {
     # Applied to: /root (entire organization)
     # Enforced for: S3 only
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_s3_encryption_and_tls_version"],
+
+    # ---------------------------------------------------------------------------------------------------------
+    # AI SERVICES OPT-OUT POLICIES - DATA PRIVACY PROTECTION
+    # ---------------------------------------------------------------------------------------------------------
+    # Opt out of AI service data usage across the entire organization to protect customer data privacy
+    #
+    # WHAT THIS DOES:
+    #   - Prevents AWS from using customer data to improve AI/ML services
+    #   - Applies organization-wide to all accounts and AI services
+    #   - Hard enforced at root level (child accounts cannot override)
+    #
+    # AFFECTED SERVICES:
+    #   - Amazon Comprehend, Lex, Polly, Rekognition, Textract, Transcribe, Translate
+    #   - Amazon CodeGuru, DevOps Guru
+    #   - AWS HealthScribe, Amazon Q
+    #   - And other AI/ML services
+    #
+    # COMPLIANCE BENEFITS:
+    #   ✓ Protects sensitive customer data from AI training
+    #   ✓ Supports GDPR and data sovereignty requirements
+    #   ✓ Reduces data residency concerns
+    #   ✓ Enforces data minimization principles
+    #
+    # POLICY ENFORCEMENT:
+    #   - "@@none" operators prevent child policies from overriding
+    #   - "optOut" ensures all customer data is excluded from AI training
+    #   - Applied to /root affects entire organization hierarchy
+    #
+    # Reference: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_ai-opt-out_syntax.html
+    # ---------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "OptOutFromAllAIServices"
+      policy_type        = "AISERVICES_OPT_OUT_POLICY"
+      policy_description = "Opt outs all customer data from all AI services. Hard enforced at root level for all."
+      target_ou_paths    = ["/root"]
+      target_account_ids = []
+      policy_json = jsonencode({
+        services = {
+          "@@operators_allowed_for_child_policies" = ["@@none"]
+          default = {
+            "@@operators_allowed_for_child_policies" = ["@@none"]
+            opt_out_policy = {
+              "@@operators_allowed_for_child_policies" = ["@@none"]
+              "@@assign"                               = "optOut"
+            }
+          }
+        }
+      })
+    }
+
   ]
 
   # -------------------------------------------------------------------------------------------------------------------

@@ -221,7 +221,7 @@ module "ntc_organizations" {
     {
       policy_name        = "OptOutFromAllAIServices"
       policy_type        = "AISERVICES_OPT_OUT_POLICY"
-      policy_description = "Opt outs all customer data from all AI services. Hard enforced at root level for all."
+      policy_description = "Opts out all customer data from all AI services. Hard enforced at root level for all."
       target_ou_paths    = ["/root"]
       target_account_ids = []
       policy_json = jsonencode({

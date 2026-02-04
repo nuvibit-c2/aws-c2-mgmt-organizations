@@ -786,7 +786,10 @@ module "ntc_guardrail_templates" {
       # Resource exceptions (resources exempt from confused deputy protection)
       # CONFIGURATION: Only add exceptions for resources with legitimate external service access
       # EXAMPLE: exclude_resource_arns = ["arn:aws:s3:::my-public-bucket/*"]
-      exclude_resource_arns = []
+      exclude_resource_arns = [
+        # NOTE: network firewall with kms cmk triggers confused deputy protection - exclude while investigating with aws support
+        "arn:aws:kms:eu-central-1:944538260333:key/d2cc767c-fb08-4382-9d67-2f4c460cc75f"
+      ]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # RCP 2: Organization Boundary Enforcement

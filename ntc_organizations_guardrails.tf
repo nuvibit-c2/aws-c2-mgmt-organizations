@@ -788,7 +788,7 @@ module "ntc_guardrail_templates" {
       # EXAMPLE: exclude_resource_arns = ["arn:aws:s3:::my-public-bucket/*"]
       exclude_resource_arns = [
         # NOTE: network firewall with kms cmk triggers confused deputy protection - exclude while investigating with aws support
-        "arn:aws:kms:eu-central-1:944538260333:key/d2cc767c-fb08-4382-9d67-2f4c460cc75f"
+        "arn:aws:kms:eu-central-1:944538260333:key/2bb3bfda-5446-4470-aa40-f74cea61ae85"
       ]
     },
     # -----------------------------------------------------------------------------------------------------------------

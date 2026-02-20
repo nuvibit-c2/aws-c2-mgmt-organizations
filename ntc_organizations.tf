@@ -74,7 +74,8 @@ module "ntc_organizations" {
     "/root/workloads",
     "/root/workloads/prod",
     "/root/workloads/dev",
-    "/root/workloads/test"
+    "/root/workloads/test",
+    "/root/workloads/preprod",
   ]
 
   # -----------------------------------------------------------------------------------------------------------------

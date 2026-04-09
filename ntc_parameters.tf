@@ -213,10 +213,6 @@ module "ntc_parameters_bucket" {
       "node_owner_account_id" = local.backup_account_id
     },
   ]
-
-  providers = {
-    aws = aws.euc1
-  }
 }
 
 # =====================================================================================================================

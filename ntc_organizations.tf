@@ -8,7 +8,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.0.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.0.4"
 
   region = "eu-central-1"
   # -------------------------------------------------------------------------------------------------------------------
@@ -217,6 +217,7 @@ module "ntc_organizations" {
   #   - Small additional cost but provides immediate visibility
   # -------------------------------------------------------------------------------------------------------------------
   organization_trail = {
+    enabled        = true
     kms_key_arn    = local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["org_cloudtrail"]
     s3_bucket_name = local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"]
 

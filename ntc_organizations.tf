@@ -8,7 +8,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.1.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.2.0"
 
   region = "eu-central-1"
   # -------------------------------------------------------------------------------------------------------------------

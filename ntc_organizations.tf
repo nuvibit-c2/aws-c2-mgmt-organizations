@@ -227,6 +227,37 @@ module "ntc_organizations" {
     # cloud_watch_logs_existing   = false                    # Set to true if log group already exists
     # cloud_watch_logs_group_name = "organization-trail-logs" # Customize log group name
     # cloud_watch_logs_role_name  = "organization-trail-logs" # Customize IAM role name
+
+    # -----------------------------------------------------------------------------------------------------------------
+    # ADVANCED EVENT SELECTORS - FINE-GRAINED DATA / MANAGEMENT EVENT LOGGING
+    # -----------------------------------------------------------------------------------------------------------------
+    # Generic passthrough of the CloudTrail advanced event selector shape.
+    #
+    # BEHAVIOR:
+    #   - Omit this block entirely to keep the default trail behavior (all management events, no data events).
+    #   - When configured, an "eventCategory Equals Management" selector is added automatically so management
+    #     logging is preserved (include_management_events defaults to true). Set it to false only if you define
+    #     your own management-events selector.
+    #
+    # EXAMPLE BELOW: audit access to the Terraform state backend buckets across ALL member accounts.
+    #   - One org-wide selector matches every account's state bucket via a shared ARN prefix (StartsWith).
+    #   - If installations use S3-native locking (use_lockfile), the .tflock object writes/deletes are captured
+    #     by the same selector for free.
+    #
+    # ⚠️  VERIFY THE ARN PREFIX: replace "tfstate-" with your actual state-backend bucket naming prefix.
+    # -----------------------------------------------------------------------------------------------------------------
+    advanced_event_selectors = {
+      selectors = [
+        {
+          name = "tfstate-backend-audit"
+          field_selectors = [
+            { field = "eventCategory", equals = ["Data"] },
+            { field = "resources.type", equals = ["AWS::S3::Object"] },
+            { field = "resources.ARN", starts_with = ["arn:${local.current_partition}:s3:::tfstate-"] },
+          ]
+        }
+      ]
+    }
   }
 
   # -------------------------------------------------------------------------------------------------------------------

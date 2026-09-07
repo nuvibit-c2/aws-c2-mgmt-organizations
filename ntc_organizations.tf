@@ -507,9 +507,9 @@ module "ntc_organizations" {
       target_account_ids  = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only on these accounts
       include_root        = false
     }
-   ]
+  ]
 
-   # -------------------------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------------------------
   # AWS BACKUP GLOBAL SETTINGS
   # -------------------------------------------------------------------------------------------------------------------
   # Org-wide AWS Backup settings - UpdateGlobalSettings only accepts calls from the management account.

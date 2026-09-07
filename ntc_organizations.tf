@@ -8,7 +8,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.2.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.3.0"
 
   region = "eu-central-1"
   # -------------------------------------------------------------------------------------------------------------------
@@ -483,6 +483,50 @@ module "ntc_organizations" {
       ]
     },
   ]
+
+  # -------------------------------------------------------------------------------------------------------------------
+  # DELEGATION POLICIES - SCOPED ORGANIZATIONS POLICY MANAGEMENT
+  # -------------------------------------------------------------------------------------------------------------------
+  # Grants the backup account rights over Organizations' own policy-management APIs, scoped to BACKUP_POLICY -
+  # different from 'delegated_administrators' above, which only covers AWS Backup's own APIs.
+  #
+  # CONFIGURATION:
+  #   - delegate_account_id: account receiving the delegated policy rights
+  #   - policy_types: which policy type(s) the delegate may manage
+  #   - target_ou_paths: OU paths delegate may attach/detach to - empty = all OUs
+  #   - target_account_ids: individual accounts the delegate may target - empty = all accounts
+  #   - include_root: whether delegate may ALSO attach/detach at the org Root, in addition to
+  #     target_ou_paths/target_account_ids - not a restriction of them, since Root is inherited org-wide.
+  #     Only needed for org-wide attachment or accounts placed directly under Root (outside any OU).
+  # -------------------------------------------------------------------------------------------------------------------
+  delegation_policies = [
+    {
+      delegate_account_id = local.backup_account_id
+      policy_types        = ["BACKUP_POLICY"]
+      target_ou_paths     = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only within these OUs
+      target_account_ids  = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only on these accounts
+      include_root        = false
+    }
+   ]
+
+   # -------------------------------------------------------------------------------------------------------------------
+  # AWS BACKUP GLOBAL SETTINGS
+  # -------------------------------------------------------------------------------------------------------------------
+  # Org-wide AWS Backup settings - UpdateGlobalSettings only accepts calls from the management account.
+  #
+  # CONFIGURATION:
+  #   - enabled: apply this block at all - REQUIRED true for central backup to work, false leaves existing
+  #     global settings untouched (the other attributes below are then ignored)
+  #   - enable_cross_account_backup: allow backup plans to copy recovery points into another account's vault
+  #   - enable_delegated_administrator: let the delegated backup admin account manage org-wide backup policies
+  #   - enable_multi_party_approval: require a second approver before destructive backup actions (e.g. vault deletion)
+  # -------------------------------------------------------------------------------------------------------------------
+  backup_global_settings = {
+    enabled                        = true
+    enable_cross_account_backup    = true
+    enable_delegated_administrator = true
+    enable_multi_party_approval    = false
+  }
 
   # NOTE: 'aws.global_service_region' configuration_alias is only required for 'var.service_quota_templates'
   # in aws commercial partition, service quota templates must be applied from the 'us-east-1' region

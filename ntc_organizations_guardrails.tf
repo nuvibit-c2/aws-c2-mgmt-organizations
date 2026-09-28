@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.0.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.1.0"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -100,18 +100,21 @@ module "ntc_guardrail_templates" {
     #
     # CONFIGURATION PARAMETERS:
     #   - allowed_regions: Define which AWS regions workloads can be deployed to
-    #   - whitelist_for_other_regions: Global services that must be accessible regardless of region
-    #     (e.g., IAM, CloudFront, Route53, STS)
+    #   - whitelist_for_other_regions: Harmless, region-agnostic actions accessible from ANY region
+    #     (e.g., ec2:DescribeRegions for cross-region automation)
+    #   - whitelist_for_specific_regions: Regions which are partially opened for specific actions
+    #     (e.g., global services like IAM, CloudFront, Route53, STS in us-east-1, Lambda@Edge in us-east-1)
     #
     # EXCLUSIONS:
     #   - OrganizationAccountAccessRole: Allows cross-region management access
     #
     # USE CASE: Enforce data residency requirements (e.g., GDPR requiring data in EU regions)
     #
-    # CONFIGURATION TIP: 
+    # CONFIGURATION TIP:
     #   - Add regions to allowed_regions for data residency requirements
-    #   - Global services in whitelist_for_other_regions typically don't store customer data
-    #   - Always include IAM, STS, and CloudFormation for account management
+    #   - Global services pin their API calls to a specific region (mostly us-east-1, some us-west-2), so map
+    #     them in whitelist_for_specific_regions instead of whitelisting them in every region
+    #   - Overriding whitelist_for_specific_regions replaces the module default, so keep the default entries
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "scp_workloads_ou"
@@ -122,98 +125,123 @@ module "ntc_guardrail_templates" {
         "eu-central-1",
         "eu-central-2",
       ]
-      # Global/multi-region services that can be accessed from any region
-      # These typically don't store data in specific regions or are required for account functionality
+      # Harmless, region-agnostic actions which can be called from ANY region
+      # e.g. a central networking account enumerating transit gateways across all regions
       whitelist_for_other_regions = [
-        # allowed global actions
-        "a4b:*",
-        "acm:*",
-        "aws-marketplace-management:*",
-        "aws-marketplace:*",
-        "aws-portal:*",
-        "bcm-dashboards:*",
-        "budgets:*",
-        "ce:*",
-        "chime:*",
-        "cloudfront:*",
-        "cloudwatch:*",
-        "logs:*",
-        "config:*",
-        "cur:*",
-        "directconnect:*",
         "ec2:DescribeRegions",
         "ec2:DescribeTransitGateways",
         "ec2:DescribeVpnGateways",
-        "fms:*",
-        "globalaccelerator:*",
-        "health:*",
-        "iam:*",
-        "importexport:*",
-        "kms:*",
-        "mobileanalytics:*",
-        "networkmanager:*",
-        "organizations:*",
-        "pricing:*",
-        "route53:*",
-        "route53domains:*",
-        "route53-recovery-cluster:*",
-        "route53-recovery-control-config:*",
-        "route53-recovery-readiness:*",
-        "s3:GetAccountPublic*",
-        "s3:ListAllMyBuckets",
-        "s3:ListMultiRegionAccessPoints",
-        "s3:PutAccountPublic*",
-        "shield:*",
-        "sts:*",
-        "support:*",
-        "trustedadvisor:*",
-        "waf-regional:*",
-        "waf:*",
-        "wafv2:*",
-        "wellarchitected:*",
-        # -----------------------------------------------------------------------------------------------------------------
+      ]
+      # Regions which are partially opened for specific actions (in addition to allowed_regions)
+      # In each region ONLY the listed actions are allowed, everything else stays denied.
+      # NOTE: this overrides the module default - the default global service entries are repeated here
+      whitelist_for_specific_regions = {
+        # -------------------------------------------------------------------------------------------------------------
         # EXCEPTIONS FOR SERVICES RUNNING IN OTHER REGIONS
-        # -----------------------------------------------------------------------------------------------------------------
-        # Some services may legitimately need to operate in regions outside the allowed_regions list
-        # Common use cases for regional exceptions:
+        # -------------------------------------------------------------------------------------------------------------
+        # Global services pin their control plane to a specific region, regardless of the region the caller's
+        # SDK/CLI is configured for. Some services may also legitimately need to operate in specific regions
+        # outside the allowed_regions list. Common use cases for regional exceptions:
         #
-        # 1. LAMBDA@EDGE:
-        #    - Lambda@Edge functions must be deployed in us-east-1 (different from CloudFront Functions)
-        #    - CloudWatch Logs for Lambda@Edge will also be stored in us-east-1
-        #    - Required for: Complex request/response manipulation, A/B testing, security headers
-        #    - Add: "lambda:*" or specific Lambda@Edge actions
-        #    - Note: CloudFront Functions (lightweight alternative) run at edge locations globally, not in regions
+        # 1. LAMBDA@EDGE (CloudFront Functions):
+        #    - CloudFront is a global service but Lambda@Edge functions must be deployed in us-east-1
+        #    - Required for: Request/response manipulation, A/B testing, security headers
+        #    - Add: "lambda:*" or specific Lambda@Edge actions to "us-east-1"
         #
         # 2. DISASTER RECOVERY / BUSINESS CONTINUITY:
         #    - Backup regions outside primary data residency requirements
         #    - Required for: RTO/RPO compliance, resilience, failover capabilities
-        #    - Add: Service-specific actions (e.g., "s3:*", "dynamodb:*", "rds:*")
+        #    - Add: Service-specific actions to the DR region (e.g., "us-west-2" = ["s3:*", "dynamodb:*"])
         #
         # 3. THIRD-PARTY INTEGRATIONS:
         #    - SaaS vendors requiring specific regions (e.g., us-east-1, us-west-2)
         #    - Required for: VPC endpoints, PrivateLink, data exchange
-        #    - Add: Service actions for specific integrations
+        #    - Add: Service actions for specific integrations to the vendor's region
         #
         # CONFIGURATION GUIDELINES:
         #   ✓ Document WHY each service needs regional exceptions
         #   ✓ Use specific actions (e.g., "lambda:InvokeFunction") instead of wildcards when possible
+        #   ✓ An action can be listed for multiple regions, patterns may overlap across regions
+        #     (e.g., "lambda:*" in us-east-1 and "lambda:Get*" in eu-west-1)
         #   ✓ Regularly review and remove unused exceptions
         #   ✓ Consider data residency and compliance implications
         #   ✓ Validate exceptions with security and compliance teams
         #
         # SECURITY CONSIDERATIONS:
-        #   ⚠️  Exceptions bypass regional data residency controls
+        #   ⚠️  Exceptions bypass regional data residency controls for the listed actions in the listed regions
         #   ⚠️  Ensure no sensitive data is processed in excepted regions
         #   ⚠️  Monitor CloudTrail for unexpected cross-region activity
         #   ⚠️  Use resource-based policies to further restrict access
-        #
-        # EXAMPLES:
-        #   Lambda@Edge:           "lambda:*"
-        #   DR to us-west-2:       "s3:*", "dynamodb:*", "rds:*"
-        #   Specific Lambda actions: "lambda:InvokeFunction", "lambda:GetFunction"
-        # -----------------------------------------------------------------------------------------------------------------
-        "lambda:*", # Lambda@Edge functions for CloudFront (requires us-east-1)
-      ]
+        # -------------------------------------------------------------------------------------------------------------
+        "us-east-1" = [
+          "a4b:*",
+          "account:Get*",
+          "account:List*",
+          "acm:*",
+          "aws-marketplace-management:*",
+          "aws-marketplace:*",
+          "aws-portal:*",
+          "bcm-dashboards:*", # c1 addition: Billing and Cost Management dashboards
+          "billing:*",
+          "billingconductor:*",
+          "budgets:*",
+          "ce:*",
+          "chime:*",
+          "cloudfront:*",
+          "config:*",
+          "consolidatedbilling:*",
+          "cost-optimization-hub:*",
+          "cur:*",
+          "directconnect:*",
+          "ecr-public:GetAuthorizationToken",
+          "fms:*",
+          "freetier:*",
+          "health:*",
+          "iam:*",
+          "importexport:*",
+          "invoicing:*",
+          "kms:*",
+          "lambda:*", # c1 addition: Lambda@Edge functions for CloudFront (requires us-east-1)
+          "mobileanalytics:*",
+          "notifications-contacts:*",
+          "notifications:*",
+          "organizations:*",
+          "payments:*",
+          "pricing:*",
+          "route53:*",
+          "route53domains:*",
+          "s3:GetAccountPublic*",
+          "s3:ListAllMyBuckets",
+          "s3:PutAccountPublic*",
+          "savingsplans:*",
+          "shield:*",
+          "sts:*",
+          "support:*",
+          "supportplans:*",
+          "tax:*",
+          "trustedadvisor:*",
+          "waf-regional:*",
+          "waf:*",
+          "wafv2:*",
+          "wellarchitected:*",
+        ]
+        # globalaccelerator, networkmanager, route53-recovery-* and s3 multi-region access points use us-west-2
+        "us-west-2" = [
+          "globalaccelerator:*",
+          "networkmanager:*",
+          "route53-recovery-cluster:*",
+          "route53-recovery-control-config:*",
+          "route53-recovery-readiness:*",
+          "s3:CreateMultiRegionAccessPoint",
+          "s3:DeleteMultiRegionAccessPoint",
+          "s3:DescribeMultiRegionAccessPointOperation",
+          "s3:GetMultiRegionAccessPoint",
+          "s3:GetMultiRegionAccessPointPolicy",
+          "s3:GetMultiRegionAccessPointPolicyStatus",
+          "s3:ListMultiRegionAccessPoints",
+          "s3:PutMultiRegionAccessPointPolicy",
+        ]
+      }
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
       # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
       # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
@@ -232,7 +260,7 @@ module "ntc_guardrail_templates" {
     #
     # CONFIGURATION PARAMETERS:
     #   - allowed_regions: Regions where services can operate
-    #   - whitelist_for_other_regions: Global services accessible from any region
+    #   - whitelist_for_other_regions / whitelist_for_specific_regions: module defaults are used (see SCP 3)
     #   - whitelist_for_allowed_regions: Services permitted within allowed regions
     #
     # USE CASE: High-security environments requiring explicit approval for each AWS service
@@ -265,55 +293,10 @@ module "ntc_guardrail_templates" {
         "eu-west-1",
         "us-east-1",
       ]
-      # Services allowed to run in regions OUTSIDE of the allowed_regions list
-      # These are typically global services that don't have regional endpoints
-      # or services that must be accessed globally (like IAM, CloudFront, Route53)
-      whitelist_for_other_regions = [
-        "a4b:*",
-        "acm:*",
-        "aws-marketplace-management:*",
-        "aws-marketplace:*",
-        "aws-portal:*",
-        "budgets:*",
-        "ce:*",
-        "chime:*",
-        "cloudfront:*",
-        "cloudwatch:*",
-        "logs:*",
-        "config:*",
-        "cur:*",
-        "directconnect:*",
-        "ec2:DescribeRegions",
-        "ec2:DescribeTransitGateways",
-        "ec2:DescribeVpnGateways",
-        "fms:*",
-        "globalaccelerator:*",
-        "health:*",
-        "iam:*",
-        "importexport:*",
-        "kms:*",
-        "mobileanalytics:*",
-        "networkmanager:*",
-        "organizations:*",
-        "pricing:*",
-        "route53:*",
-        "route53domains:*",
-        "route53-recovery-cluster:*",
-        "route53-recovery-control-config:*",
-        "route53-recovery-readiness:*",
-        "s3:GetAccountPublic*",
-        "s3:ListAllMyBuckets",
-        "s3:ListMultiRegionAccessPoints",
-        "s3:PutAccountPublic*",
-        "shield:*",
-        "sts:*",
-        "support:*",
-        "trustedadvisor:*",
-        "waf-regional:*",
-        "waf:*",
-        "wafv2:*",
-        "wellarchitected:*",
-      ]
+      # whitelist_for_other_regions and whitelist_for_specific_regions are not set, so the module defaults apply:
+      #   - whitelist_for_other_regions: harmless ec2 describe actions accessible from any region
+      #   - whitelist_for_specific_regions: global services in us-east-1 and us-west-2
+      # us-east-1 is already in allowed_regions, so only the us-west-2 entries have an effect here
       # Regional services permitted within allowed_regions
       # CONFIGURATION STRATEGY:
       #   - Start with essential services your teams need
@@ -330,8 +313,6 @@ module "ntc_guardrail_templates" {
         "ce:*",
         "chime:*",
         "cloudfront:*",
-        "cloudwatch:*",
-        "logs:*",
         "config:*",
         "cur:*",
         "directconnect:*",
@@ -396,7 +377,7 @@ module "ntc_guardrail_templates" {
     #
     # CONFIGURATION PARAMETERS:
     #   - allowed_regions: EU regions with C5 certification
-    #   - whitelist_for_other_regions: C5-compliant global services
+    #   - whitelist_for_specific_regions: C5-compliant global services (us-east-1 only)
     #   - whitelist_for_allowed_regions: C5-compliant regional services
     #
     # DEPLOYMENT STRATEGY:
@@ -434,26 +415,28 @@ module "ntc_guardrail_templates" {
         "eu-south-1",   # Milan
         "eu-south-2",   # Spain
       ]
-      # C5-compliant global services (accessible from any region)
+      # No actions are exempted in every region
+      whitelist_for_other_regions = []
+      # C5-compliant global services (only accessible in us-east-1, where their control plane is located)
       # These services are certified under BSI C5 and provide global endpoints
       # MAINTENANCE: Update when AWS publishes new C5 certifications
-      whitelist_for_other_regions = [
-        "acm:*",           # AWS Certificate Manager
-        "budgets:*",       # AWS Budgets
-        "ce:*",            # AWS Cost Explorer Service
-        "cloudfront:*",    # Amazon CloudFront
-        "cloudwatch:*",    # Amazon CloudWatch
-        "logs:*",          # Amazon CloudWatch Logs
-        "health:*",        # AWS Health APIs and Notifications
-        "iam:*",           # AWS Identity and Access Management
-        "kms:*",           # AWS Key Management Service
-        "organizations:*", # AWS Organizations
-        "route53:*",       # Amazon Route 53
-        "shield:*",        # AWS Shield
-        "sts:*",           # AWS Security Token Service
-        "support:*",       # AWS Support
-        "waf:*",           # AWS WAF
-      ]
+      whitelist_for_specific_regions = {
+        "us-east-1" = [
+          "acm:*",           # AWS Certificate Manager
+          "budgets:*",       # AWS Budgets
+          "ce:*",            # AWS Cost Explorer Service
+          "cloudfront:*",    # Amazon CloudFront
+          "health:*",        # AWS Health APIs and Notifications
+          "iam:*",           # AWS Identity and Access Management
+          "kms:*",           # AWS Key Management Service
+          "organizations:*", # AWS Organizations
+          "route53:*",       # Amazon Route 53
+          "shield:*",        # AWS Shield
+          "sts:*",           # AWS Security Token Service
+          "support:*",       # AWS Support
+          "waf:*",           # AWS WAF
+        ]
+      }
       # C5-compliant regional services (accessible within allowed EU regions)
       # This comprehensive list includes all AWS services certified under BSI C5
       # Services are organized by category for easier maintenance

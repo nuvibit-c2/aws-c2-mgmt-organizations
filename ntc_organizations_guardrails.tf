@@ -313,6 +313,8 @@ module "ntc_guardrail_templates" {
         "ce:*",
         "chime:*",
         "cloudfront:*",
+        "cloudwatch:*",
+        "logs:*",
         "config:*",
         "cur:*",
         "directconnect:*",

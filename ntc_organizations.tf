@@ -117,9 +117,19 @@ module "ntc_organizations" {
     # ---------------------------------------------------------------------------------------------------------
 
     # SCP 1: Organization-wide Security Baseline
-    # Prevents accounts from leaving org, blocks root user actions, denies IAM user creation
+    # Prevents accounts from leaving org, blocks root user actions, denies IAM user creation and console passwords
     # Applied to: /root (entire organization)
     module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
+
+    # SCP 1b: Protected Resources
+    # Denies deletion/modification of account baseline resources (tagged with ManagedBy = ntc-account-factory)
+    # Applied to: /root (entire organization)
+    module.ntc_guardrail_templates.service_control_policies["scp_protected_resources"],
+
+    # SCP 1c: Blacklisted Services
+    # Denies usage of explicitly blacklisted services
+    # Applied to: /root (entire organization)
+    module.ntc_guardrail_templates.service_control_policies["scp_blacklisted_services"],
 
     # SCP 2: Suspended/Transitional Account Lockdown
     # Blocks all AWS service access for suspended or transitional accounts

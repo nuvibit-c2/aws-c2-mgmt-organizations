@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.1.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.2.0"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -39,6 +39,8 @@ module "ntc_guardrail_templates" {
     #   1. deny_leaving_organizations: Prevents accounts from leaving the organization
     #   2. deny_actions_as_root_except_centralized_root: Blocks root user actions except for specific tasks
     #   3. deny_iam_user_and_access_key_creation: Prevents creation of IAM users and long-term access keys
+    #   4. deny_login_profile_creation: Prevents console passwords for IAM users (create/update login profile,
+    #      change password, update account password policy)
     #
     # SCOPE: Applied to the entire organization (/root)
     #
@@ -46,16 +48,142 @@ module "ntc_guardrail_templates" {
     #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role
     #
     # USE CASE: Baseline security for all accounts to prevent unauthorized changes and enforce
-    #           identity federation (no IAM users with long-term credentials)
+    #           identity federation (no IAM users with long-term credentials or console passwords)
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "scp_root_ou"
-      policy_description = "Deny member accounts from leaving the organization and any root user actions except for centralized root privilege tasks"
+      policy_description = "Deny member accounts from leaving the organization, any root user actions except for centralized root privilege tasks and IAM user credentials"
       target_ou_paths    = ["/root"]
       template_names = [
         "deny_leaving_organizations",
         "deny_actions_as_root_except_centralized_root",
-        "deny_iam_user_and_access_key_creation"
+        "deny_iam_user_and_access_key_creation",
+        "deny_login_profile_creation",
+      ]
+      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+    },
+    # -----------------------------------------------------------------------------------------------------------------
+    # SCP 1b: Protected Resources (tag-based)
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Prevent deletion or modification of critical resources which are tagged as protected
+    #
+    # TEMPLATES USED:
+    #   - deny_actions_on_tagged_resources: Denies the listed actions on resources where aws:ResourceTag/<tag_key>
+    #     matches one of the tag_values
+    #
+    # SCOPE: Applied to the entire organization (/root)
+    #
+    # CONFIGURATION PARAMETERS:
+    #   - tagged_resource_actions: Actions denied on protected resources
+    #   - tag_key / tag_values: Tag which marks a resource as protected
+    #
+    # EXCLUSIONS:
+    #   - OrganizationAccountAccessRole: Used by the account baseline pipelines (assumed for all member account
+    #     actions), so baseline-managed resources can still be updated and destroyed when tagged as protected
+    #
+    # IMPORTANT:
+    #   - Only works for actions which support resource-level permissions and the aws:ResourceTag condition key
+    #   - Always include the tagging actions of each protected service, otherwise the protection tag can be
+    #     removed first and the resource deleted afterwards
+    #   - S3: aws:ResourceTag is only evaluated once ABAC is enabled on the bucket (aws_s3_bucket_abac).
+    #     With ABAC enabled, bucket tagging moves from s3:PutBucketTagging to s3:TagResource / s3:UntagResource,
+    #     so both pairs are listed to cover buckets before and after enabling ABAC
+    #   - Other pipelines which manage protected resources with their own role (i.e. not via
+    #     OrganizationAccountAccessRole) must be added to exclude_principal_arns
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "scp_protected_resources"
+      policy_description = "Deny deletion and modification actions, and removal of the protection tag, on resources tagged as protected"
+      target_ou_paths    = ["/root"]
+      template_names     = ["deny_actions_on_tagged_resources"]
+      tagged_resource_actions = [
+        # ec2 / vpc
+        "ec2:TerminateInstances",
+        "ec2:DeleteVpc",
+        "ec2:DeleteSubnet",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DeleteRouteTable",
+        "ec2:DeleteInternetGateway",
+        "ec2:DeleteNatGateway",
+        "ec2:DeleteTransitGateway",
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
+        # rds
+        "rds:DeleteDBInstance",
+        "rds:AddTagsToResource",
+        "rds:RemoveTagsFromResource",
+        # s3 (requires ABAC on the bucket, see note above)
+        "s3:DeleteBucket",
+        "s3:PutBucketTagging",
+        "s3:TagResource",
+        "s3:UntagResource",
+        # kms (e.g. keys used for tfstate or backup encryption)
+        "kms:ScheduleKeyDeletion",
+        "kms:DisableKey",
+        "kms:PutKeyPolicy",
+        "kms:TagResource",
+        "kms:UntagResource",
+        # iam roles (e.g. account baseline, backup, aws config roles)
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:AttachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription",
+        "iam:PutRolePermissionsBoundary",
+        "iam:TagRole",
+        "iam:UntagRole",
+        # iam oidc identity providers (e.g. github actions / spacelift oidc federation)
+        "iam:DeleteOpenIDConnectProvider",
+        "iam:UpdateOpenIDConnectProviderThumbprint",
+        "iam:AddClientIDToOpenIDConnectProvider",
+        "iam:RemoveClientIDFromOpenIDConnectProvider",
+        "iam:TagOpenIDConnectProvider",
+        "iam:UntagOpenIDConnectProvider",
+        # aws backup vault
+        "backup:DeleteBackupVault",
+        "backup:DeleteBackupVaultAccessPolicy",
+        "backup:DeleteBackupVaultLockConfiguration",
+        "backup:PutBackupVaultAccessPolicy",
+        "backup:PutBackupVaultLockConfiguration",
+        "backup:TagResource",
+        "backup:UntagResource",
+      ]
+      tag_key                = "ManagedBy"
+      tag_values             = ["ntc-account-factory"]
+      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+    },
+    # -----------------------------------------------------------------------------------------------------------------
+    # SCP 1c: Blacklisted Services
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Deny specific AWS services organization-wide (lighter alternative to full service whitelisting)
+    #
+    # TEMPLATES USED:
+    #   - deny_blacklisted_services: Denies all actions listed in blacklisted_services
+    #
+    # SCOPE: Applied to the entire organization (/root)
+    #
+    # CONFIGURATION PARAMETERS:
+    #   - blacklisted_services: Actions to deny, as "service:*" or specific actions
+    #
+    # EXCLUSIONS:
+    #   - OrganizationAccountAccessRole: Allows organization admins to clean up existing resources
+    #
+    # USE CASE: Block services which bypass central controls or are not approved for use
+    #
+    # NOTE: Deny wins over any whitelist, so a blacklisted service stays blocked even if it is listed in
+    #       whitelist_for_allowed_regions or whitelist_for_specific_regions of another SCP
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "scp_blacklisted_services"
+      policy_description = "Deny usage of blacklisted services"
+      target_ou_paths    = ["/root"]
+      template_names     = ["deny_blacklisted_services"]
+      blacklisted_services = [
+        "lightsail:*", # bypasses VPC, network firewall and central networking controls
+        "gamelift:*",  # no business use case
       ]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },

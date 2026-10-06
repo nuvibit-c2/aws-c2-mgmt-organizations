@@ -839,41 +839,43 @@ module "ntc_guardrail_templates" {
     #          unauthorized actions on your resources using its credentials
     # 
     # TEMPLATE USED:
-    #   - enforce_confused_deputy_protection: Requires aws:SourceAccount or aws:SourceArn conditions
+    #   - enforce_confused_deputy_protection: Denies AWS service requests made on behalf of resources
+    #     outside your organization (aws:SourceOrgID)
     #
     # SCOPE: Applied organization-wide (/root)
     #
     # ATTACK SCENARIO:
-    #   Without this protection, an attacker could create a resource policy that allows an AWS service
-    #   to access your resources, then trick that service into accessing them on the attacker's behalf.
+    #   A resource policy grants an AWS service principal access without source conditions
+    #   (e.g. cloudtrail.amazonaws.com may write to a bucket). An attacker in another account configures
+    #   the same service (e.g. their own trail) to target your resource, and the service accesses it
+    #   on the attacker's behalf.
     #
     # PROTECTION MECHANISM:
-    #   Requires resource-based policies to include aws:SourceAccount or aws:SourceArn conditions
-    #   when granting access to AWS services. This ensures the service is acting on behalf of
-    #   YOUR account, not an attacker's.
+    #   The RCP denies requests to your resources when all of the following apply:
+    #     - the caller is an AWS service principal (aws:PrincipalIsAWSService = true)
+    #     - the request carries an aws:SourceArn (the service acts on behalf of another resource)
+    #     - aws:SourceOrgID is not your organization or is missing
+    #   The deny is enforced by the RCP itself. Existing resource-based policies do NOT need to be
+    #   updated with aws:SourceAccount or aws:SourceArn conditions.
     #
     # CONFIGURATION PARAMETERS:
-    #   - org_id: Your AWS Organization ID (used to validate source accounts)
+    #   - org_id: Your AWS Organization ID (compared against aws:SourceOrgID)
     #   - enforced_service_actions: List of service actions that must include confused deputy protection
     #   - exclude_resource_arns: Resources exempt from this requirement (use sparingly)
     #
-    # EXAMPLE COMPLIANT POLICY:
-    #   {
-    #     "Effect": "Allow",
-    #     "Principal": {"Service": "cloudtrail.amazonaws.com"},
-    #     "Action": "s3:PutObject",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
-    #     "Condition": {
-    #       "StringEquals": {"aws:SourceAccount": "123456789012"}
-    #     }
-    #   }
+    # EXAMPLE DENIED REQUEST:
+    #   An SNS topic in an account outside your organization delivers to an SQS queue in your
+    #   organization (principal sns.amazonaws.com, aws:SourceArn = the external topic). The request is
+    #   denied even if the queue policy allows sns.amazonaws.com.
     #
-    # WARNING: Carefully test this policy as it may break existing service integrations that
-    #          don't include proper source conditions. Update resource policies before deployment.
+    # WARNING: Carefully test this policy as it may break existing service integrations where an AWS service
+    #          acts on behalf of resources outside your organization, or does not send aws:SourceOrgID
+    #          (e.g. network firewall with a kms cmk).
     #
     # DEPLOYMENT STRATEGY:
-    #   1. Audit existing resource policies for compliance
-    #   2. Update non-compliant policies to include source conditions
+    #   1. Identify service integrations which originate from outside your organization
+    #      (e.g. external SNS topics or EventBridge buses, third-party log deliveries)
+    #   2. Add legitimate exceptions to exclude_resource_arns
     #   3. Deploy to test environment first
     #   4. Monitor CloudTrail for denied requests
     #   5. Roll out to production after validation
@@ -996,7 +998,7 @@ module "ntc_guardrail_templates" {
     # PURPOSE: Ensure all data in transit is encrypted by requiring HTTPS/TLS for all service requests
     # 
     # TEMPLATE USED:
-    #   - enforce_secure_transport: Requires aws:SecureTransport condition
+    #   - enforce_secure_transport: Denies requests where aws:SecureTransport is false
     #
     # SCOPE: Applied organization-wide (/root)
     #
@@ -1005,32 +1007,22 @@ module "ntc_guardrail_templates" {
     #   exposing sensitive information to network eavesdropping and man-in-the-middle attacks.
     #
     # PROTECTION MECHANISM:
-    #   Requires resource-based policies to include aws:SecureTransport condition set to true,
-    #   blocking all requests not made over HTTPS/TLS.
+    #   The RCP denies all requests to the enforced services which are not made over HTTPS/TLS
+    #   (aws:SecureTransport = false or missing). The deny is enforced by the RCP itself. Existing
+    #   resource-based policies do NOT need an aws:SecureTransport condition.
     #
     # CONFIGURATION PARAMETERS:
     #   - enforced_service_actions: Services requiring HTTPS/TLS
     #   - exclude_resource_arns: Resources exempt from secure transport requirement
     #
-    # EXAMPLE COMPLIANT POLICY:
-    #   {
-    #     "Effect": "Allow",
-    #     "Principal": "*",
-    #     "Action": "s3:*",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
-    #     "Condition": {
-    #       "Bool": {"aws:SecureTransport": "true"}
-    #     }
-    #   }
-    #
-    # ALTERNATIVELY (Deny approach):
+    # EQUIVALENT STATEMENT (enforced by the RCP for every resource in scope):
     #   {
     #     "Effect": "Deny",
     #     "Principal": "*",
     #     "Action": "s3:*",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
+    #     "Resource": "*",
     #     "Condition": {
-    #       "Bool": {"aws:SecureTransport": "false"}
+    #       "BoolIfExists": {"aws:SecureTransport": "false"}
     #     }
     #   }
     #

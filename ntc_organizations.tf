@@ -173,7 +173,7 @@ module "ntc_organizations" {
 
     # RCP 1: Confused Deputy Protection
     # Prevents AWS services from being tricked into accessing your resources on behalf of attackers
-    # Requires aws:SourceAccount or aws:SourceArn conditions in resource policies
+    # Denies AWS service requests made on behalf of resources outside the organization (aws:SourceOrgID)
     # Applied to: /root (entire organization)
     # Enforced for: S3, SQS, KMS, Secrets Manager, STS
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_confused_deputy_protection"],

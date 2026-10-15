@@ -913,7 +913,8 @@ module "ntc_guardrail_templates" {
     #          within your AWS Organization (implements organizational boundary)
     # 
     # TEMPLATE USED:
-    #   - enforce_principal_access_from_organization: Requires aws:PrincipalOrgID condition
+    #   - enforce_principal_access_from_organization: Denies access by principals outside your organization
+    #     (aws:PrincipalOrgID)
     #
     # SCOPE: Applied organization-wide (/root)
     #
@@ -922,25 +923,23 @@ module "ntc_guardrail_templates" {
     #   granting access to an external AWS account, enabling data exfiltration.
     #
     # PROTECTION MECHANISM:
-    #   Requires resource-based policies to include aws:PrincipalOrgID condition, ensuring
-    #   only principals from your organization can access the resource.
+    #   The RCP denies requests to your resources when all of the following apply:
+    #     - aws:PrincipalOrgID is not your organization or is missing (also anonymous requests)
+    #     - the caller is not an AWS service principal (aws:PrincipalIsAWSService = false or missing)
+    #     - the principal is not listed in exclude_principal_arns
+    #   The deny is enforced by the RCP itself. Existing resource-based policies do NOT need to be
+    #   updated with an aws:PrincipalOrgID condition.
     #
     # CONFIGURATION PARAMETERS:
-    #   - org_id: Your AWS Organization ID
+    #   - org_id: Your AWS Organization ID (compared against aws:PrincipalOrgID)
     #   - enforced_service_actions: Actions requiring organization principal validation
     #   - exclude_resource_arns: Resources needing external access (e.g., public S3 buckets)
     #   - exclude_principal_arns: External principals that legitimately need access
     #
-    # EXAMPLE COMPLIANT POLICY:
-    #   {
-    #     "Effect": "Allow",
-    #     "Principal": "*",
-    #     "Action": "s3:GetObject",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
-    #     "Condition": {
-    #       "StringEquals": {"aws:PrincipalOrgID": "o-xxxxxxxxxx"}
-    #     }
-    #   }
+    # EXAMPLE DENIED REQUEST:
+    #   A bucket policy grants s3:GetObject to an account outside your organization. The external
+    #   principal's request is denied even though the bucket policy allows it, unless the bucket is in
+    #   exclude_resource_arns or the principal is in exclude_principal_arns.
     #
     # EXCLUSION USE CASES:
     #   - Public websites hosted on S3
@@ -953,11 +952,10 @@ module "ntc_guardrail_templates" {
     # DEPLOYMENT STRATEGY:
     #   1. Identify resources with legitimate external access requirements
     #   2. Document business justification for each exclusion
-    #   3. Update resource policies to include PrincipalOrgID conditions
-    #   4. Add necessary exclusions to exclude_resource_arns or exclude_principal_arns
-    #   5. Test in non-production environment
-    #   6. Monitor CloudTrail for unexpected access denials
-    #   7. Gradually roll out to production OUs
+    #   3. Add necessary exclusions to exclude_resource_arns or exclude_principal_arns
+    #   4. Test in non-production environment
+    #   5. Monitor CloudTrail for unexpected access denials
+    #   6. Gradually roll out to production OUs
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "rcp_enforce_principal_access_from_organization"

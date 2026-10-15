@@ -180,7 +180,7 @@ module "ntc_organizations" {
 
     # RCP 2: Organization Boundary Enforcement
     # Prevents data exfiltration by ensuring resources only accessible by org principals
-    # Requires aws:PrincipalOrgID condition in resource policies
+    # Denies requests from principals outside the organization (aws:PrincipalOrgID), AWS services excluded
     # Applied to: /root (entire organization)
     # Enforced for: S3, SQS, KMS, Secrets Manager, STS
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_principal_access_from_organization"],

@@ -153,7 +153,7 @@ module "ntc_organizations" {
     #   - Use case: Government, highly regulated industries in Germany
     #   - ⚠️ WARNING: Significantly limits available AWS services
     # ---------------------------------------------------------------------------------------------------------
-    # module.ntc_guardrail_templates.service_control_policies["scp_c5_compliance"],
+    # module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou_c5_compliance"],
 
     # ---------------------------------------------------------------------------------------------------------
     # OPTION B: Service Whitelisting (Defense-in-Depth)
@@ -516,7 +516,7 @@ module "ntc_organizations" {
       target_ou_paths     = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only within these OUs
       target_account_ids  = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only on these accounts
       include_root        = false
-    }
+    },
   ]
 
   # -------------------------------------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.2.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.3.0"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -1058,20 +1058,33 @@ module "ntc_guardrail_templates" {
     # -----------------------------------------------------------------------------------------------------------------
     # RCP 4: S3 Encryption and TLS Version Enforcement
     # -----------------------------------------------------------------------------------------------------------------
-    # PURPOSE: Enforce data-at-rest encryption using AWS KMS and require minimum TLS version for S3 access
-    # 
+    # PURPOSE: Enforce data-at-rest encryption using AWS KMS (SSE-KMS) and require minimum TLS version for S3 access
+    #
     # TEMPLATES USED:
-    #   1. enforce_s3_kms_encryption: Requires S3 objects to be encrypted with AWS KMS
+    #   1. enforce_s3_kms_encryption: Denies s3:PutObject unless the object is encrypted with an AWS KMS key (SSE-KMS)
     #   2. enforce_s3_tls_version: Enforces minimum TLS version for S3 requests
+    #   3. deny_s3_sse_c_encryption: Denies S3 writes using customer-provided keys (SSE-C) to mitigate ransomware
+    #      re-encrypting objects with an attacker-controlled key
     #
     # SCOPE: Applied organization-wide (/root)
     #
     # SECURITY REQUIREMENTS:
     #   DATA AT REST:
-    #     - All S3 objects must be encrypted using AWS KMS (SSE-KMS)
-    #     - Blocks uploads of unencrypted objects
-    #     - Blocks uploads using S3-managed encryption (SSE-S3) or customer-provided keys (SSE-C)
-    #   
+    #     - All new S3 objects must be encrypted with SSE-KMS
+    #     - SSE-S3 can no longer be used: requests with "x-amz-server-side-encryption: AES256" are denied, and so are
+    #       uploads without encryption headers into buckets whose default encryption is still SSE-S3
+    #     - Blocks uploads using customer-provided keys (SSE-C)
+    #     - Covers PutObject, CopyObject, POST uploads and multipart uploads (all authorized as s3:PutObject)
+    #
+    #   HOW THE EFFECTIVE ENCRYPTION IS EVALUATED:
+    #     The condition checks the KMS key S3 actually uses for the object, not only the request header.
+    #     Encryption headers in the request always override the bucket default encryption:
+    #     - no encryption header       -> bucket default applies, allowed if the bucket default is SSE-KMS
+    #     - "aws:kms" + key id         -> that key is used, allowed
+    #     - "aws:kms" without key id   -> AWS managed key aws/s3 is used (even if the bucket default is a CMK), allowed
+    #     - "AES256" (SSE-S3)          -> overrides bucket default, denied
+    #     => clients do not need to send encryption headers as long as the bucket default encryption is SSE-KMS
+    #
     #   DATA IN TRANSIT:
     #     - Enforces minimum TLS version to prevent use of outdated, vulnerable protocols
     #     - Protects against protocol downgrade attacks
@@ -1106,9 +1119,11 @@ module "ntc_guardrail_templates" {
     #   - Temporary buckets for non-sensitive data processing
     #
     # DEPLOYMENT STRATEGY:
-    #   1. Create KMS keys for S3 encryption if not already existing
-    #   2. Update S3 bucket default encryption settings to use KMS
-    #   3. Update application code to specify SSE-KMS for uploads
+    #   1. Create customer managed KMS keys for S3 encryption if not already existing
+    #   2. Set the default encryption of all S3 buckets to SSE-KMS with a CMK (buckets still on SSE-S3 will reject
+    #      uploads without encryption headers once this RCP is attached)
+    #   3. Search application code for explicit SSE-S3 ("AES256") headers and remove them. Prefer relying on the
+    #      bucket default; if a header is sent, include the CMK key id ("aws:kms" alone falls back to aws/s3)
     #   4. Verify all S3 clients support TLS 1.2 or higher
     #   5. Test in non-production environment
     #   6. Monitor CloudTrail for encryption-related access denials
@@ -1121,6 +1136,7 @@ module "ntc_guardrail_templates" {
       template_names = [
         "enforce_s3_kms_encryption",
         "enforce_s3_tls_version",
+        "deny_s3_sse_c_encryption",
       ]
       # Minimum TLS version for S3 access
       # CONFIGURATION OPTIONS:

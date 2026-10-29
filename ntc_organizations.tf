@@ -141,6 +141,12 @@ module "ntc_organizations" {
     # Applied to: /root/workloads (including prod, dev, test)
     module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou"],
 
+    # SCP 4: Data Perimeter & Identity Hardening for Workloads
+    # Denies domain registration, external S3 writes, RAM sharing outside the org, member SSO instances,
+    # identity provider modification and Cognito
+    # Applied to: /root/workloads (including prod, dev, test)
+    module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou_data_perimeter"],
+
     # ---------------------------------------------------------------------------------------------------------
     # ALTERNATIVE SCPs - STRICTER SECURITY POSTURES (COMMENTED OUT)
     # ---------------------------------------------------------------------------------------------------------

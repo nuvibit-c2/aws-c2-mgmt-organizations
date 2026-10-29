@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.3.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.4.0"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -803,6 +803,40 @@ module "ntc_guardrail_templates" {
       # No principal exclusions for C5 compliance - policy applies to all principals
       # CONFIGURATION: Add exclusions only if absolutely necessary for operational reasons
       exclude_principal_arns = []
+    },
+    # -----------------------------------------------------------------------------------------------------------------
+    # SCP: WORKLOADS OU - DATA PERIMETER & IDENTITY HARDENING
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Prevent data exfiltration and identity sprawl in workload accounts
+    #   1. deny_domain_registration: Domains are registered centrally, not in workload accounts
+    #   2. deny_writes_to_external_bucket: Deny S3 writes to buckets outside the organization
+    #   3. deny_resource_sharing_outside_org: Deny RAM shares with principals outside the organization
+    #   4. deny_accepting_resource_shares_from_outside_org: Deny accepting RAM invitations from outside the organization
+    #   5. deny_sso_member_account_instances_creation: Identity Center is managed centrally (organization instance only)
+    #   6. deny_identity_provider_modification: Deny creating/modifying IAM OIDC and SAML providers
+    #   7. deny_cognito: Deny Amazon Cognito usage
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "scp_workloads_ou_data_perimeter"
+      policy_description = "Deny domain registration, external S3 writes, RAM sharing outside the org, member SSO instances, IdP modification and Cognito"
+      target_ou_paths    = ["/root/workloads"]
+      template_names = [
+        "deny_domain_registration",
+        "deny_writes_to_external_bucket",
+        "deny_resource_sharing_outside_org",
+        "deny_accepting_resource_shares_from_outside_org",
+        "deny_sso_member_account_instances_creation",
+        "deny_identity_provider_modification",
+        "deny_cognito",
+      ]
+      # template specific parameters
+      # DO NOT reference module.ntc_organizations.org_id directly
+      org_id                                   = local.organization_id
+      exclude_principal_arns                   = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_resource_arns                    = []
+      exclude_identity_provider_arns           = []
+      eks_oidc_provider_regions                = []
+      trusted_resource_share_owner_account_ids = []
     }
   ]
 

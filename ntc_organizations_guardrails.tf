@@ -50,10 +50,6 @@ module "ntc_guardrail_templates" {
     # EXCLUSIONS:
     #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role. Its trust policy only
     #     allows the management account and cannot be changed from within a member account (deny_iam_modification)
-    #   - Every exclusion of this role uses twelve '?' instead of '*' for the account id. '?' matches exactly one
-    #     character, '*' matches any sequence including ':' and '/'. IAM role paths may contain ':', so with '*' a
-    #     role created as path "/:role/" + name "OrganizationAccountAccessRole" would match the exclusion
-    #     (arn:aws:iam::<account>:role/:role/OrganizationAccountAccessRole) and bypass every SCP
     #
     # USE CASE: Baseline security for all accounts to prevent unauthorized changes and enforce
     #           identity federation (no IAM users with long-term credentials or console passwords)

@@ -50,6 +50,10 @@ module "ntc_guardrail_templates" {
     # EXCLUSIONS:
     #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role. Its trust policy only
     #     allows the management account and cannot be changed from within a member account (deny_iam_modification)
+    #   - Every exclusion of this role uses twelve '?' instead of '*' for the account id. '?' matches exactly one
+    #     character, '*' matches any sequence including ':' and '/'. IAM role paths may contain ':', so with '*' a
+    #     role created as path "/:role/" + name "OrganizationAccountAccessRole" would match the exclusion
+    #     (arn:aws:iam::<account>:role/:role/OrganizationAccountAccessRole) and bypass every SCP
     #
     # USE CASE: Baseline security for all accounts to prevent unauthorized changes and enforce
     #           identity federation (no IAM users with long-term credentials or console passwords)
@@ -67,7 +71,7 @@ module "ntc_guardrail_templates" {
       ]
       # template specific parameters
       iam_arns_to_protect    = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 1b: Protected Resources (tag-based)
@@ -160,7 +164,7 @@ module "ntc_guardrail_templates" {
       ]
       tag_key                = "ManagedBy"
       tag_values             = ["ntc-account-factory"]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 1c: Blacklisted Services
@@ -192,7 +196,7 @@ module "ntc_guardrail_templates" {
         "lightsail:*", # bypasses VPC, network firewall and central networking controls
         "gamelift:*",  # no business use case
       ]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 2: Suspended/Transitional Accounts Lock-down
@@ -221,7 +225,7 @@ module "ntc_guardrail_templates" {
         "/root/transitional"
       ]
       template_names         = ["deny_all"]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 3: Regional Restriction for Workload Accounts
@@ -377,7 +381,7 @@ module "ntc_guardrail_templates" {
           "s3:PutMultiRegionAccessPointPolicy",
         ]
       }
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
       # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
       # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
       exclude_bedrock_inference_profile_arns = ["arn:aws:bedrock:*:*:inference-profile/eu.*"]
@@ -489,7 +493,7 @@ module "ntc_guardrail_templates" {
         "ec2:*",
       ]
       # Principals exempt from this SCP (typically management roles)
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
       # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
       # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
       exclude_bedrock_inference_profile_arns = ["arn:aws:bedrock:*:*:inference-profile/eu.*"]
@@ -839,7 +843,7 @@ module "ntc_guardrail_templates" {
       # template specific parameters
       # DO NOT reference module.ntc_organizations.org_id directly
       org_id                                   = local.organization_id
-      exclude_principal_arns                   = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns                   = ["arn:aws:iam::????????????:role/OrganizationAccountAccessRole"]
       exclude_resource_arns                    = []
       exclude_identity_provider_arns           = []
       eks_oidc_provider_regions                = []

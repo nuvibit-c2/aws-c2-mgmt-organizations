@@ -41,25 +41,32 @@ module "ntc_guardrail_templates" {
     #   3. deny_iam_user_and_access_key_creation: Prevents creation of IAM users and long-term access keys
     #   4. deny_login_profile_creation: Prevents console passwords for IAM users (create/update login profile,
     #      change password, update account password policy)
+    #   5. deny_iam_modification: Protects OrganizationAccountAccessRole (trust policy, attached policies, deletion).
+    #      Every SCP exempts this role, so without this protection a member account administrator could add their
+    #      own principal to its trust policy, assume it and bypass all guardrails
     #
     # SCOPE: Applied to the entire organization (/root)
     #
     # EXCLUSIONS:
-    #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role
+    #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role. Its trust policy only
+    #     allows the management account and cannot be changed from within a member account (deny_iam_modification)
     #
     # USE CASE: Baseline security for all accounts to prevent unauthorized changes and enforce
     #           identity federation (no IAM users with long-term credentials or console passwords)
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "scp_root_ou"
-      policy_description = "Deny member accounts from leaving the organization, any root user actions except for centralized root privilege tasks and IAM user credentials"
+      policy_description = "Deny member accounts from leaving the organization, any root user actions except for centralized root privilege tasks, IAM user credentials and changes to the OrganizationAccountAccessRole"
       target_ou_paths    = ["/root"]
       template_names = [
         "deny_leaving_organizations",
         "deny_actions_as_root_except_centralized_root",
         "deny_iam_user_and_access_key_creation",
         "deny_login_profile_creation",
+        "deny_iam_modification",
       ]
+      # template specific parameters
+      iam_arns_to_protect    = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
       exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------

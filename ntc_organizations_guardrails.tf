@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.0.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.4.0"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -39,25 +39,160 @@ module "ntc_guardrail_templates" {
     #   1. deny_leaving_organizations: Prevents accounts from leaving the organization
     #   2. deny_actions_as_root_except_centralized_root: Blocks root user actions except for specific tasks
     #   3. deny_iam_user_and_access_key_creation: Prevents creation of IAM users and long-term access keys
+    #   4. deny_login_profile_creation: Prevents console passwords for IAM users (create/update login profile,
+    #      change password, update account password policy)
+    #   5. deny_iam_modification: Protects OrganizationAccountAccessRole (trust policy, attached policies, deletion).
+    #      Every SCP exempts this role, so without this protection a member account administrator could add their
+    #      own principal to its trust policy, assume it and bypass all guardrails
     #
     # SCOPE: Applied to the entire organization (/root)
     #
     # EXCLUSIONS:
-    #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role
+    #   - OrganizationAccountAccessRole: Excluded to allow centralized management via this role. Its trust policy only
+    #     allows the management account and cannot be changed from within a member account (deny_iam_modification)
     #
     # USE CASE: Baseline security for all accounts to prevent unauthorized changes and enforce
-    #           identity federation (no IAM users with long-term credentials)
+    #           identity federation (no IAM users with long-term credentials or console passwords)
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "scp_root_ou"
-      policy_description = "Deny member accounts from leaving the organization and any root user actions except for centralized root privilege tasks"
+      policy_description = "Deny member accounts from leaving the organization, any root user actions except for centralized root privilege tasks, IAM user credentials and changes to the OrganizationAccountAccessRole"
       target_ou_paths    = ["/root"]
       template_names = [
         "deny_leaving_organizations",
         "deny_actions_as_root_except_centralized_root",
-        "deny_iam_user_and_access_key_creation"
+        "deny_iam_user_and_access_key_creation",
+        "deny_login_profile_creation",
+        "deny_iam_modification",
       ]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      # template specific parameters
+      iam_arns_to_protect    = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
+    },
+    # -----------------------------------------------------------------------------------------------------------------
+    # SCP 1b: Protected Resources (tag-based)
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Prevent deletion or modification of critical resources which are tagged as protected
+    #
+    # TEMPLATES USED:
+    #   - deny_actions_on_tagged_resources: Denies the listed actions on resources where aws:ResourceTag/<tag_key>
+    #     matches one of the tag_values
+    #
+    # SCOPE: Applied to the entire organization (/root)
+    #
+    # CONFIGURATION PARAMETERS:
+    #   - tagged_resource_actions: Actions denied on protected resources
+    #   - tag_key / tag_values: Tag which marks a resource as protected
+    #
+    # EXCLUSIONS:
+    #   - OrganizationAccountAccessRole: Used by the account baseline pipelines (assumed for all member account
+    #     actions), so baseline-managed resources can still be updated and destroyed when tagged as protected
+    #
+    # IMPORTANT:
+    #   - Only works for actions which support resource-level permissions and the aws:ResourceTag condition key
+    #   - Always include the tagging actions of each protected service, otherwise the protection tag can be
+    #     removed first and the resource deleted afterwards
+    #   - S3: aws:ResourceTag is only evaluated once ABAC is enabled on the bucket (aws_s3_bucket_abac).
+    #     With ABAC enabled, bucket tagging moves from s3:PutBucketTagging to s3:TagResource / s3:UntagResource,
+    #     so both pairs are listed to cover buckets before and after enabling ABAC
+    #   - Other pipelines which manage protected resources with their own role (i.e. not via
+    #     OrganizationAccountAccessRole) must be added to exclude_principal_arns
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "scp_protected_resources"
+      policy_description = "Deny deletion and modification actions, and removal of the protection tag, on resources tagged as protected"
+      target_ou_paths    = ["/root"]
+      template_names     = ["deny_actions_on_tagged_resources"]
+      tagged_resource_actions = [
+        # ec2 / vpc
+        "ec2:TerminateInstances",
+        "ec2:DeleteVpc",
+        "ec2:DeleteSubnet",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DeleteRouteTable",
+        "ec2:DeleteInternetGateway",
+        "ec2:DeleteNatGateway",
+        "ec2:DeleteTransitGateway",
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
+        # rds
+        "rds:DeleteDBInstance",
+        "rds:AddTagsToResource",
+        "rds:RemoveTagsFromResource",
+        # s3 (requires ABAC on the bucket, see note above)
+        "s3:DeleteBucket",
+        "s3:PutBucketTagging",
+        "s3:TagResource",
+        "s3:UntagResource",
+        # kms (e.g. keys used for tfstate or backup encryption)
+        "kms:ScheduleKeyDeletion",
+        "kms:DisableKey",
+        "kms:PutKeyPolicy",
+        "kms:TagResource",
+        "kms:UntagResource",
+        # iam roles (e.g. account baseline, backup, aws config roles)
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:AttachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription",
+        "iam:PutRolePermissionsBoundary",
+        "iam:TagRole",
+        "iam:UntagRole",
+        # iam oidc identity providers (e.g. github actions / spacelift oidc federation)
+        "iam:DeleteOpenIDConnectProvider",
+        "iam:UpdateOpenIDConnectProviderThumbprint",
+        "iam:AddClientIDToOpenIDConnectProvider",
+        "iam:RemoveClientIDFromOpenIDConnectProvider",
+        "iam:TagOpenIDConnectProvider",
+        "iam:UntagOpenIDConnectProvider",
+        # aws backup vault
+        "backup:DeleteBackupVault",
+        "backup:DeleteBackupVaultAccessPolicy",
+        "backup:DeleteBackupVaultLockConfiguration",
+        "backup:PutBackupVaultAccessPolicy",
+        "backup:PutBackupVaultLockConfiguration",
+        "backup:TagResource",
+        "backup:UntagResource",
+      ]
+      tag_key                = "ManagedBy"
+      tag_values             = ["ntc-account-factory"]
+      exclude_principal_arns = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
+    },
+    # -----------------------------------------------------------------------------------------------------------------
+    # SCP 1c: Blacklisted Services
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Deny specific AWS services organization-wide (lighter alternative to full service whitelisting)
+    #
+    # TEMPLATES USED:
+    #   - deny_blacklisted_services: Denies all actions listed in blacklisted_services
+    #
+    # SCOPE: Applied to the entire organization (/root)
+    #
+    # CONFIGURATION PARAMETERS:
+    #   - blacklisted_services: Actions to deny, as "service:*" or specific actions
+    #
+    # EXCLUSIONS:
+    #   - OrganizationAccountAccessRole: Allows organization admins to clean up existing resources
+    #
+    # USE CASE: Block services which bypass central controls or are not approved for use
+    #
+    # NOTE: Deny wins over any whitelist, so a blacklisted service stays blocked even if it is listed in
+    #       whitelist_for_allowed_regions or whitelist_for_specific_regions of another SCP
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "scp_blacklisted_services"
+      policy_description = "Deny usage of blacklisted services"
+      target_ou_paths    = ["/root"]
+      template_names     = ["deny_blacklisted_services"]
+      blacklisted_services = [
+        "lightsail:*", # bypasses VPC, network firewall and central networking controls
+        "gamelift:*",  # no business use case
+      ]
+      exclude_principal_arns = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 2: Suspended/Transitional Accounts Lock-down
@@ -86,7 +221,7 @@ module "ntc_guardrail_templates" {
         "/root/transitional"
       ]
       template_names         = ["deny_all"]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # SCP 3: Regional Restriction for Workload Accounts
@@ -100,18 +235,21 @@ module "ntc_guardrail_templates" {
     #
     # CONFIGURATION PARAMETERS:
     #   - allowed_regions: Define which AWS regions workloads can be deployed to
-    #   - whitelist_for_other_regions: Global services that must be accessible regardless of region
-    #     (e.g., IAM, CloudFront, Route53, STS)
+    #   - whitelist_for_other_regions: Harmless, region-agnostic actions accessible from ANY region
+    #     (e.g., ec2:DescribeRegions for cross-region automation)
+    #   - whitelist_for_specific_regions: Regions which are partially opened for specific actions
+    #     (e.g., global services like IAM, CloudFront, Route53, STS in us-east-1, Lambda@Edge in us-east-1)
     #
     # EXCLUSIONS:
     #   - OrganizationAccountAccessRole: Allows cross-region management access
     #
     # USE CASE: Enforce data residency requirements (e.g., GDPR requiring data in EU regions)
     #
-    # CONFIGURATION TIP: 
+    # CONFIGURATION TIP:
     #   - Add regions to allowed_regions for data residency requirements
-    #   - Global services in whitelist_for_other_regions typically don't store customer data
-    #   - Always include IAM, STS, and CloudFormation for account management
+    #   - Global services pin their API calls to a specific region (mostly us-east-1, some us-west-2), so map
+    #     them in whitelist_for_specific_regions instead of whitelisting them in every region
+    #   - Overriding whitelist_for_specific_regions replaces the module default, so keep the default entries
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "scp_workloads_ou"
@@ -122,99 +260,124 @@ module "ntc_guardrail_templates" {
         "eu-central-1",
         "eu-central-2",
       ]
-      # Global/multi-region services that can be accessed from any region
-      # These typically don't store data in specific regions or are required for account functionality
+      # Harmless, region-agnostic actions which can be called from ANY region
+      # e.g. a central networking account enumerating transit gateways across all regions
       whitelist_for_other_regions = [
-        # allowed global actions
-        "a4b:*",
-        "acm:*",
-        "aws-marketplace-management:*",
-        "aws-marketplace:*",
-        "aws-portal:*",
-        "bcm-dashboards:*",
-        "budgets:*",
-        "ce:*",
-        "chime:*",
-        "cloudfront:*",
-        "cloudwatch:*",
-        "logs:*",
-        "config:*",
-        "cur:*",
-        "directconnect:*",
         "ec2:DescribeRegions",
         "ec2:DescribeTransitGateways",
         "ec2:DescribeVpnGateways",
-        "fms:*",
-        "globalaccelerator:*",
-        "health:*",
-        "iam:*",
-        "importexport:*",
-        "kms:*",
-        "mobileanalytics:*",
-        "networkmanager:*",
-        "organizations:*",
-        "pricing:*",
-        "route53:*",
-        "route53domains:*",
-        "route53-recovery-cluster:*",
-        "route53-recovery-control-config:*",
-        "route53-recovery-readiness:*",
-        "s3:GetAccountPublic*",
-        "s3:ListAllMyBuckets",
-        "s3:ListMultiRegionAccessPoints",
-        "s3:PutAccountPublic*",
-        "shield:*",
-        "sts:*",
-        "support:*",
-        "trustedadvisor:*",
-        "waf-regional:*",
-        "waf:*",
-        "wafv2:*",
-        "wellarchitected:*",
-        # -----------------------------------------------------------------------------------------------------------------
+      ]
+      # Regions which are partially opened for specific actions (in addition to allowed_regions)
+      # In each region ONLY the listed actions are allowed, everything else stays denied.
+      # NOTE: this overrides the module default - the default global service entries are repeated here
+      whitelist_for_specific_regions = {
+        # -------------------------------------------------------------------------------------------------------------
         # EXCEPTIONS FOR SERVICES RUNNING IN OTHER REGIONS
-        # -----------------------------------------------------------------------------------------------------------------
-        # Some services may legitimately need to operate in regions outside the allowed_regions list
-        # Common use cases for regional exceptions:
+        # -------------------------------------------------------------------------------------------------------------
+        # Global services pin their control plane to a specific region, regardless of the region the caller's
+        # SDK/CLI is configured for. Some services may also legitimately need to operate in specific regions
+        # outside the allowed_regions list. Common use cases for regional exceptions:
         #
-        # 1. LAMBDA@EDGE:
-        #    - Lambda@Edge functions must be deployed in us-east-1 (different from CloudFront Functions)
-        #    - CloudWatch Logs for Lambda@Edge will also be stored in us-east-1
-        #    - Required for: Complex request/response manipulation, A/B testing, security headers
-        #    - Add: "lambda:*" or specific Lambda@Edge actions
-        #    - Note: CloudFront Functions (lightweight alternative) run at edge locations globally, not in regions
+        # 1. LAMBDA@EDGE (CloudFront Functions):
+        #    - CloudFront is a global service but Lambda@Edge functions must be deployed in us-east-1
+        #    - Required for: Request/response manipulation, A/B testing, security headers
+        #    - Add: "lambda:*" or specific Lambda@Edge actions to "us-east-1"
         #
         # 2. DISASTER RECOVERY / BUSINESS CONTINUITY:
         #    - Backup regions outside primary data residency requirements
         #    - Required for: RTO/RPO compliance, resilience, failover capabilities
-        #    - Add: Service-specific actions (e.g., "s3:*", "dynamodb:*", "rds:*")
+        #    - Add: Service-specific actions to the DR region (e.g., "us-west-2" = ["s3:*", "dynamodb:*"])
         #
         # 3. THIRD-PARTY INTEGRATIONS:
         #    - SaaS vendors requiring specific regions (e.g., us-east-1, us-west-2)
         #    - Required for: VPC endpoints, PrivateLink, data exchange
-        #    - Add: Service actions for specific integrations
+        #    - Add: Service actions for specific integrations to the vendor's region
         #
         # CONFIGURATION GUIDELINES:
         #   ✓ Document WHY each service needs regional exceptions
         #   ✓ Use specific actions (e.g., "lambda:InvokeFunction") instead of wildcards when possible
+        #   ✓ An action can be listed for multiple regions, patterns may overlap across regions
+        #     (e.g., "lambda:*" in us-east-1 and "lambda:Get*" in eu-west-1)
         #   ✓ Regularly review and remove unused exceptions
         #   ✓ Consider data residency and compliance implications
         #   ✓ Validate exceptions with security and compliance teams
         #
         # SECURITY CONSIDERATIONS:
-        #   ⚠️  Exceptions bypass regional data residency controls
+        #   ⚠️  Exceptions bypass regional data residency controls for the listed actions in the listed regions
         #   ⚠️  Ensure no sensitive data is processed in excepted regions
         #   ⚠️  Monitor CloudTrail for unexpected cross-region activity
         #   ⚠️  Use resource-based policies to further restrict access
-        #
-        # EXAMPLES:
-        #   Lambda@Edge:           "lambda:*"
-        #   DR to us-west-2:       "s3:*", "dynamodb:*", "rds:*"
-        #   Specific Lambda actions: "lambda:InvokeFunction", "lambda:GetFunction"
-        # -----------------------------------------------------------------------------------------------------------------
-        "lambda:*", # Lambda@Edge functions for CloudFront (requires us-east-1)
-      ]
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+        # -------------------------------------------------------------------------------------------------------------
+        "us-east-1" = [
+          "a4b:*",
+          "account:Get*",
+          "account:List*",
+          "acm:*",
+          "aws-marketplace-management:*",
+          "aws-marketplace:*",
+          "aws-portal:*",
+          "bcm-dashboards:*", # c1 addition: Billing and Cost Management dashboards
+          "billing:*",
+          "billingconductor:*",
+          "budgets:*",
+          "ce:*",
+          "chime:*",
+          "cloudfront:*",
+          "config:*",
+          "consolidatedbilling:*",
+          "cost-optimization-hub:*",
+          "cur:*",
+          "directconnect:*",
+          "ecr-public:GetAuthorizationToken",
+          "fms:*",
+          "freetier:*",
+          "health:*",
+          "iam:*",
+          "importexport:*",
+          "invoicing:*",
+          "kms:*",
+          "lambda:*", # c1 addition: Lambda@Edge functions for CloudFront (requires us-east-1)
+          "mobileanalytics:*",
+          "notifications-contacts:*",
+          "notifications:*",
+          "organizations:*",
+          "payments:*",
+          "pricing:*",
+          "route53:*",
+          "route53domains:*",
+          "s3:GetAccountPublic*",
+          "s3:ListAllMyBuckets",
+          "s3:PutAccountPublic*",
+          "savingsplans:*",
+          "shield:*",
+          "sts:*",
+          "support:*",
+          "supportplans:*",
+          "tax:*",
+          "trustedadvisor:*",
+          "waf-regional:*",
+          "waf:*",
+          "wafv2:*",
+          "wellarchitected:*",
+        ]
+        # globalaccelerator, networkmanager, route53-recovery-* and s3 multi-region access points use us-west-2
+        "us-west-2" = [
+          "globalaccelerator:*",
+          "networkmanager:*",
+          "route53-recovery-cluster:*",
+          "route53-recovery-control-config:*",
+          "route53-recovery-readiness:*",
+          "s3:CreateMultiRegionAccessPoint",
+          "s3:DeleteMultiRegionAccessPoint",
+          "s3:DescribeMultiRegionAccessPointOperation",
+          "s3:GetMultiRegionAccessPoint",
+          "s3:GetMultiRegionAccessPointPolicy",
+          "s3:GetMultiRegionAccessPointPolicyStatus",
+          "s3:ListMultiRegionAccessPoints",
+          "s3:PutMultiRegionAccessPointPolicy",
+        ]
+      }
+      exclude_principal_arns = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
       # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
       # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
       exclude_bedrock_inference_profile_arns = ["arn:aws:bedrock:*:*:inference-profile/eu.*"]
@@ -232,7 +395,7 @@ module "ntc_guardrail_templates" {
     #
     # CONFIGURATION PARAMETERS:
     #   - allowed_regions: Regions where services can operate
-    #   - whitelist_for_other_regions: Global services accessible from any region
+    #   - whitelist_for_other_regions / whitelist_for_specific_regions: module defaults are used (see SCP 3)
     #   - whitelist_for_allowed_regions: Services permitted within allowed regions
     #
     # USE CASE: High-security environments requiring explicit approval for each AWS service
@@ -265,55 +428,10 @@ module "ntc_guardrail_templates" {
         "eu-west-1",
         "us-east-1",
       ]
-      # Services allowed to run in regions OUTSIDE of the allowed_regions list
-      # These are typically global services that don't have regional endpoints
-      # or services that must be accessed globally (like IAM, CloudFront, Route53)
-      whitelist_for_other_regions = [
-        "a4b:*",
-        "acm:*",
-        "aws-marketplace-management:*",
-        "aws-marketplace:*",
-        "aws-portal:*",
-        "budgets:*",
-        "ce:*",
-        "chime:*",
-        "cloudfront:*",
-        "cloudwatch:*",
-        "logs:*",
-        "config:*",
-        "cur:*",
-        "directconnect:*",
-        "ec2:DescribeRegions",
-        "ec2:DescribeTransitGateways",
-        "ec2:DescribeVpnGateways",
-        "fms:*",
-        "globalaccelerator:*",
-        "health:*",
-        "iam:*",
-        "importexport:*",
-        "kms:*",
-        "mobileanalytics:*",
-        "networkmanager:*",
-        "organizations:*",
-        "pricing:*",
-        "route53:*",
-        "route53domains:*",
-        "route53-recovery-cluster:*",
-        "route53-recovery-control-config:*",
-        "route53-recovery-readiness:*",
-        "s3:GetAccountPublic*",
-        "s3:ListAllMyBuckets",
-        "s3:ListMultiRegionAccessPoints",
-        "s3:PutAccountPublic*",
-        "shield:*",
-        "sts:*",
-        "support:*",
-        "trustedadvisor:*",
-        "waf-regional:*",
-        "waf:*",
-        "wafv2:*",
-        "wellarchitected:*",
-      ]
+      # whitelist_for_other_regions and whitelist_for_specific_regions are not set, so the module defaults apply:
+      #   - whitelist_for_other_regions: harmless ec2 describe actions accessible from any region
+      #   - whitelist_for_specific_regions: global services in us-east-1 and us-west-2
+      # us-east-1 is already in allowed_regions, so only the us-west-2 entries have an effect here
       # Regional services permitted within allowed_regions
       # CONFIGURATION STRATEGY:
       #   - Start with essential services your teams need
@@ -371,7 +489,7 @@ module "ntc_guardrail_templates" {
         "ec2:*",
       ]
       # Principals exempt from this SCP (typically management roles)
-      exclude_principal_arns = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_principal_arns = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
       # exclude bedrock inference profiles in denied regions to avoid issues with cross region inference
       # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
       exclude_bedrock_inference_profile_arns = ["arn:aws:bedrock:*:*:inference-profile/eu.*"]
@@ -396,7 +514,7 @@ module "ntc_guardrail_templates" {
     #
     # CONFIGURATION PARAMETERS:
     #   - allowed_regions: EU regions with C5 certification
-    #   - whitelist_for_other_regions: C5-compliant global services
+    #   - whitelist_for_specific_regions: C5-compliant global services (us-east-1 only)
     #   - whitelist_for_allowed_regions: C5-compliant regional services
     #
     # DEPLOYMENT STRATEGY:
@@ -434,26 +552,28 @@ module "ntc_guardrail_templates" {
         "eu-south-1",   # Milan
         "eu-south-2",   # Spain
       ]
-      # C5-compliant global services (accessible from any region)
+      # No actions are exempted in every region
+      whitelist_for_other_regions = []
+      # C5-compliant global services (only accessible in us-east-1, where their control plane is located)
       # These services are certified under BSI C5 and provide global endpoints
       # MAINTENANCE: Update when AWS publishes new C5 certifications
-      whitelist_for_other_regions = [
-        "acm:*",           # AWS Certificate Manager
-        "budgets:*",       # AWS Budgets
-        "ce:*",            # AWS Cost Explorer Service
-        "cloudfront:*",    # Amazon CloudFront
-        "cloudwatch:*",    # Amazon CloudWatch
-        "logs:*",          # Amazon CloudWatch Logs
-        "health:*",        # AWS Health APIs and Notifications
-        "iam:*",           # AWS Identity and Access Management
-        "kms:*",           # AWS Key Management Service
-        "organizations:*", # AWS Organizations
-        "route53:*",       # Amazon Route 53
-        "shield:*",        # AWS Shield
-        "sts:*",           # AWS Security Token Service
-        "support:*",       # AWS Support
-        "waf:*",           # AWS WAF
-      ]
+      whitelist_for_specific_regions = {
+        "us-east-1" = [
+          "acm:*",           # AWS Certificate Manager
+          "budgets:*",       # AWS Budgets
+          "ce:*",            # AWS Cost Explorer Service
+          "cloudfront:*",    # Amazon CloudFront
+          "health:*",        # AWS Health APIs and Notifications
+          "iam:*",           # AWS Identity and Access Management
+          "kms:*",           # AWS Key Management Service
+          "organizations:*", # AWS Organizations
+          "route53:*",       # Amazon Route 53
+          "shield:*",        # AWS Shield
+          "sts:*",           # AWS Security Token Service
+          "support:*",       # AWS Support
+          "waf:*",           # AWS WAF
+        ]
+      }
       # C5-compliant regional services (accessible within allowed EU regions)
       # This comprehensive list includes all AWS services certified under BSI C5
       # Services are organized by category for easier maintenance
@@ -690,6 +810,40 @@ module "ntc_guardrail_templates" {
       # No principal exclusions for C5 compliance - policy applies to all principals
       # CONFIGURATION: Add exclusions only if absolutely necessary for operational reasons
       exclude_principal_arns = []
+    },
+    # -----------------------------------------------------------------------------------------------------------------
+    # SCP: WORKLOADS OU - DATA PERIMETER & IDENTITY HARDENING
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Prevent data exfiltration and identity sprawl in workload accounts
+    #   1. deny_domain_registration: Domains are registered centrally, not in workload accounts
+    #   2. deny_writes_to_external_bucket: Deny S3 writes to buckets outside the organization
+    #   3. deny_resource_sharing_outside_org: Deny RAM shares with principals outside the organization
+    #   4. deny_accepting_resource_shares_from_outside_org: Deny accepting RAM invitations from outside the organization
+    #   5. deny_sso_member_account_instances_creation: Identity Center is managed centrally (organization instance only)
+    #   6. deny_identity_provider_modification: Deny creating/modifying IAM OIDC and SAML providers
+    #   7. deny_cognito: Deny Amazon Cognito usage
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "scp_workloads_ou_data_perimeter"
+      policy_description = "Deny domain registration, external S3 writes, RAM sharing outside the org, member SSO instances, IdP modification and Cognito"
+      target_ou_paths    = ["/root/workloads"]
+      template_names = [
+        "deny_domain_registration",
+        "deny_writes_to_external_bucket",
+        "deny_resource_sharing_outside_org",
+        "deny_accepting_resource_shares_from_outside_org",
+        "deny_sso_member_account_instances_creation",
+        "deny_identity_provider_modification",
+        "deny_cognito",
+      ]
+      # template specific parameters
+      # DO NOT reference module.ntc_organizations.org_id directly
+      org_id                                   = local.organization_id
+      exclude_principal_arns                   = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
+      exclude_resource_arns                    = []
+      exclude_identity_provider_arns           = []
+      eks_oidc_provider_regions                = []
+      trusted_resource_share_owner_account_ids = []
     }
   ]
 
@@ -726,41 +880,43 @@ module "ntc_guardrail_templates" {
     #          unauthorized actions on your resources using its credentials
     # 
     # TEMPLATE USED:
-    #   - enforce_confused_deputy_protection: Requires aws:SourceAccount or aws:SourceArn conditions
+    #   - enforce_confused_deputy_protection: Denies AWS service requests made on behalf of resources
+    #     outside your organization (aws:SourceOrgID)
     #
     # SCOPE: Applied organization-wide (/root)
     #
     # ATTACK SCENARIO:
-    #   Without this protection, an attacker could create a resource policy that allows an AWS service
-    #   to access your resources, then trick that service into accessing them on the attacker's behalf.
+    #   A resource policy grants an AWS service principal access without source conditions
+    #   (e.g. cloudtrail.amazonaws.com may write to a bucket). An attacker in another account configures
+    #   the same service (e.g. their own trail) to target your resource, and the service accesses it
+    #   on the attacker's behalf.
     #
     # PROTECTION MECHANISM:
-    #   Requires resource-based policies to include aws:SourceAccount or aws:SourceArn conditions
-    #   when granting access to AWS services. This ensures the service is acting on behalf of
-    #   YOUR account, not an attacker's.
+    #   The RCP denies requests to your resources when all of the following apply:
+    #     - the caller is an AWS service principal (aws:PrincipalIsAWSService = true)
+    #     - the request carries an aws:SourceArn (the service acts on behalf of another resource)
+    #     - aws:SourceOrgID is not your organization or is missing
+    #   The deny is enforced by the RCP itself. Existing resource-based policies do NOT need to be
+    #   updated with aws:SourceAccount or aws:SourceArn conditions.
     #
     # CONFIGURATION PARAMETERS:
-    #   - org_id: Your AWS Organization ID (used to validate source accounts)
+    #   - org_id: Your AWS Organization ID (compared against aws:SourceOrgID)
     #   - enforced_service_actions: List of service actions that must include confused deputy protection
     #   - exclude_resource_arns: Resources exempt from this requirement (use sparingly)
     #
-    # EXAMPLE COMPLIANT POLICY:
-    #   {
-    #     "Effect": "Allow",
-    #     "Principal": {"Service": "cloudtrail.amazonaws.com"},
-    #     "Action": "s3:PutObject",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
-    #     "Condition": {
-    #       "StringEquals": {"aws:SourceAccount": "123456789012"}
-    #     }
-    #   }
+    # EXAMPLE DENIED REQUEST:
+    #   An SNS topic in an account outside your organization delivers to an SQS queue in your
+    #   organization (principal sns.amazonaws.com, aws:SourceArn = the external topic). The request is
+    #   denied even if the queue policy allows sns.amazonaws.com.
     #
-    # WARNING: Carefully test this policy as it may break existing service integrations that
-    #          don't include proper source conditions. Update resource policies before deployment.
+    # WARNING: Carefully test this policy as it may break existing service integrations where an AWS service
+    #          acts on behalf of resources outside your organization, or does not send aws:SourceOrgID
+    #          (e.g. network firewall with a kms cmk).
     #
     # DEPLOYMENT STRATEGY:
-    #   1. Audit existing resource policies for compliance
-    #   2. Update non-compliant policies to include source conditions
+    #   1. Identify service integrations which originate from outside your organization
+    #      (e.g. external SNS topics or EventBridge buses, third-party log deliveries)
+    #   2. Add legitimate exceptions to exclude_resource_arns
     #   3. Deploy to test environment first
     #   4. Monitor CloudTrail for denied requests
     #   5. Roll out to production after validation
@@ -786,7 +942,10 @@ module "ntc_guardrail_templates" {
       # Resource exceptions (resources exempt from confused deputy protection)
       # CONFIGURATION: Only add exceptions for resources with legitimate external service access
       # EXAMPLE: exclude_resource_arns = ["arn:aws:s3:::my-public-bucket/*"]
-      exclude_resource_arns = []
+      exclude_resource_arns = [
+        # NOTE: network firewall with kms cmk triggers confused deputy protection - exclude while investigating with aws support
+        "arn:aws:kms:eu-central-1:944538260333:key/2bb3bfda-5446-4470-aa40-f74cea61ae85"
+      ]
     },
     # -----------------------------------------------------------------------------------------------------------------
     # RCP 2: Organization Boundary Enforcement
@@ -795,7 +954,8 @@ module "ntc_guardrail_templates" {
     #          within your AWS Organization (implements organizational boundary)
     # 
     # TEMPLATE USED:
-    #   - enforce_principal_access_from_organization: Requires aws:PrincipalOrgID condition
+    #   - enforce_principal_access_from_organization: Denies access by principals outside your organization
+    #     (aws:PrincipalOrgID)
     #
     # SCOPE: Applied organization-wide (/root)
     #
@@ -804,25 +964,23 @@ module "ntc_guardrail_templates" {
     #   granting access to an external AWS account, enabling data exfiltration.
     #
     # PROTECTION MECHANISM:
-    #   Requires resource-based policies to include aws:PrincipalOrgID condition, ensuring
-    #   only principals from your organization can access the resource.
+    #   The RCP denies requests to your resources when all of the following apply:
+    #     - aws:PrincipalOrgID is not your organization or is missing (also anonymous requests)
+    #     - the caller is not an AWS service principal (aws:PrincipalIsAWSService = false or missing)
+    #     - the principal is not listed in exclude_principal_arns
+    #   The deny is enforced by the RCP itself. Existing resource-based policies do NOT need to be
+    #   updated with an aws:PrincipalOrgID condition.
     #
     # CONFIGURATION PARAMETERS:
-    #   - org_id: Your AWS Organization ID
+    #   - org_id: Your AWS Organization ID (compared against aws:PrincipalOrgID)
     #   - enforced_service_actions: Actions requiring organization principal validation
     #   - exclude_resource_arns: Resources needing external access (e.g., public S3 buckets)
     #   - exclude_principal_arns: External principals that legitimately need access
     #
-    # EXAMPLE COMPLIANT POLICY:
-    #   {
-    #     "Effect": "Allow",
-    #     "Principal": "*",
-    #     "Action": "s3:GetObject",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
-    #     "Condition": {
-    #       "StringEquals": {"aws:PrincipalOrgID": "o-xxxxxxxxxx"}
-    #     }
-    #   }
+    # EXAMPLE DENIED REQUEST:
+    #   A bucket policy grants s3:GetObject to an account outside your organization. The external
+    #   principal's request is denied even though the bucket policy allows it, unless the bucket is in
+    #   exclude_resource_arns or the principal is in exclude_principal_arns.
     #
     # EXCLUSION USE CASES:
     #   - Public websites hosted on S3
@@ -835,11 +993,10 @@ module "ntc_guardrail_templates" {
     # DEPLOYMENT STRATEGY:
     #   1. Identify resources with legitimate external access requirements
     #   2. Document business justification for each exclusion
-    #   3. Update resource policies to include PrincipalOrgID conditions
-    #   4. Add necessary exclusions to exclude_resource_arns or exclude_principal_arns
-    #   5. Test in non-production environment
-    #   6. Monitor CloudTrail for unexpected access denials
-    #   7. Gradually roll out to production OUs
+    #   3. Add necessary exclusions to exclude_resource_arns or exclude_principal_arns
+    #   4. Test in non-production environment
+    #   5. Monitor CloudTrail for unexpected access denials
+    #   6. Gradually roll out to production OUs
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "rcp_enforce_principal_access_from_organization"
@@ -880,7 +1037,7 @@ module "ntc_guardrail_templates" {
     # PURPOSE: Ensure all data in transit is encrypted by requiring HTTPS/TLS for all service requests
     # 
     # TEMPLATE USED:
-    #   - enforce_secure_transport: Requires aws:SecureTransport condition
+    #   - enforce_secure_transport: Denies requests where aws:SecureTransport is false
     #
     # SCOPE: Applied organization-wide (/root)
     #
@@ -889,32 +1046,22 @@ module "ntc_guardrail_templates" {
     #   exposing sensitive information to network eavesdropping and man-in-the-middle attacks.
     #
     # PROTECTION MECHANISM:
-    #   Requires resource-based policies to include aws:SecureTransport condition set to true,
-    #   blocking all requests not made over HTTPS/TLS.
+    #   The RCP denies all requests to the enforced services which are not made over HTTPS/TLS
+    #   (aws:SecureTransport = false or missing). The deny is enforced by the RCP itself. Existing
+    #   resource-based policies do NOT need an aws:SecureTransport condition.
     #
     # CONFIGURATION PARAMETERS:
     #   - enforced_service_actions: Services requiring HTTPS/TLS
     #   - exclude_resource_arns: Resources exempt from secure transport requirement
     #
-    # EXAMPLE COMPLIANT POLICY:
-    #   {
-    #     "Effect": "Allow",
-    #     "Principal": "*",
-    #     "Action": "s3:*",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
-    #     "Condition": {
-    #       "Bool": {"aws:SecureTransport": "true"}
-    #     }
-    #   }
-    #
-    # ALTERNATIVELY (Deny approach):
+    # EQUIVALENT STATEMENT (enforced by the RCP for every resource in scope):
     #   {
     #     "Effect": "Deny",
     #     "Principal": "*",
     #     "Action": "s3:*",
-    #     "Resource": "arn:aws:s3:::my-bucket/*",
+    #     "Resource": "*",
     #     "Condition": {
-    #       "Bool": {"aws:SecureTransport": "false"}
+    #       "BoolIfExists": {"aws:SecureTransport": "false"}
     #     }
     #   }
     #
@@ -950,20 +1097,33 @@ module "ntc_guardrail_templates" {
     # -----------------------------------------------------------------------------------------------------------------
     # RCP 4: S3 Encryption and TLS Version Enforcement
     # -----------------------------------------------------------------------------------------------------------------
-    # PURPOSE: Enforce data-at-rest encryption using AWS KMS and require minimum TLS version for S3 access
-    # 
+    # PURPOSE: Enforce data-at-rest encryption using AWS KMS (SSE-KMS) and require minimum TLS version for S3 access
+    #
     # TEMPLATES USED:
-    #   1. enforce_s3_kms_encryption: Requires S3 objects to be encrypted with AWS KMS
+    #   1. enforce_s3_kms_encryption: Denies s3:PutObject unless the object is encrypted with an AWS KMS key (SSE-KMS)
     #   2. enforce_s3_tls_version: Enforces minimum TLS version for S3 requests
+    #   3. deny_s3_sse_c_encryption: Denies S3 writes using customer-provided keys (SSE-C) to mitigate ransomware
+    #      re-encrypting objects with an attacker-controlled key
     #
     # SCOPE: Applied organization-wide (/root)
     #
     # SECURITY REQUIREMENTS:
     #   DATA AT REST:
-    #     - All S3 objects must be encrypted using AWS KMS (SSE-KMS)
-    #     - Blocks uploads of unencrypted objects
-    #     - Blocks uploads using S3-managed encryption (SSE-S3) or customer-provided keys (SSE-C)
-    #   
+    #     - All new S3 objects must be encrypted with SSE-KMS
+    #     - SSE-S3 can no longer be used: requests with "x-amz-server-side-encryption: AES256" are denied, and so are
+    #       uploads without encryption headers into buckets whose default encryption is still SSE-S3
+    #     - Blocks uploads using customer-provided keys (SSE-C)
+    #     - Covers PutObject, CopyObject, POST uploads and multipart uploads (all authorized as s3:PutObject)
+    #
+    #   HOW THE EFFECTIVE ENCRYPTION IS EVALUATED:
+    #     The condition checks the KMS key S3 actually uses for the object, not only the request header.
+    #     Encryption headers in the request always override the bucket default encryption:
+    #     - no encryption header       -> bucket default applies, allowed if the bucket default is SSE-KMS
+    #     - "aws:kms" + key id         -> that key is used, allowed
+    #     - "aws:kms" without key id   -> AWS managed key aws/s3 is used (even if the bucket default is a CMK), allowed
+    #     - "AES256" (SSE-S3)          -> overrides bucket default, denied
+    #     => clients do not need to send encryption headers as long as the bucket default encryption is SSE-KMS
+    #
     #   DATA IN TRANSIT:
     #     - Enforces minimum TLS version to prevent use of outdated, vulnerable protocols
     #     - Protects against protocol downgrade attacks
@@ -998,9 +1158,11 @@ module "ntc_guardrail_templates" {
     #   - Temporary buckets for non-sensitive data processing
     #
     # DEPLOYMENT STRATEGY:
-    #   1. Create KMS keys for S3 encryption if not already existing
-    #   2. Update S3 bucket default encryption settings to use KMS
-    #   3. Update application code to specify SSE-KMS for uploads
+    #   1. Create customer managed KMS keys for S3 encryption if not already existing
+    #   2. Set the default encryption of all S3 buckets to SSE-KMS with a CMK (buckets still on SSE-S3 will reject
+    #      uploads without encryption headers once this RCP is attached)
+    #   3. Search application code for explicit SSE-S3 ("AES256") headers and remove them. Prefer relying on the
+    #      bucket default; if a header is sent, include the CMK key id ("aws:kms" alone falls back to aws/s3)
     #   4. Verify all S3 clients support TLS 1.2 or higher
     #   5. Test in non-production environment
     #   6. Monitor CloudTrail for encryption-related access denials
@@ -1013,6 +1175,7 @@ module "ntc_guardrail_templates" {
       template_names = [
         "enforce_s3_kms_encryption",
         "enforce_s3_tls_version",
+        "deny_s3_sse_c_encryption",
       ]
       # Minimum TLS version for S3 access
       # CONFIGURATION OPTIONS:

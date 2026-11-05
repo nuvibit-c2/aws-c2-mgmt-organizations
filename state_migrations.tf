@@ -1,10 +1,3 @@
-removed {
-  from = aws_iam_service_linked_role.access_analyzer
-  lifecycle {
-    destroy = false
-  }
-}
-
 # state migration for global admin delegations
 moved {
   from = module.ntc_delegated_admins_euc1.aws_organizations_delegated_administrator.ntc_delegated_admin["access-analyzer.amazonaws.com"]

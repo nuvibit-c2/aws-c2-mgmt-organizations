@@ -8,22 +8,6 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias  = "euc1"
-  region = "eu-central-1"
-  default_tags {
-    tags = local.default_tags
-  }
-}
-
-provider "aws" {
-  alias  = "euc2"
-  region = "eu-central-2"
-  default_tags {
-    tags = local.default_tags
-  }
-}
-
 # provider for us-east-1 region is sometimes required for specific features or services
 provider "aws" {
   alias  = "use1"
@@ -37,7 +21,7 @@ provider "aws" {
 # ¦ REQUIREMENTS
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 1.3.0"
+  required_version = ">= 1.5.7"
 
   required_providers {
     aws = {
@@ -63,6 +47,8 @@ locals {
   default_tags = {
     ManagedBy     = "OpenTofu"
     ProvisionedBy = "aws-c2-mgmt-organizations"
+    # aws product tag
+    aws-apn-id = "pc:c1ztn0gbrzi3judwmfx1lrq1t"
   }
   default_region               = data.aws_region.default.region
   current_partition            = data.aws_partition.current.partition  # e.g. "aws"

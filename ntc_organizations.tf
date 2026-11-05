@@ -8,7 +8,7 @@
 # ¦ NTC ORGANIZATIONS
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_organizations" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.0.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-organizations?ref=2.3.1"
 
   region = "eu-central-1"
   # -------------------------------------------------------------------------------------------------------------------
@@ -117,9 +117,19 @@ module "ntc_organizations" {
     # ---------------------------------------------------------------------------------------------------------
 
     # SCP 1: Organization-wide Security Baseline
-    # Prevents accounts from leaving org, blocks root user actions, denies IAM user creation
+    # Prevents accounts from leaving org, blocks root user actions, denies IAM user creation and console passwords
     # Applied to: /root (entire organization)
     module.ntc_guardrail_templates.service_control_policies["scp_root_ou"],
+
+    # SCP 1b: Protected Resources
+    # Denies deletion/modification of account baseline resources (tagged with ManagedBy = ntc-account-factory)
+    # Applied to: /root (entire organization)
+    module.ntc_guardrail_templates.service_control_policies["scp_protected_resources"],
+
+    # SCP 1c: Blacklisted Services
+    # Denies usage of explicitly blacklisted services
+    # Applied to: /root (entire organization)
+    module.ntc_guardrail_templates.service_control_policies["scp_blacklisted_services"],
 
     # SCP 2: Suspended/Transitional Account Lockdown
     # Blocks all AWS service access for suspended or transitional accounts
@@ -130,6 +140,12 @@ module "ntc_organizations" {
     # Enforces data residency by restricting actions to allowed regions (currently: eu-central-1, eu-central-2)
     # Applied to: /root/workloads (including prod, dev, test)
     module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou"],
+
+    # SCP 4: Data Perimeter & Identity Hardening for Workloads
+    # Denies domain registration, external S3 writes, RAM sharing outside the org, member SSO instances,
+    # identity provider modification and Cognito
+    # Applied to: /root/workloads (including prod, dev, test)
+    module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou_data_perimeter"],
 
     # ---------------------------------------------------------------------------------------------------------
     # ALTERNATIVE SCPs - STRICTER SECURITY POSTURES (COMMENTED OUT)
@@ -143,7 +159,7 @@ module "ntc_organizations" {
     #   - Use case: Government, highly regulated industries in Germany
     #   - ⚠️ WARNING: Significantly limits available AWS services
     # ---------------------------------------------------------------------------------------------------------
-    # module.ntc_guardrail_templates.service_control_policies["scp_c5_compliance"],
+    # module.ntc_guardrail_templates.service_control_policies["scp_workloads_ou_c5_compliance"],
 
     # ---------------------------------------------------------------------------------------------------------
     # OPTION B: Service Whitelisting (Defense-in-Depth)
@@ -163,14 +179,14 @@ module "ntc_organizations" {
 
     # RCP 1: Confused Deputy Protection
     # Prevents AWS services from being tricked into accessing your resources on behalf of attackers
-    # Requires aws:SourceAccount or aws:SourceArn conditions in resource policies
+    # Denies AWS service requests made on behalf of resources outside the organization (aws:SourceOrgID)
     # Applied to: /root (entire organization)
     # Enforced for: S3, SQS, KMS, Secrets Manager, STS
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_confused_deputy_protection"],
 
     # RCP 2: Organization Boundary Enforcement
     # Prevents data exfiltration by ensuring resources only accessible by org principals
-    # Requires aws:PrincipalOrgID condition in resource policies
+    # Denies requests from principals outside the organization (aws:PrincipalOrgID), AWS services excluded
     # Applied to: /root (entire organization)
     # Enforced for: S3, SQS, KMS, Secrets Manager, STS
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_principal_access_from_organization"],
@@ -267,6 +283,7 @@ module "ntc_organizations" {
   #   - Small additional cost but provides immediate visibility
   # -------------------------------------------------------------------------------------------------------------------
   organization_trail = {
+    enabled        = true
     kms_key_arn    = local.ntc_parameters["log-archive"]["log_bucket_kms_key_arns"]["org_cloudtrail"]
     s3_bucket_name = local.ntc_parameters["log-archive"]["log_bucket_ids"]["org_cloudtrail"]
 
@@ -276,6 +293,37 @@ module "ntc_organizations" {
     # cloud_watch_logs_existing   = false                    # Set to true if log group already exists
     # cloud_watch_logs_group_name = "organization-trail-logs" # Customize log group name
     # cloud_watch_logs_role_name  = "organization-trail-logs" # Customize IAM role name
+
+    # -----------------------------------------------------------------------------------------------------------------
+    # ADVANCED EVENT SELECTORS - FINE-GRAINED DATA / MANAGEMENT EVENT LOGGING
+    # -----------------------------------------------------------------------------------------------------------------
+    # Generic passthrough of the CloudTrail advanced event selector shape.
+    #
+    # BEHAVIOR:
+    #   - Omit this block entirely to keep the default trail behavior (all management events, no data events).
+    #   - When configured, an "eventCategory Equals Management" selector is added automatically so management
+    #     logging is preserved (include_management_events defaults to true). Set it to false only if you define
+    #     your own management-events selector.
+    #
+    # EXAMPLE BELOW: audit access to the Terraform state backend buckets across ALL member accounts.
+    #   - One org-wide selector matches every account's state bucket via a shared ARN prefix (StartsWith).
+    #   - If installations use S3-native locking (use_lockfile), the .tflock object writes/deletes are captured
+    #     by the same selector for free.
+    #
+    # ⚠️  VERIFY THE ARN PREFIX: replace "tfstate-" with your actual state-backend bucket naming prefix.
+    # -----------------------------------------------------------------------------------------------------------------
+    advanced_event_selectors = {
+      selectors = [
+        {
+          name = "tfstate-backend-audit"
+          field_selectors = [
+            { field = "eventCategory", equals = ["Data"] },
+            { field = "resources.type", equals = ["AWS::S3::Object"] },
+            { field = "resources.ARN", starts_with = ["arn:${local.current_partition}:s3:::tfstate-"] },
+          ]
+        }
+      ]
+    }
   }
 
   # -------------------------------------------------------------------------------------------------------------------
@@ -501,6 +549,50 @@ module "ntc_organizations" {
       ]
     },
   ]
+
+  # -------------------------------------------------------------------------------------------------------------------
+  # DELEGATION POLICIES - SCOPED ORGANIZATIONS POLICY MANAGEMENT
+  # -------------------------------------------------------------------------------------------------------------------
+  # Grants the backup account rights over Organizations' own policy-management APIs, scoped to BACKUP_POLICY -
+  # different from 'delegated_administrators' above, which only covers AWS Backup's own APIs.
+  #
+  # CONFIGURATION:
+  #   - delegate_account_id: account receiving the delegated policy rights
+  #   - policy_types: which policy type(s) the delegate may manage
+  #   - target_ou_paths: OU paths delegate may attach/detach to - empty = all OUs
+  #   - target_account_ids: individual accounts the delegate may target - empty = all accounts
+  #   - include_root: whether delegate may ALSO attach/detach at the org Root, in addition to
+  #     target_ou_paths/target_account_ids - not a restriction of them, since Root is inherited org-wide.
+  #     Only needed for org-wide attachment or accounts placed directly under Root (outside any OU).
+  # -------------------------------------------------------------------------------------------------------------------
+  delegation_policies = [
+    {
+      delegate_account_id = local.backup_account_id
+      policy_types        = ["BACKUP_POLICY"]
+      target_ou_paths     = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only within these OUs
+      target_account_ids  = [] # restricts the delegate to attaching/detaching BACKUP_POLICY only on these accounts
+      include_root        = false
+    },
+  ]
+
+  # -------------------------------------------------------------------------------------------------------------------
+  # AWS BACKUP GLOBAL SETTINGS
+  # -------------------------------------------------------------------------------------------------------------------
+  # Org-wide AWS Backup settings - UpdateGlobalSettings only accepts calls from the management account.
+  #
+  # CONFIGURATION:
+  #   - enabled: apply this block at all - REQUIRED true for central backup to work, false leaves existing
+  #     global settings untouched (the other attributes below are then ignored)
+  #   - enable_cross_account_backup: allow backup plans to copy recovery points into another account's vault
+  #   - enable_delegated_administrator: let the delegated backup admin account manage org-wide backup policies
+  #   - enable_multi_party_approval: require a second approver before destructive backup actions (e.g. vault deletion)
+  # -------------------------------------------------------------------------------------------------------------------
+  backup_global_settings = {
+    enabled                        = true
+    enable_cross_account_backup    = true
+    enable_delegated_administrator = true
+    enable_multi_party_approval    = false
+  }
 
   # NOTE: 'aws.global_service_region' configuration_alias is only required for 'var.service_quota_templates'
   # in aws commercial partition, service quota templates must be applied from the 'us-east-1' region

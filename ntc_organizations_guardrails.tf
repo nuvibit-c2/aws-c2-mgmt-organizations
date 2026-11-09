@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.4.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.5.0"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -1191,5 +1191,71 @@ module "ntc_guardrail_templates" {
       # IMPORTANT: Exclusions reduce security posture - use sparingly
       exclude_resource_arns = []
     },
+  ]
+
+  # ===================================================================================================================
+  # AI SERVICES OPT-OUT POLICIES
+  # ===================================================================================================================
+  # AWS AI services may store and use customer content for service improvement (e.g. model training), possibly in
+  # a region other than the one where the service is used. The opt-out policy prevents this and makes AWS delete
+  # content previously stored for that purpose.
+  #   - Does not block any service, it only controls content use for service improvement
+  #   - Also applies to the management account (unlike SCPs and RCPs)
+  #   - Amazon Bedrock is not covered by this policy type (Bedrock does not use customer content to train models)
+  #   - Locked with "@@none" so OU or account level policies cannot opt back in
+  # Supported services: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_ai-opt-out_all.html
+  #
+  # AVAILABLE TEMPLATES:
+  #   Unlike SCP and RCP templates, these cannot be combined: each template defines the whole policy document.
+  #   'template_name' must therefore be one of the following:
+  #
+  #   1. opt_out_all_services: Opts out of all current and future supported AI services (default set to optOut)
+  #      - exclude_service_names (optional): services which remain opted in, e.g. ["rekognition"]
+  #
+  #   2. opt_out_selected_services: Opts out of the listed services only, all other services keep the AWS default
+  #      - service_names (required): services to opt out, e.g. ["comprehend", "lex", "transcribe"]
+  #
+  #   Service names are the lowercase keys used in the AWS policy syntax (see link above).
+  #
+  # IMPORTANT: Attach only one AI services opt-out policy per root, OU or account. Policies attached to the same
+  #            target are merged, so a second policy can add exceptions despite the "@@none" lock.
+  # ===================================================================================================================
+  aiservices_opt_out_policy_templates = [
+    # -----------------------------------------------------------------------------------------------------------------
+    # AI OPT-OUT 1: Opt out of all AI services (organization-wide)
+    # -----------------------------------------------------------------------------------------------------------------
+    # PURPOSE: Prevent AWS from storing and using customer content for service improvement in any account
+    #
+    # TEMPLATES USED:
+    #   - opt_out_all_services: Sets the default for all current and future supported AI services to optOut
+    #
+    # SCOPE: Applied to the entire organization (/root), including the management account
+    #
+    # USE CASE: Baseline for regulated environments with data protection or data residency requirements
+    # -----------------------------------------------------------------------------------------------------------------
+    {
+      policy_name        = "aiopt_opt_out_all_services"
+      policy_description = "Opt out of content use for service improvement by all current and future supported AI services"
+      target_ou_paths    = ["/root"]
+      template_name      = "opt_out_all_services"
+      # template specific parameters
+      exclude_service_names = []
+    },
+
+    # -----------------------------------------------------------------------------------------------------------------
+    # ALTERNATIVE: Opt out of selected AI services only (commented out)
+    # -----------------------------------------------------------------------------------------------------------------
+    # Use this instead of 'aiopt_opt_out_all_services' if only specific services must be opted out.
+    # Services not listed keep the AWS default (opted in), so prefer 'opt_out_all_services' with
+    # 'exclude_service_names' when only a few services should stay opted in.
+    # -----------------------------------------------------------------------------------------------------------------
+    # {
+    #   policy_name        = "aiopt_opt_out_selected_services"
+    #   policy_description = "Opt out of content use for service improvement by selected AI services"
+    #   target_ou_paths    = ["/root"]
+    #   template_name      = "opt_out_selected_services"
+    #   # template specific parameters
+    #   service_names = ["comprehend", "lex", "transcribe"]
+    # },
   ]
 }

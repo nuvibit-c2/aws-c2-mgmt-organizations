@@ -87,6 +87,7 @@ module "ntc_organizations" {
   #   - SERVICE_CONTROL_POLICY: Define maximum permissions for IAM principals (never grants, only restricts)
   #   - RESOURCE_CONTROL_POLICY: Define maximum permissions for resources (what can be done TO a resource)
   #   - BACKUP_POLICY: Configure automated backup plans for AWS Backup
+  #   - AISERVICES_OPT_OUT_POLICY: Control whether AWS AI services may use customer content for service improvement
   #
   # POLICY APPLICATION:
   #   Policies are applied in order and inherited down the OU hierarchy. Multiple policies combine with
@@ -204,6 +205,15 @@ module "ntc_organizations" {
     # Applied to: /root (entire organization)
     # Enforced for: S3 only
     module.ntc_guardrail_templates.resource_control_policies["rcp_enforce_s3_encryption_and_tls_version"],
+
+    # ---------------------------------------------------------------------------------------------------------
+    # AI SERVICES OPT-OUT POLICIES - CURRENTLY ACTIVE
+    # ---------------------------------------------------------------------------------------------------------
+    # Opts out of content use for service improvement by AWS AI services (e.g. model training)
+    # Also applies to the management account, Amazon Bedrock is not covered
+    # Applied to: /root (entire organization), locked so child policies cannot opt back in
+    # ---------------------------------------------------------------------------------------------------------
+    module.ntc_guardrail_templates.aiservices_opt_out_policies["aiopt_opt_out_all_services"],
   ]
 
   # -------------------------------------------------------------------------------------------------------------------

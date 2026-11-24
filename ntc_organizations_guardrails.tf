@@ -21,7 +21,7 @@
 #   - Evaluated alongside IAM policies and SCPs
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_guardrail_templates" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.5.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-guardrail-templates?ref=2.6.1"
 
   # ===================================================================================================================
   # SERVICE CONTROL POLICIES (SCPs)
@@ -44,6 +44,12 @@ module "ntc_guardrail_templates" {
     #   5. deny_iam_modification: Protects OrganizationAccountAccessRole (trust policy, attached policies, deletion).
     #      Every SCP exempts this role, so without this protection a member account administrator could add their
     #      own principal to its trust policy, assume it and bypass all guardrails
+    #   6. deny_baseline_modification: Protects components deployed by the account baseline in member accounts from
+    #      being disabled or modified, currently the AWS Config recorder, delivery channel and retention configuration.
+    #      The protected services and actions are maintained by NTC and can be extended in future releases.
+    #      The principal that runs the baseline must be excluded ('baseline_execution_role_name' in the account factory,
+    #      here OrganizationAccountAccessRole), otherwise baseline runs fail on the protected resources. The IAM role of
+    #      the recorder is not covered by this template, protect it with deny_iam_modification (iam_arns_to_protect)
     #
     # SCOPE: Applied to the entire organization (/root)
     #
@@ -56,7 +62,7 @@ module "ntc_guardrail_templates" {
     # -----------------------------------------------------------------------------------------------------------------
     {
       policy_name        = "scp_root_ou"
-      policy_description = "Deny member accounts from leaving the organization, any root user actions except for centralized root privilege tasks, IAM user credentials and changes to the OrganizationAccountAccessRole"
+      policy_description = "Deny member accounts from leaving the organization, any root user actions except for centralized root privilege tasks, IAM user credentials, changes to the OrganizationAccountAccessRole and modification of components deployed by the account baseline"
       target_ou_paths    = ["/root"]
       template_names = [
         "deny_leaving_organizations",
@@ -64,6 +70,7 @@ module "ntc_guardrail_templates" {
         "deny_iam_user_and_access_key_creation",
         "deny_login_profile_creation",
         "deny_iam_modification",
+        "deny_baseline_modification",
       ]
       # template specific parameters
       iam_arns_to_protect    = ["arn:${local.current_partition}:iam::*:role/OrganizationAccountAccessRole"]
